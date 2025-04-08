@@ -5,6 +5,8 @@ services:
     container_name: demostore-mysql
     image: mysql:8.0
     restart: unless-stopped
+    ports:
+      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
@@ -66,13 +68,6 @@ services:
           - ${MEILISEARCH_UI_PORT}:24900
       depends_on:
           - meilisearch
-
-  redis:
-    container_name: demostore-redis
-    image: redis:latest
-    restart: unless-stopped
-    ports:
-        - "${REDIS_PORT}:${REDIS_PORT}"
 
   mailhog:
     container_name: demostore-mailhog
