@@ -131,6 +131,7 @@ class ProductResource extends BaseResource
     protected static function getMainFormComponents(): array
     {
         return [
+            static::getBrandFormComponent(),
             static::getProductTypeFormComponent(),
             static::getTagsFormComponent(),
         ];
@@ -203,18 +204,16 @@ class ProductResource extends BaseResource
             ]);
     }
 
-        public static function getProductTypeFormComponent(): Component
-        {
-            return Forms\Components\Select::make('product_type_id')
-                ->label(__('lunarpanel::product.form.producttype.label'))
-                ->relationship('productType', 'name')
-                ->searchable()
-                ->preload()
-                ->live()
-                ->default(1) // Preselect item with ID = 1
-                ->required();
-        }
-
+    public static function getProductTypeFormComponent(): Component
+    {
+        return Forms\Components\Select::make('product_type_id')
+            ->label(__('lunarpanel::product.form.producttype.label'))
+            ->relationship('productType', 'name')
+            ->searchable()
+            ->preload()
+            ->live()
+            ->required();
+    }
 
     protected static function getTagsFormComponent(): Component
     {
@@ -234,7 +233,8 @@ class ProductResource extends BaseResource
     {
         return Attributes::make()
             ->using(ProductVariant::class)
-            ->relationship('variant');
+            ->relationship('variant')
+            ->hidden(fn (Product $record) => $record->hasVariants);
     }
 
     public static function getDefaultTable(Table $table): Table

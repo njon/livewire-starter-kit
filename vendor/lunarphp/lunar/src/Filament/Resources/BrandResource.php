@@ -55,6 +55,7 @@ class BrandResource extends BaseResource
             Pages\EditBrand::class,
             Pages\ManageBrandMedia::class,
             Pages\ManageBrandUrls::class,
+            Pages\ManageBrandProducts::class,
             Pages\ManageBrandCollections::class,
         ];
     }
@@ -90,7 +91,7 @@ class BrandResource extends BaseResource
 
     protected static function getAttributeDataFormComponent(): Component
     {
-        return Attributes::make()->statePath('attribute_data');
+        return Attributes::make();
     }
 
     public static function getDefaultTable(Table $table): Table

@@ -1,0 +1,134 @@
+img {
+    max-width: 100%;
+}
+
+
+span.product-price-original {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: #243E16;
+}
+.icon-bottom {
+    vertical-align: bottom;
+}
+.product-icon {
+    font-size: 1.8rem;
+    vertical-align: bottom;
+}
+
+.bottom-info {
+    line-height: 16px;
+}
+
+body {
+    /* font-family: Roboto !important; */!i;!;!u;!un;!u;!;
+    font-size: 0.9rem !important;
+    line-height: 24px !important;!i;!;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+body {
+    line-height: 30px !important;
+    font-size: 16px !important;
+}
+span.material-symbols-outlined.product-fav-icon:hover {
+    opacity: 0.7;
+}
+span.material-symbols-outlined.product-fav-icon {
+    font-size: 25px;
+    cursor: pointer;
+}
+.attribute {
+    line-height: 25px;
+}
+
+.gallery-row {
+    display: flex;
+    margin-bottom: 30px;
+}
+.gallery-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.thumbnail-item {
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+.thumbnail-item.active, .thumbnail-item:hover {
+    border-color: #007bff;
+}
+.thumbnail-item img {
+    width: 100%;
+    height: auto;
+}
+.main-image {
+    padding-left: 20px;
+}
+.main-image img {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: contain;
+}
+.sticky-box {
+    position: sticky;
+    top: 20px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #DFEDD6;
+}
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    margin-right: 10px;
+}
+.current-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d82e2e;
+}
+.discount-percentage {
+    background: #d82e2e;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+.btn-add-to-cart, .btn-buy-now {
+    flex: 1;
+    padding: 10px;
+}
+.footer-links {
+    font-size: 0.8rem;
+    margin-top: 20px;
+    color: #666;
+}
+.special-offer {
+    background: #F6FEF0;
+    padding: 5px 19px;
+    border-radius: 4px;
+    margin: 15px 0;
+    text-align: center;
+    width: max-content;
+}
+img.review-avatar {
+    border-radius: 50%;
+}
