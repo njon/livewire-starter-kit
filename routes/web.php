@@ -8,7 +8,7 @@ use App\Livewire\ProductPage;
 use App\Livewire\SearchPage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CookieController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,33 +34,47 @@ use App\Http\Controllers\CookieController;
 // Route::get('checkout/success', CheckoutSuccessPage::class)->name('checkout-success.view');
 
 
-Route::get('/get-cookie', [CookieController::class, 'getCookie']);
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::get('/cartItems', [CartController::class, 'getCart'])->name('cart.items');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/checkout', [ProductController::class, 'checkout'])->name('checkout');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show'); // Added this line
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
+
+Route::resource('products.questions', ProductQuestionController::class)
+    ->only(['index', 'store', 'destroy'])
+    ->parameters(['questions' => 'productQuestion']);
+
+Route::post('/products/{product}/questions/{productQuestion}/answer', 
+    [ProductQuestionController::class, 'answer'])
+    ->name('products.questions.answer');
+
+
+Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
+
+
+// routes/web.php
+Route::get('/xx/add-to-cart', [ProductController::class, 'addToCart'])
+    ->name('products.add-to-cart');
+
+
+
+
 
 Route::get('{slug}', function($slug) {
-    // Try product first
     if ($product = \App\Models\Product::with(['defaultUrl'])
         ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
         ->first()) {
         return app(ProductController::class)->show($slug);
     }
 
-    // Then try collection
     if ($collection = \Lunar\Models\Collection::with(['defaultUrl'])
         ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
         ->first()) {
         return app(ProductController::class)->byCollection($slug);
     }
 })->where('slug', '.*');
-
-
-
-
-
-
-Route::post('/set-cookie', [CookieController::class, 'setCookie']);
-Route::get('/delete-cookie', [CookieController::class, 'deleteCookie']);
-Route::get('/page-with-cookie', [CookieController::class, 'showPage']);

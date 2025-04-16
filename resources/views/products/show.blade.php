@@ -1,8 +1,9 @@
 @extends('layouts.app')
-
-
 @section('content')
+
+@include('partials.cart-element')
 @include('partials.breadcrumbs')
+
 
 <div class="product-detail mt-3">
     <!-- <div class="row gallery-row mb-5">
@@ -52,70 +53,7 @@
 
             <div class="mb-4">Showing 2 questions</div>
 
-            <div class="row">
-                <div class="col">
-                    <div class="d-flex flex-start">
-                        <img class="review-avatar me-3"
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp" alt="avatar" width="50"
-                            height="50">
-                        <div class="flex-grow-1 flex-shrink-1">
-                            <div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="mb-1">Maria Smantha <span class="small">- 2 hours ago</span></p>
-                                </div>
-                                <p class="small mb-0">
-                                    It is a long established fact that a reader will be distracted by the
-                                    readable content of a page.
-                                </p>
-                            </div>
-
-                            <div class="d-flex flex-start mt-4">
-                                <a class="me-3" href="#">
-                                    <img class="review-avatar"
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp" alt="avatar"
-                                        width="50" height="50">
-                                </a>
-                                <div class="flex-grow-1 flex-shrink-1">
-                                    <div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-1">
-                                                Simona Disa <span class="small">- 3 hours ago</span>
-                                            </p>
-                                        </div>
-                                        <p class="small mb-0">
-                                            letters, as opposed to using 'Content here, content here', making it
-                                            look like readable English.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-start mt-4">
-                                <a class="me-3" href="#">
-                                    <img class="review-avatar"
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp" alt="avatar"
-                                        width="50" height="50">
-                                </a>
-                                <div class="flex-grow-1 flex-shrink-1">
-                                    <div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-1">
-                                                John Smith <span class="small">- 4 hours ago</span>
-                                            </p>
-                                        </div>
-                                        <p class="small mb-0">
-                                            the majority have suffered alteration in some form, by injected
-                                            humour, or randomised words.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </div>
+            @include('products.questions.index', ['product' => $product, 'questions' => $product->answeredQuestions()->paginate(5)])
 
         </div>
 
@@ -135,9 +73,9 @@
                     {{ $product->translateAttribute('short_description') }}</p>
 
                 <div class="pricing mb-3">
-                    <span class="original-price">{{ $product->price }}</span>
+                    <span class="original-price">{{ $product->original_price }}</span>
                     <span class="current-price">{{ $product->price }}</span>
-                    <span class="discount-percentage">-{{ $product->price }}%</span>
+                    <span class="discount-percentage">-{{ $product->discount }}%</span>
                 </div>
 
                 @if($product->price)
@@ -167,12 +105,14 @@
                 </div>
 
                 <div class="action-buttons">
-                    <form id="add-to-cart" action="https://effective-space-happiness-6rx99v96443rvrv-80.app.github.dev/set-cookie" method="POST">
-                        <button class="btn btn-success btn-add-to-cart">
+                    <form id="add-to-cart" action="/cart/add" method="POST">
+                        <button class="btn btn-success btn-add-to-cart" id="btn-add-to-cart">
                             <span class="material-symbols-outlined icon-bottom">shopping_cart</span> Add to Cart
                         </button>
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="image" value="{{ $product->images->first()->getUrl() }}">
+                        <input type="hidden" name="link" value="{{ $product->id }}">
                         <input type="hidden" name="quantity" value="1">
                         <input type="hidden" name="price" value="{{ $product->price }}">
                         <input type="hidden" name="product_name" value="{{ $product->translateAttribute('name') }}">

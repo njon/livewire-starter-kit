@@ -1,152 +1,359 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Cookie Helper Functions
-    function setCookie(name, value, days = 30) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = `${name}=${JSON.stringify(value)}; expires=${date.toUTCString()}; path=/`;
-    }
+const curCurrency = '€';
 
-    function getCookie(name) {
-        const cookies = document.cookie.split('; ');
-        const cookie = cookies.find(c => c.startsWith(`${name}=`));
-        return cookie ? JSON.parse(cookie.split('=')[1]) : null;
-    }
-
-    // Initialize cart
-    const cartCookie = getCookie('cart');
-    const cart = cartCookie ? cartCookie : {};
-    updateCartDisplay();
-
-    // 1. Add to Cart Form Submission
-    document.getElementById('add-to-cart').addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const form = this;
-        const formData = new FormData(form);
-        
-        // Update local cart immediately for better UX
-        const product = {
-            id: formData.get('product_id'),
-            name: formData.get('product_name'),
-            price: formData.get('price'),
-            quantity: parseInt(formData.get('quantity'))
-        };
-        
-        addToCart(product);
-        updateCartDisplay();
-        
-        // Then send to server
-        // fetch(form.action, {
-        //     method: 'POST',
-        //     headers: {
-        //         'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-        //         'Accept': 'application/json',
-        //     },
-        //     body: formData,
-        // })
-        // .then(response => {
-        //     if (!response.ok) throw new Error('Network response was not ok');
-        //     return response.json();
-        // })
-        // .then(data => {
-        //     console.log('Server response:', data);
-        //     // Optionally sync server response with local cart
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        //     // Optionally revert local changes if server fails
-        // });
-    });
-
-    // 2. Buy Now Button
-    document.querySelector('.btn-buy-now').addEventListener('click', function() {
-        // First ensure cart is updated
-        const formData = new FormData(document.getElementById('add-to-cart'));
-        const product = {
-            id: formData.get('product_id'),
-            name: formData.get('product_name'),
-            price: formData.get('price'),
-            quantity: parseInt(formData.get('quantity'))
-        };
-        
-        addToCart(product);
-        updateCartDisplay();
-        
-        // Then proceed to checkout
-        window.location.href = '/checkout';
-    });
-
-    // 3. Thumbnail Click Handler
-    document.querySelectorAll('.thumbnail-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.thumbnail-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            document.getElementById('mainProductImage').src = this.dataset.target;
-        });
-    });
-
-    // Cart Management Functions
-    function addToCart(product) {
-        if (cart[product.id]) {
-            cart[product.id].quantity += product.quantity;
-        } else {
-            cart[product.id] = product;
-        }
-        setCookie('cart', cart);
-    }
-
-    function removeFromCart(productId) {
-        if (cart[productId]) {
-            delete cart[productId];
-            setCookie('cart', cart);
-        }
-    }
-
-    function updateQuantity(productId, change) {
-        if (cart[productId]) {
-            cart[productId].quantity += change;
-            if (cart[productId].quantity <= 0) {
-                delete cart[productId];
+function loadCartItems() {
+    fetch('/cartItems')
+        .then(response => response.json())
+        .then(data => {
+            cartElement = document.querySelector('.cart');
+            // Generate the HTML structure
+            let cartHtml = `
+                <div class="card-body p-0">
+            `;
+            
+            if (data && Object.keys(data).length > 0) {
+                cartHtml += `
+                    <div class="list-group list-group-flush">
+                `;
+                
+                // Loop through cart items
+                for (const [productId, item] of Object.entries(data)) {
+                    const itemTotal = (parseFloat(item.price.replace(curCurrency, '')) * item.quantity).toFixed(2);
+                    
+                    cartHtml += `
+                        <div class="list-group-item py-3 cart-item">
+                            <div class="row align-items-center">
+                                <div class="col-md-1">
+                                    <a href="${item.link}" class="flex-shrink-0 me-3">
+                                        <img src="${item.image || 'placeholder.jpg'}" alt="${item.product_name}" class="rounded" width="80" height="auto">
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="mb-1 fw-bold">${item.product_name}</h6>
+                                    <small class="text-muted">Price: ${item.price}</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                                        <input type="number" 
+                                               class="form-control quantity-input" 
+                                               value="${item.quantity}" 
+                                               min="1" 
+                                               data-id="${productId}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <span class="item-total">€${itemTotal}</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-sm btn-outline-danger btn-remove" data-id="${productId}">
+                                        <span class="material-symbols-outlined product-icon">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                cartHtml += `
+                    </div>
+                `;
+            } else {
+                cartHtml += `
+                    <div class="p-4 text-center">
+                        <i class="material-icons display-4 text-muted">remove_shopping_cart</i>
+                        <h5 class="mt-3">Your cart is empty</h5>
+                        <a href="/" class="btn btn-primary mt-3">
+                            <i class="material-icons">shopping_bag</i> Start Shopping
+                        </a>
+                    </div>
+                `;
             }
-            setCookie('cart', cart);
-            updateCartDisplay();
+            
+            cartHtml += `
+                </div>
+            `;
+            
+            // Insert the generated HTML
+            cartElement.innerHTML = cartHtml;
+            
+            // Update cart counter if exists
+            const cartCounter = document.querySelector('.cart-count');
+            if (cartCounter) cartCounter.textContent = Object.keys(data).length;
+        })
+        .catch(error => console.error('Error loading cart:', error));
+}
+
+function loadOffcanvasCartItems(showElement = true) {
+    fetch('/cartItems')
+        .then(response => response.json())
+        .then(data => {
+            cartElement = document.querySelector('#shoppingCart .offcanvas-body');
+            if(showElement) {
+                $('#shoppingCart').offcanvas('show');
+            }
+            // Generate the HTML structure
+            let cartHtml = `
+                <div class="d-flex flex-column h-100">
+                    <div class="flex-grow-1 overflow-auto">
+                        <ul class="list-group list-group-flush">
+            `;
+
+            if (data && Object.keys(data).length > 0) {
+                // Loop through cart items
+                for (const [productId, item] of Object.entries(data)) {
+                    const itemTotal = (parseFloat(item.price.replace(curCurrency, '')) * item.quantity).toFixed(2);
+
+                    cartHtml += `
+                        <li class="cart-item list-group-item py-3">
+                            <div class="d-flex align-items-start">
+                                <a href="${item.link}" class="flex-shrink-0 me-3">
+                                    <img src="${item.image || 'placeholder.jpg'}" alt="${item.product_name}" class="rounded" width="80" height="auto">
+                                </a>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="mb-1">${item.product_name}</h6>
+                                        <button type="button" class="btn-close btn-sm btn-remove" data-id="${productId}" aria-label="Remove"></button>
+                                    </div>
+                                    <p class="mb-1">${item.quantity} × ${item.price}</p>
+                                    <small class="text-muted">Total: €${itemTotal}</small>
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                }
+            } else {
+                cartHtml += `
+                    <li class="list-group-item py-3 text-center">
+                        <i class="material-icons display-4 text-muted">remove_shopping_cart</i>
+                        <h5 class="mt-3">Your cart is empty</h5>
+                        <a href="/" class="btn btn-primary mt-3">
+                            <i class="material-icons">shopping_bag</i> Start Shopping
+                        </a>
+                    </li>
+                `;
+            }
+
+            cartHtml += `
+                        </ul>
+                    </div>
+                    <div class="border-top p-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6 class="mb-0">Subtotal:</h6>
+                            <span class="fw-bold">€${calculateCartTotal(data)}</span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="/cart" class="btn btn-outline-dark">View cart</a>
+                            <a href="/checkout" class="btn btn-dark">Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Insert the generated HTML
+            cartElement.innerHTML = cartHtml;
+
+            // Update cart counter if exists
+            const cartCounter = document.querySelector('.cart-count');
+            if (cartCounter) cartCounter.textContent = Object.keys(data).length;
+        })
+        .catch(error => console.error('Error loading cart:', error));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadOffcanvasCartItems(false);
+});
+
+function calculateCartTotal(cartItems) {
+    return Object.values(cartItems).reduce((total, item) => {
+        const itemTotal = parseFloat(item.price.replace(curCurrency, '')) * item.quantity;
+        return total + itemTotal;
+    }, 0).toFixed(2);
+}
+
+let isLoading = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadCartItems();
+});
+
+
+$(document).ready(function() {
+
+    var $pageInput = $('[name="page"]');
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !isLoading) {
+            loadMoreProducts();
         }
+    });
+
+    function loadMoreProducts() {
+        isLoading = true;
+        var nextPage = parseInt($pageInput.val()) + 1;
+        $pageInput.val(nextPage);
+        fetchResults(append = true);
     }
 
-    function updateCartDisplay() {
-        // Update cart count
-        const count = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-        document.querySelectorAll('.cart-count').forEach(el => {
-            el.textContent = count;
+    function fetchResults(append = false) {
+        const formData = $('#ajax-search-form').serialize();
+        const URL = location.protocol + '//' + location.host + location.pathname + '?' + formData;
+        window.history.pushState('page2', 'Title', URL);
+        $('#search-results').append('<div class="col-6 col-lg-4 mb-4 placeholder-glow"> <div class="card h-100"> <!-- Image placeholder --> <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light placeholder" data-mdb-ripple-color="light" style="height: 415px;"> <div class="card-img-top w-100 placeholder" style="background-color: #eee;height: 415px;"></div> <a href="#!"> <div class="mask"> <div class="d-flex justify-content-start align-items-end h-100"></div> </div> <div class="hover-overlay"> <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div> </div> </a> </div> <div class="card-body"> <!-- Title placeholder --> <h3 class="card-title mb-3 placeholder-wave"> <span class="placeholder col-8"></span> </h3> <!-- City placeholder --> <div class="product-city mb-2 placeholder-wave"> <span class="placeholder col-6"></span> </div> <!-- Info placeholders --> <div class="bottom-info mb-3 placeholder-wave"> <span class="placeholder col-4 me-2"></span> <span class="placeholder col-4"></span> </div> <!-- Price placeholder --> <div class="product-listing-price placeholder-wave"> <span class="placeholder col-3"></span> </div> </div> </div> </div><div class="col-lg-4 col-md-4 mb-4 placeholder-glow"> <div class="card h-100"> <!-- Image placeholder --> <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light placeholder" data-mdb-ripple-color="light" style="height: 415px;"> <div class="card-img-top w-100 placeholder" style="background-color: #eee;height: 415px;"></div> <a href="#!"> <div class="mask"> <div class="d-flex justify-content-start align-items-end h-100"></div> </div> <div class="hover-overlay"> <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div> </div> </a> </div> <div class="card-body"> <!-- Title placeholder --> <h3 class="card-title mb-3 placeholder-wave"> <span class="placeholder col-8"></span> </h3> <!-- City placeholder --> <div class="product-city mb-2 placeholder-wave"> <span class="placeholder col-6"></span> </div> <!-- Info placeholders --> <div class="bottom-info mb-3 placeholder-wave"> <span class="placeholder col-4 me-2"></span> <span class="placeholder col-4"></span> </div> <!-- Price placeholder --> <div class="product-listing-price placeholder-wave"> <span class="placeholder col-3"></span> </div> </div> </div> </div><div class="col-lg-4 col-md-4 mb-4 placeholder-glow"> <div class="card h-100"> <!-- Image placeholder --> <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light placeholder" data-mdb-ripple-color="light" style="height: 415px;"> <div class="card-img-top w-100 placeholder" style="background-color: #eee;height: 415px;"></div> <a href="#!"> <div class="mask"> <div class="d-flex justify-content-start align-items-end h-100"></div> </div> <div class="hover-overlay"> <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div> </div> </a> </div> <div class="card-body"> <!-- Title placeholder --> <h3 class="card-title mb-3 placeholder-wave"> <span class="placeholder col-8"></span> </h3> <!-- City placeholder --> <div class="product-city mb-2 placeholder-wave"> <span class="placeholder col-6"></span> </div> <!-- Info placeholders --> <div class="bottom-info mb-3 placeholder-wave"> <span class="placeholder col-4 me-2"></span> <span class="placeholder col-4"></span> </div> <!-- Price placeholder --> <div class="product-listing-price placeholder-wave"> <span class="placeholder col-3"></span> </div> </div> </div> </div><div class="col-lg-4 col-md-4 mb-4 placeholder-glow"> <div class="card h-100"> <!-- Image placeholder --> <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light placeholder" data-mdb-ripple-color="light" style="height: 415px;"> <div class="card-img-top w-100 placeholder" style="background-color: #eee;height: 415px;"></div> <a href="#!"> <div class="mask"> <div class="d-flex justify-content-start align-items-end h-100"></div> </div> <div class="hover-overlay"> <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div> </div> </a> </div> <div class="card-body"> <!-- Title placeholder --> <h3 class="card-title mb-3 placeholder-wave"> <span class="placeholder col-8"></span> </h3> <!-- City placeholder --> <div class="product-city mb-2 placeholder-wave"> <span class="placeholder col-6"></span> </div> <!-- Info placeholders --> <div class="bottom-info mb-3 placeholder-wave"> <span class="placeholder col-4 me-2"></span> <span class="placeholder col-4"></span> </div> <!-- Price placeholder --> <div class="product-listing-price placeholder-wave"> <span class="placeholder col-3"></span> </div> </div> </div> </div>');
+
+        $.ajax({
+            url: "/ajax-search",
+            type: "GET",
+            data: formData,
+            success: function(response) {
+                if(append) {
+                    $('#search-results').append(response);
+                } else {
+                    $('#search-results').html(response);
+                }
+                $('.placeholder-glow').remove();
+                isLoading = false;
+            },
+            error: function(xhr) {
+                $('#search-results').html(`
+                    <div class="alert alert-danger">
+                        An error occurred while searching. Please try again.
+                    </div>
+                `);
+            }
         });
+    }
+
+    
+
+    $('#ajax-search-form').on('submit', function(e) {
+        e.preventDefault();
+        fetchResults();
+    });
+
+    // Handle input changes for real-time search
+    $('#search-query, #min-price, #max-price').on('input', function() {
+        // Add slight delay to prevent too many requests
+        clearTimeout($(this).data('timer'));
+        $(this).data('timer', setTimeout(fetchResults, 500));
+    });
+    
+    // Add to cart
+    $('#add-to-cart').on('submit', function(e) {
+        e.preventDefault();
         
-        // Update mini-cart if exists
-        const miniCart = document.getElementById('mini-cart');
-        if (miniCart) {
-            miniCart.innerHTML = Object.values(cart).map(item => `
-                <div class="cart-item">
-                    <h4>${item.name}</h4>
-                    <p>${item.price} × ${item.quantity}</p>
-                    <button class="btn-qty" data-id="${item.id}" data-change="-1">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="btn-qty" data-id="${item.id}" data-change="1">+</button>
-                    <button class="btn-remove" data-id="${item.id}">Remove</button>
-                </div>
-            `).join('');
-            
-            // Add event listeners to dynamically created buttons
-            document.querySelectorAll('.btn-qty').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    updateQuantity(this.dataset.id, parseInt(this.dataset.change));
+        var $form = $(this);
+        var $button = $form.find('.btn-add-to-cart');
+        var originalText = $button.html();
+        
+        // Show loading state
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...');
+        
+        $.ajax({
+            url: $form.attr('action'),
+            type: 'POST',
+            data: $form.serialize(),
+            dataType: 'json',
+            success: function(response) {
+                updateCartUI(response);
+                toastr.success(response.message);
+            },
+            error: function(xhr) {
+                var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'An error occurred while adding to cart';
+                toastr.error(errorMessage);
+            },
+            complete: function() {
+                $button.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Remove item
+    $(document).on('click', '.btn-remove', function(e) {
+        e.preventDefault();
+        
+        var $button = $(this);
+        var productId = $button.data('id');
+        var $cartItem = $button.closest('.cart-item');
+        
+        // Show loading state
+        
+        $.ajax({
+            url: '/cart/remove',
+            type: 'POST',
+            data: {
+                _token: $('[name="_token"]').val(),
+                product_id: productId
+            },
+            dataType: 'json',
+            success: function(response) {
+                $cartItem.fadeOut(300, function() {
+                    $(this).remove();
+                    updateCartUI(response);
                 });
-            });
-            
-            document.querySelectorAll('.btn-remove').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    removeFromCart(this.dataset.id);
-                    updateCartDisplay();
-                });
-            });
+                toastr.success(response.message);
+            },
+            error: function(xhr) {
+                var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'An error occurred while removing item';
+                toastr.error(errorMessage);
+                $button.html('<i class="material-icons">delete</i>');
+            }
+        });
+    });
+
+    // Update quantity
+    $(document).on('change', '.quantity-input', function() {
+        var $input = $(this);
+        var productId = $input.data('id');
+        var quantity = $input.val();
+        var $cartItem = $input.closest('.cart-item');
+        
+        $.ajax({
+            url: '/cart/update-quantity',
+            type: 'POST',
+            data: {
+                _token: $('[name="_token"]').val(),
+                product_id: productId,
+                quantity: quantity
+            },
+            dataType: 'json',
+            success: function(response) {
+                $cartItem.find('.item-total').text(calculateItemTotal(response.cart[productId]));
+                updateCartUI(response);
+                toastr.success(response.message);
+            },
+            error: function(xhr) {
+                var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'An error occurred while updating quantity';
+                toastr.error(errorMessage);
+                // Reset to previous value
+                $input.val($input.data('previous-value'));
+            }
+        });
+    });
+
+    // Store previous value for quantity inputs
+    $(document).on('focusin', '.quantity-input', function() {
+        $(this).data('previous-value', $(this).val());
+    });
+
+    function calculateItemTotal(item) {
+        // Remove $ sign and calculate total
+        const price = parseFloat(item.price.replace(curCurrency, ''));
+        return curCurrency + (price * item.quantity).toFixed(2);
+    }
+
+    function updateCartUI(response) {
+        if (response.total_items !== undefined) {
+            $('.cart-counter').text(response.total_items);
         }
+        if (response.cart_total !== undefined) {
+            $('.cart-total').text(curCurrency + response.cart_total.toFixed(2));
+        }
+        loadOffcanvasCartItems();
+        loadCartItems();
     }
 });

@@ -7,7 +7,8 @@
 /public/js/app/components
 /public/storage
 /storage/*.key
-/vendor
+/vendor/*
+!/vendor/lunar
 .env
 .env.backup
 .phpunit.result.cache

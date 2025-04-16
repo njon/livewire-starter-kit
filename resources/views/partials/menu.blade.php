@@ -49,6 +49,11 @@
         </ul>
       </div>
     </div>
+    
+    <button type="button" class="btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart" aria-controls="shoppingCart" aria-label="Toggle navigation">
+      <span class="material-symbols-outlined icon-bottom">shopping_cart</span>
+
+    </div>
   </div>
 </nav>
 

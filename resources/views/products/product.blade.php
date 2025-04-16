@@ -1,4 +1,4 @@
-<div class="col-lg-4 col-md-12 mb-4">
+<div class="col-6 col-lg-4 mb-4">
     <div class="card">
         <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
             @if($product->thumbnail)
@@ -31,7 +31,7 @@
                 @endif
             </div>
 
-            <div class="bottom-info">
+            <div class="bottom-info mb-3">
                 <span class="material-symbols-outlined product-icon">person</span> {{ $product->translateAttribute('participants') }} participants
                 <span class="material-symbols-outlined product-icon">schedule</span> {{ $product->translateAttribute('length') }} minutes
             </div>
