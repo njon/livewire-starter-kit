@@ -178,7 +178,79 @@ document.addEventListener('DOMContentLoaded', function() {
 
 $(document).ready(function() {
 
+    const csrf_token = $('[name="_token"]').val()
+
+    $('.btn-helpful').click(function() {
+        const button = $(this);
+        const reviewId = button.data('review-id');
+        
+        $.ajax({
+            url: `/reviews/${reviewId}/helpful`,
+            method: 'POST',
+            data: {
+                _token: csrf_token
+            },
+            success: function(response) {
+                button.find('.emoji').text('❤️');
+                button.html(`<span class="emoji">❤️</span> Helpful (${response.count})`);
+            },
+            error: function() {
+                alert('Error marking as helpful');
+            }
+        });
+    });
+
     var $pageInput = $('[name="page"]');
+
+    $(document).ready(function() {
+        // Handle form submission
+        // $('#ask-question-form').on('submit', function(e) {
+        $('form').on('submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
+            
+            // Get form data
+            var formData = $(this).serialize();
+            var formAction = $(this).attr('action');
+            var submitButton = $(this).find('button[type="submit"]');
+            
+            // Disable submit button to prevent multiple submissions
+            submitButton.prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
+            );
+            
+            // AJAX request
+            $.ajax({
+                url: formAction,
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message || 'Question submitted successfully!');
+                        $('#askQuestionModal').modal('hide');
+                        $('#question').val('');
+                    }
+                },
+                error: function(xhr) {
+                    // Handle errors
+                    var errorMessage = 'An error occurred. Please try again.';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.statusText) {
+                        errorMessage = xhr.statusText;
+                    }
+                    
+                    toastr.error(errorMessage);
+                },
+                complete: function() {
+                    submitButton.prop('disabled', false).html('Submit Question');
+                }
+            });
+        });
+    });
 
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !isLoading) {
@@ -282,7 +354,7 @@ $(document).ready(function() {
             url: '/cart/remove',
             type: 'POST',
             data: {
-                _token: $('[name="_token"]').val(),
+                _token: csrf_token,
                 product_id: productId
             },
             dataType: 'json',
@@ -314,7 +386,7 @@ $(document).ready(function() {
             url: '/cart/update-quantity',
             type: 'POST',
             data: {
-                _token: $('[name="_token"]').val(),
+                _token: csrf_token,
                 product_id: productId,
                 quantity: quantity
             },

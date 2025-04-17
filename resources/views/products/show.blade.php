@@ -41,19 +41,9 @@
             {!! $product->translateAttribute('description') !!}
 
 
-            <div class="d-flex justify-content-between mt-5">
-                <div>
-                    <h2>Questions and Answers</h2>
-                </div>
 
-                <div>
-                    <button type="button" class="btn btn-outline-success p-3">ASK QUESTION</button>
-                </div>
-            </div>
-
-            <div class="mb-4">Showing 2 questions</div>
-
-            @include('products.questions.index', ['product' => $product, 'questions' => $product->answeredQuestions()->paginate(5)])
+            @include('products.questions.index', ['product' => $product, 'questions' => $product->questions()->paginate(10)])
+            @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
 
         </div>
 
@@ -73,9 +63,13 @@
                     {{ $product->translateAttribute('short_description') }}</p>
 
                 <div class="pricing mb-3">
-                    <span class="original-price">{{ $product->original_price }}</span>
+                    @if ($product->discount)
+                        <span class="original-price">{{ $product->original_price }}</span>
+                    @endif
                     <span class="current-price">{{ $product->price }}</span>
-                    <span class="discount-percentage">-{{ $product->discount }}%</span>
+                    @if ($product->discount)
+                        <span class="discount-percentage">-{{ $product->discount }}%</span>
+                    @endif
                 </div>
 
                 @if($product->price)
@@ -84,6 +78,61 @@
                             data-end="{{ $product->price }}">04:25:15</span>
                     </div>
                 @endif
+
+                @if($product->variants->isNotEmpty())
+                <div class="product-variants">
+                    <h3 class="text-lg font-medium mb-4">Available Options</h3>
+                    
+                    @foreach($product->variants as $variant)
+                        <div class="variant-option mb-6">
+                            <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
+                            
+                            @if($variant->values->isNotEmpty())
+                                <div class="variant-values flex flex-wrap gap-2">
+                                    @foreach($variant->values as $value)
+                                        <button 
+                                            type="button"
+                                            class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
+                                            data-variant-id="{{ $variant->id }}"
+                                            data-value-id="{{ $value->id }}"
+                                            @if($value->disabled) disabled @endif
+                                        >
+                                            {{ $value->translate('name') }}
+                                            {{ $variant->basePrices()->first()->price->formatted()}}
+                                            @if($value->price)
+                                                <span class="text-sm text-gray-600 ml-1">
+                                                    (+{{ $value->price->formatted }})
+                                                </span>
+                                            @endif
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Handle variant selection logic here
+                        const variantButtons = document.querySelectorAll('.variant-value-btn');
+                        
+                        variantButtons.forEach(button => {
+                            button.addEventListener('click', function() {
+                                // Remove active class from siblings
+                                const siblings = this.parentNode.querySelectorAll('.variant-value-btn');
+                                siblings.forEach(sib => sib.classList.remove('bg-blue-500', 'text-white'));
+                                
+                                // Add active class to clicked button
+                                this.classList.add('bg-blue-500', 'text-white');
+                                
+                                // Update product price, image, etc. based on selection
+                                // You would typically make an AJAX call or update state here
+                            });
+                        });
+                    });
+                </script>
+@endif
 
                 <div class="product-attributes d-flex justify-content-between mt-2">
                 <div class="attribute">

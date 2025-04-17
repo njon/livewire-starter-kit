@@ -9,6 +9,12 @@ use App\Livewire\SearchPage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Models\Product;
+use App\Http\Controllers\ProductQuestionController;
+use App\Models\ProductQuestion;
+use App\Http\Controllers\ProductReviewController;
+
+$x = ProductQuestion::all();
 
 /*
 |--------------------------------------------------------------------------
@@ -20,18 +26,6 @@ use App\Http\Controllers\CartController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/', Home::class);
-
-// Route::get('/collections/{slug}', CollectionPage::class)->name('collection.view');
-
-// Route::get('/products/{slug}', ProductPage::class)->name('product.view');
-
-// Route::get('search', SearchPage::class)->name('search.view');
-
-// Route::get('checkout', CheckoutPage::class)->name('checkout.view');
-
-// Route::get('checkout/success', CheckoutSuccessPage::class)->name('checkout-success.view');
 
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
@@ -49,10 +43,8 @@ Route::resource('products.questions', ProductQuestionController::class)
     ->only(['index', 'store', 'destroy'])
     ->parameters(['questions' => 'productQuestion']);
 
-Route::post('/products/{product}/questions/{productQuestion}/answer', 
-    [ProductQuestionController::class, 'answer'])
+Route::post('/product/{product}/answer/{productquestion}', [ProductQuestionController::class, 'answer'])
     ->name('products.questions.answer');
-
 
 Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
 
@@ -60,6 +52,36 @@ Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('pro
 // routes/web.php
 Route::get('/xx/add-to-cart', [ProductController::class, 'addToCart'])
     ->name('products.add-to-cart');
+
+
+
+Route::prefix('products/{product}')->group(function() {
+    Route::get('/reviews', [ProductReviewController::class, 'index'])->name('products.reviews.index');
+    Route::get('/reviews/create', [ProductReviewController::class, 'create'])->name('products.reviews.create');
+    Route::post('/reviews', [ProductReviewController::class, 'store'])->name('products.reviews.store');
+});
+
+Route::get('/reviews/verify/{token}', [ProductReviewController::class, 'verify'])->name('reviews.verify');
+Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpful'])->name('reviews.helpful');
+
+
+
+
+Route::get('/test-email', function() {
+    $review = App\Models\ProductReview::first();
+    return new App\Mail\GuestReviewInvitation($review);
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 

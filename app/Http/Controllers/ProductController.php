@@ -135,6 +135,9 @@ class ProductController extends Controller
             throw new NotFoundHttpException('Product not found');
         }
 
+        // $dd = \App\Models\ProductQuestion::all();;
+        // dd($dd);
+
         return view('products.show', [
             'product' => $product,
             'relatedProducts' => $product->getRelatedProducts(),

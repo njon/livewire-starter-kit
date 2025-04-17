@@ -1,47 +1,66 @@
 <?php
 
-namespace App\Models;
+namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\ProductQuestion;
+use Illuminate\Http\Request;
+use Lunar\Models\Product;
 
-class ProductQuestion extends Model
+class ProductQuestionController extends Controller
 {
-    protected $fillable = [
-        'product_id',
-        'user_id',
-        'question',
-        'answer',
-        'answered_by',
-        'answered_at'
-    ];
-
-    protected $casts = [
-        'answered_at' => 'datetime',
-    ];
-
-    public function product(): BelongsTo
+    public function index(Product $product)
     {
-        return $this->belongsTo(\Lunar\Models\Product::class);
+        $questions = $product->questions()
+            ->with(['user', 'answerer'])
+            ->answered()
+            ->latest()
+            ->paginate(10);
+
+        return view('products.questions.index', compact('product', 'questions'));
     }
 
-    public function user(): BelongsTo
+    public function store(Request $request, Product $product)
     {
-        return $this->belongsTo(User::class);
+        $request->validate([
+            'question' => 'required|string|min:10|max:1000',
+        ]);
+
+        $question = new ProductQuestion([
+            'question' => $request->question,
+            'user_id' => auth()->id(),
+        ]);
+
+        $product->questions()->save($question);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your question has been submitted!',
+        ]);
     }
 
-    public function answerer(): BelongsTo
+    public function answer(Request $request, Product $product, ProductQuestion $productquestion)
     {
-        return $this->belongsTo(User::class, 'answered_by');
+        $request->validate([
+            'answer' => 'required|string|min:10|max:1000',
+        ]);
+
+        $productquestion->update([
+            'answer' => $request->answer,
+            'answered_by' => auth()->id(),
+            'answered_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your question has been submitted!',
+        ]);
     }
 
-    public function scopeAnswered($query)
+    public function destroy(ProductQuestion $question)
     {
-        return $query->whereNotNull('answer');
-    }
+        $question->delete();
 
-    public function scopeUnanswered($query)
-    {
-        return $query->whereNull('answer');
+        return redirect()->back()
+            ->with('success', 'Question deleted successfully!');
     }
 }

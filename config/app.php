@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev'),
 
     'asset_url' => env('ASSET_URL', null),
 

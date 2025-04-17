@@ -38,7 +38,8 @@ class Product extends LunarProduct
         'images',
         'defaultUrl',
         'productType.mappedAttributes',
-        'associations'
+        'associations',
+        'questions',
     ];
 
     /**
@@ -268,6 +269,16 @@ class Product extends LunarProduct
     public function answeredQuestions()
     {
         return $this->hasMany(ProductQuestion::class)->answered();
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
     }
 
 }

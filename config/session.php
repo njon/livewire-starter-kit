@@ -155,7 +155,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => '.app.github.dev', // Notice the leading dot
 
     /*
     |--------------------------------------------------------------------------
