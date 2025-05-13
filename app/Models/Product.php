@@ -7,33 +7,32 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection as BaseCollection;
 use Lunar\Models\Product as LunarProduct;
 use Lunar\Models\Collection;
-use Illuminate\Support\Facades\URL;
 use Lunar\Models\DiscountPurchasable;
 use Lunar\DataTypes\Price;
 use Lunar\Models\Currency;
-
+use Lunar\Models\TaxClass;
+use Lunar\Models\TaxRateAmount;
+use Lunar\Models\TaxRate;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Carbon;
+use Lunar\Models\Discount;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Product extends LunarProduct
 {
-
-    // protected $appends = ['has_discount', 'discount_percentage'];
-
-    /**
-     * Eager loads for product listings
-     */
+  
     public static array $listingWith = [
-        'variants.basePrices',
+        'variants.basePrices.currency',
         'defaultUrl',
         'thumbnail',
         'productType',
         'media',
     ];
 
-    /**
-     * Eager loads for single product view
-     */
     public static array $detailWith = [
-        'variants.basePrices',
+        'variants.basePrices.currency',
         'collections.defaultUrl',
         'images',
         'defaultUrl',
@@ -43,24 +42,85 @@ class Product extends LunarProduct
     ];
 
     /**
-     * Scope for published products
+     * Calculate discounted price based on discount data
      */
-    public function scopePublished(Builder $query): Builder
+    protected function calculateDiscountedPrice(int $priceValue, array $discountData): array
     {
-        return $query->where('status', 'published');
+        $discountedValue = $priceValue;
+        $discountAmount = 0;
+        $discountPercentage = null;
+
+        // Handle fixed value discount
+        if ($discountData['fixed_value'] ?? false) {
+            $fixedDiscount = $discountData['fixed_values']['Eur'] ?? 0;
+            $discountAmount = $fixedDiscount;
+            $discountedValue = max(0, $priceValue - $fixedDiscount);
+        }
+        // Handle percentage discount
+        elseif (isset($discountData['percentage'])) {
+            $percentage = (float)$discountData['percentage'];
+            $discountAmount = (int)round($priceValue * ($percentage / 100));
+            $discountedValue = max(0, $priceValue - $discountAmount);
+            $discountPercentage = $percentage;
+        }
+
+        return [
+            'original' => $priceValue,
+            'discounted' => $discountedValue,
+            'discount_amount' => $discountAmount,
+            'discount_percentage' => $discountPercentage,
+        ];
     }
 
     /**
-     * Scope for latest products
+     * Get discount information for the product
      */
-    public function scopeLatestProducts(Builder $query): Builder
+    public function getDiscountInfoAttribute($price = ''): array
     {
-        return $query->orderBy('created_at', 'desc');
+        if(!$price) {
+            $price = $this->prices->first();
+        }
+
+        $priceValue = $price->price->value;
+        $discounts = $this->discounts;
+
+        if ($discounts->isEmpty()) {
+            return [
+                'has_discount' => false,
+                'discount_value' => null,
+                'discount_percentage' => null,
+                'price_without_discount' => $price->price->formatted,
+                'current_price' => $price->price->formatted,
+            ];
+        }
+
+        // Get the first active discount (you might want to prioritize certain discounts)
+        $discountData = $discounts->first()->data;
+        $calculated = $this->calculateDiscountedPrice($priceValue, $discountData);
+
+        return [
+            'has_discount' => true,
+            'discount_value' => format_price($calculated['discount_amount'])->formatted(),
+            'discount_percentage' => $calculated['discount_percentage'],
+            'price_without_discount' => format_price($calculated['original'])->formatted(),
+            'current_price' => format_price($calculated['discounted'])->formatted(),
+        ];
     }
 
     /**
-     * Find a product by its slug
+     * Format price in euros
      */
+    protected function formatPrice(int $value): Price
+    {
+        $currency = Currency::where('code', 'EUR')->first();
+        $price = new Price(
+            $value, // value in smallest unit (cents/pence)
+            $currency,
+        );
+
+        return $price;
+    }
+
     public static function findBySlug(string $slug): ?self
     {
         return static::with(static::$detailWith)
@@ -68,9 +128,6 @@ class Product extends LunarProduct
             ->first();
     }
 
-    /**
-     * Get products for a collection
-     */
     public static function getForCollection(Collection $collection, int $perPage = 12)
     {
         return $collection->products()
@@ -80,9 +137,6 @@ class Product extends LunarProduct
             ->paginate($perPage);
     }
 
-    /**
-     * Get all published products
-     */
     public static function getAllPublished(int $perPage = 12)
     {
         return static::with(static::$listingWith)
@@ -91,24 +145,13 @@ class Product extends LunarProduct
             ->paginate($perPage);
     }
 
-    /**
-     * Get price for display
-     */
-    public function getDisplayPrice(): string
-    {
-        return optional($this->variants->first())->price?->formatted() ?? 'Price unavailable';
-    }
-
-    /**
-     * Get related products (from same collections)
-     */
     public function getRelatedProducts(int $limit = 4): BaseCollection
     {
         return static::with(static::$listingWith)
             ->whereHas('collections', function($query) {
                 $query->whereIn(
                     'lunar_collection_product.collection_id', 
-                    $this->collections->pluck('id')->toArray()
+                    $this->collections->pluck('id')
                 );
             })
             ->where('lunar_products.id', '!=', $this->id)
@@ -117,149 +160,63 @@ class Product extends LunarProduct
             ->get();
     }
 
-    public function getDiscountData(): ?array
+    public function tax()
     {
-        $discountPurchasable = DiscountPurchasable::with('discount')
-            ->where('purchasable_id', $this->id)
-            ->first();
+        // THIS WILL BE CORRECT-> ADD TAX CLASS ID
+        $tax_class_id = $this->variants->first()->tax_class_id ?? null;
+        $taxRateAmount = TaxRateAmount::whereHas('taxRate', function($query) use ($tax_class_id) {
+            $query->where('id', $tax_class_id);
+        })->get(); 
 
-        if (!$discountPurchasable || !$discountPurchasable->discount) {
-            return null;
-        }
-
-        return $discountPurchasable->discount->getAttribute('data');
+        return $taxRateAmount;
     }
 
-
-    /**
-     * Check if product has an active discount
-     * 
-     * @return bool
-     */
-    public function hasDiscount(): bool
+    public function getHasDiscountAttribute(): bool
     {
-        return !is_null($this->getDiscountData());
+        return $this->discount_info['has_discount'];
     }
 
-    /**
-     * Get discount percentage if available
-     * 
-     * @return float|null
-     */
-    public function getDiscountPercentage()
+    public function getDiscountValueAttribute(): ?string
     {
-        $data = $this->getDiscountData();
-        
-        if (!$data || ($data['fixed_value'] ?? true)) {
-            return null;
-        }
-
-        return ($data['percentage'] ?? 0);
+        return $this->discount_info['discount_value'];
     }
 
-    /**
-     * Get fixed discount amount if available
-     * 
-     * @return float|null
-     */
-    public function getFixedDiscountAmount(): ?float
+    public function getDiscountPercentageAttribute(): ?float
     {
-        $data = $this->getDiscountData();
-        
-        if (!$data || !($data['fixed_value'] ?? false)) {
-            return null;
-        }
-
-        return (float) ($data['fixed_amount'] ?? 0);
+        return $this->discount_info['discount_percentage'];
     }
 
-    /**
-     * Apply discount to a given price
-     * 
-     * @param float $price
-     * @return float
-     */
-    public function applyDiscount($price)
+    public function getPriceWithoutDiscountAttribute(): string
     {
-        if ($percentage = $this->getDiscountPercentage()) {
-            return $price * (1 - ($percentage / 100));
-        }
-
-        if ($fixedAmount = $this->getFixedDiscountAmount()) {
-            return max(0, $price - $fixedAmount);
-        }
-
-        return $price;
+        return $this->discount_info['price_without_discount'];
     }
 
-    /**
-     * Access product attributes through the product type
-     */
-    public function getAttributeData()
-    {
-        return $this->productType->mappedAttributes->mapWithKeys(function ($attribute) {
-            return [
-                $attribute->handle => $this->attr($attribute->handle)
-            ];
-        });
-    }
-
-    public function getBasePrices()
-    {
-        $prices = $this->variants
-            ->flatMap(function ($variant) {
-                return $variant->basePrices->map(function ($price) use ($variant) {
-
-                    $value = (int) $this->applyDiscount($price->price->value);
-                    $currency = Currency::getDefault();
-                    $after_discount = new Price($value, $currency);
-                    $discounted_price = $after_discount->formatted();
-
-                    return (object) [
-                        'variant_id' => $variant->id,
-                        'price' => $discounted_price,
-                        'the' => $variant->id,
-                        'variant_name' => $variant->name,
-                        'original_price' => $price->price->formatted(),
-                        'formatted_price' => $price->price->formatted(),
-                        'currency_code' => $price->currency->code,
-                        'compare_price' => optional($price->compare_price)->decimal,
-                        'discount' => $this->getDiscountPercentage(),
-                    ];
-                });
-            });
-
-
-        // Optionally set the first price as the default price
-        if ($prices->isNotEmpty()) {
-            $this->attributes['price'] = $prices->first()->price; // Set the raw price
-            $this->attributes['formatted_price'] = $prices->first()->formatted_price; // Set the formatted price
-            $this->attributes['original_price'] = $prices->first()->original_price; // Set the formatted price
-            $this->attributes['discount'] = $prices->first()->discount; // Set the formatted price
-        }
-
-        return $prices;
-    }
-
-    // Add an accessor for the price
     public function getPriceAttribute()
     {
-        return $this->attributes['price'] ?? 'Price unavailable';
+        return $this->has_discount ? $this->discount_info['current_price'] : $this->prices->first()->price->formatted();
     }
 
-    protected static function booted()
+    public function getOriginalAttribute()
     {
-        static::addGlobalScope(new \App\Models\Scopes\PriceBetweenScope);
-
-        static::retrieved(function ($product) {
-            if (str_contains(URL::current(), 'update')) {
-                return false;
-            }
-
-            $product->getBasePrices();      
-        
-        });
+        return $this->variants->first()['formatted']['original'] ?? null;
     }
+
+
+    public function averageRating(): float
+    {
+        return (float) $this->reviews()->avg('rating');
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published');
+    }
+
+    public function scopeLatestProducts(Builder $query): Builder
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
 
     public function questions()
     {
@@ -268,7 +225,7 @@ class Product extends LunarProduct
 
     public function answeredQuestions()
     {
-        return $this->hasMany(ProductQuestion::class)->answered();
+        return $this->questions()->whereNotNull('answered_at');
     }
 
     public function reviews()
@@ -276,9 +233,51 @@ class Product extends LunarProduct
         return $this->hasMany(ProductReview::class);
     }
 
-    public function averageRating()
+    /**
+     * Get all active discounts for this product
+     * @todo Add multiple discount types
+     * @todo Add discount per product collection, etc
+     */
+    public function discounts(): MorphToMany
     {
-        return $this->reviews()->avg('rating');
+        return $this->morphToMany(
+            Discount::class,
+            'purchasable',
+            'lunar_discount_purchasables' // Explicit table name
+        )
+        ->withPivot(['type'])
+        ->where(function($query) {
+            $query->whereNull('starts_at')
+                ->orWhere('starts_at', '<=', now());
+        })
+        ->where(function($query) {
+            $query->whereNull('ends_at')
+                ->orWhere('ends_at', '>=', now());
+        })
+        ->orderBy('priority', 'desc');
     }
 
+    public function updateVariants()
+    {
+        $this->variants->each(function ($variant) {
+
+            $price = $variant->basePrices->first();
+            $prices = $this->getDiscountInfoAttribute($price);
+            $variant->setAttribute('price', $prices['current_price']);
+            $variant->setAttribute('old_price', $prices['price_without_discount']);
+            $variant->setAttribute('discount_value', $prices['discount_value']);
+            $variant->setAttribute('discount_percentage', $prices['discount_percentage']);
+            
+            return $variant;
+        });
+    }
+    
+    protected static function booted()
+    {
+        static::retrieved(function ($product) {
+            $product->getDiscountInfoAttribute();
+        });
+
+        static::addGlobalScope(new \App\Models\Scopes\PriceBetweenScope);
+    }
 }

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
 
-
 <div class="container py-5">
     <div class="row">
         <!-- Order Summary Column -->
@@ -23,6 +22,8 @@
     </thead>
     <tbody>
         @foreach($cart->lines as $line)
+        @php $variantName = $line->meta->variant_name ?? null; @endphp
+
         <tr>
             <td>
                 <div class="d-flex align-items-center">
@@ -35,13 +36,15 @@
                     @endif
                     <div>
                         <h6 class="mb-1">{{ $line->purchasable->product->translateAttribute('name') }}</h6>
+                        {{ $variantName }}
                         
                         @if($line->purchasable->variant)
                             <small class="text-muted">
                                 {{ $line->purchasable->variant->name }}
                             </small>
                         @endif
-                        
+                                        
+
                         @if($line->meta && isset($line->meta['variant_options']))
                             @foreach($line->meta['variant_options'] as $option)
                                 <small class="text-muted d-block">
@@ -54,12 +57,12 @@
             </td>
             <td class="text-end align-middle">
                 @if(discount_value($line)->value > 0)
-                    <span class="badge text-bg-light text-decoration-line-through">{{ discounted_item_price($line)->formatted() }}</span>
+                    <span class="badge text-bg-warning">-{{ discount_value($line)->formatted() }}</span>
                 @endif
-                {{ full_price($line)->formatted() }}
                 @if(discount_value($line)->value > 0)
-                    <!-- <span class="badge text-bg-warning">-{{ discount_value($line)->formatted() }}</span> -->
+                    <span class="badge text-bg-light text-decoration-line-through">{{ full_price($line)->formatted() }}</span>
                 @endif
+                {{ discounted_item_price($line)->formatted() }}
             </td>
             <td class="text-center align-middle">
                 {{ $line->quantity }}
@@ -122,7 +125,7 @@
                     <hr>
                     <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
                         <span>Total:</span>
-                        <span>{{ $sub_total }}</span>
+                        <span>{{ $total }}</span>
                     </div>
                     
                     <!-- Payment Methods -->
@@ -169,54 +172,56 @@
                     <h4 class="mb-0">Customer Information</h4>
                 </div>
                 <div class="card-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="firstName" class="form-label">First Name *</label>
-                                <input type="text" class="form-control" id="firstName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="lastName" class="form-label">Last Name *</label>
-                                <input type="text" class="form-control" id="lastName" required>
-                            </div>
+                <form action="/checkout" method="POST">
+                    @csrf <!-- Laravel CSRF protection token -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" required>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number *</label>
-                            <input type="tel" class="form-control" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number *</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Street Address *</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City *</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Street Address *</label>
-                            <input type="text" class="form-control" id="address" required>
+                        <div class="col-md-3 mb-3">
+                            <label for="zip" class="form-label">ZIP Code *</label>
+                            <input type="text" class="form-control" id="zip" name="zip_code" required>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="city" class="form-label">City *</label>
-                                <input type="text" class="form-control" id="city" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="zip" class="form-label">ZIP Code *</label>
-                                <input type="text" class="form-control" id="zip" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="country" class="form-label">Country *</label>
-                                <select class="form-select" id="country" required>
-                                    <option value="">Select...</option>
-                                    <option value="US">United States</option>
-                                    <option value="UK">United Kingdom</option>
-                                    <option value="CA">Canada</option>
-                                    <option value="AU">Australia</option>
-                                </select>
-                            </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="country" class="form-label">Country *</label>
+                            <select class="form-select" id="country" name="country" required>
+                                <option value="">Select...</option>
+                                <option value="US">United States</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="CA">Canada</option>
+                                <option value="AU">Australia</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="notes" class="form-label">Order Notes (Optional)</label>
-                            <textarea class="form-control" id="notes" rows="3"></textarea>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Order Notes (Optional)</label>
+                        <textarea class="form-control" id="notes" name="order_notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Place Order</button>
+                </form>
                 </div>
             </div>
         </div>

@@ -23,28 +23,6 @@ class ProductController extends Controller
 
     public function updateCart()
     {
-        CartSession::clear();
-
-        $cart = $this->cartService->getCart();
-
-        $cookieCart = Cookie::get('cart');
-
-        $cartContent = $cookieCart ? Collect(json_decode($cookieCart)) : Collect();
-        $cartContent->each(function($item, $key) {
-            $product = Product::find($key);
-            $purchasable = $product->variants()->first();
-        
-            $cart = $this->cartService->addToCart(
-                purchasable: $purchasable,
-                quantity: $item->quantity,
-                meta: [
-                    'product_name' => $product->translateAttribute('name'),
-                ]
-            );
-        });
-
-
-
         $cart = $this->cartService->getCart();
 
         return [
@@ -99,7 +77,6 @@ class ProductController extends Controller
                     'product_name' => $product->translateAttribute('name'),
                 ]
             );
-            dd($cart);
 
             return redirect()->route('cart.view')
                 ->with('success', __('Product added to cart successfully'));
@@ -130,6 +107,8 @@ class ProductController extends Controller
     public function show(string $slug): View
     {
         $product = Product::findBySlug($slug);
+
+        $product->updateVariants();
 
         if (!$product) {
             throw new NotFoundHttpException('Product not found');

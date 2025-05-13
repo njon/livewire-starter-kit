@@ -14,7 +14,7 @@
         <!-- Left Column - Cart Items -->
         <div class="col-lg-8 col-md-7">
             <div class="mb-4">
-                <div class="cart"></div>
+                @include('partials.cart-items')
             </div>
         </div>
 

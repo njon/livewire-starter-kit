@@ -103,12 +103,9 @@ span.material-symbols-outlined.product-fav-icon {
     color: #d82e2e;
 }
 .discount-percentage {
-    background: #d82e2e;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    margin-left: 10px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 .action-buttons {
     display: flex;
@@ -158,4 +155,24 @@ img.review-avatar {
 .star-rating label:hover,
 .star-rating label:hover ~ label {
     color: #fc0;
+}
+
+.cart-item.list-group-item .btn-close.btn-sm.btn-remove {
+    font-size: 11px;
+}
+.offcanvas-body .btn.btn-sm.btn-remove {
+    position: absolute;
+    top: 15px;
+    right: 0;
+}
+button.btn.btn-sm.btn-remove:hover {
+    opacity: 0.6;
+}
+.list-group-item.py-3.cart-item.border-bottom:last-child {
+    border: none !important;
+}
+.card-footer.border-top.bg-white.p-3.sticky-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }

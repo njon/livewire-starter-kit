@@ -2,6 +2,9 @@
     <div class="card">
         <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
             @if($product->thumbnail)
+                @if ($product->hasDiscount)
+                    <span class="discount-percentage badge text-bg-success">-{{ $product->discount_percentage }}%</span>
+                @endif
                 <img src="{{ $product->thumbnail->getUrl() }}" class="w-100" alt="{{ $product->translateAttribute('name') }}">
             @endif
             <a href="{{ $product->defaultUrl->slug }}">
@@ -38,6 +41,9 @@
 
             <div class="product-listing-price">
                 <span class="product-price-original">{{ $product->price }}</span>
+                @if ($product->hasDiscount)
+                        <span class="original-price">{{ $product->price_without_discount }}</span>
+                @endif
             </div>
         </div>
     </div>

@@ -6,15 +6,39 @@ use App\Livewire\CollectionPage;
 use App\Livewire\Home;
 use App\Livewire\ProductPage;
 use App\Livewire\SearchPage;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Models\Product;
 use App\Http\Controllers\ProductQuestionController;
 use App\Models\ProductQuestion;
 use App\Http\Controllers\ProductReviewController;
+use \Lunar\Models\Price;
+use Lunar\Facades\Pricing;
+use Lunar\Models\Currency;
+use Lunar\Models\TaxClass;
+use Lunar\Models\TaxRate;
+use Lunar\Models\TaxRateType;
+use Lunar\Models\TaxRateAmountType;
+use Lunar\Models\TaxRateAmount;
+use Lunar\Models\Discount;
+use Lunar\Models\DiscountPurchasable;
+use Lunar\Models\DiscountPurchasableType;
+use Lunar\Models\DiscountType;
+use Illuminate\Support\Facades\URL;
 
-$x = ProductQuestion::all();
+
+
+// Get the first variant (purchasable item)
+
+// dd($product);
+
+
+// dd([
+//     'original_price' => $originalPrice,
+//     'discounted_price' => $discountedPrice,
+//     'has_discount' => $originalPrice != $discountedPrice,
+//     'currency' => $priceResponse->matched->price->currency->code
+// ]);
 
 /*
 |--------------------------------------------------------------------------
@@ -28,14 +52,16 @@ $x = ProductQuestion::all();
 */
 
 
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+// @ todo Resource routes for cart. Inject CartService in the controller
+Route::post('/cart/add/{ProductVariant}', [CartController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::get('/cartItems', [CartController::class, 'getCart'])->name('cart.items');
+Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('canvas.items');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/checkout', [ProductController::class, 'checkout'])->name('checkout');
+Route::post('/checkout', [ProductController::class, 'checkoutx'])->name('checkoutx');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show'); // Added this line
 
 
@@ -47,13 +73,6 @@ Route::post('/product/{product}/answer/{productquestion}', [ProductQuestionContr
     ->name('products.questions.answer');
 
 Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
-
-
-// routes/web.php
-Route::get('/xx/add-to-cart', [ProductController::class, 'addToCart'])
-    ->name('products.add-to-cart');
-
-
 
 Route::prefix('products/{product}')->group(function() {
     Route::get('/reviews', [ProductReviewController::class, 'index'])->name('products.reviews.index');

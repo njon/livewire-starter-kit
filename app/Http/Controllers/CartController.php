@@ -4,117 +4,92 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use App\Services\CartService;
+use Lunar\Facades\CartSession;
+use Lunar\Models\ProductVariant;
 
 class CartController extends Controller
 {
-    public function index()
+    public $cart;
+
+    public function __construct(CartService $cartService)
     {
-        $cart = $this->getCart();
-        return view('partials.cart', compact('cart'));
+        $this->cart = $cartService;
     }
 
-    public function addToCart(Request $request)
+    // public function getCart()
+    // {
+    //     $cart = $this->cart->getCart();
+
+    //     $data = $this->cart->canvasItems($cart);
+
+    //     return response()->json($data);
+    // }
+
+    public function index()
     {
-        $request->validate([
-            'product_id' => 'required|integer',
-            'product_name' => 'required|string',
-            'price' => 'required|string',
-            'quantity' => 'required|integer|min:1',
-            'image' => 'required|string', // New field for product image
-            'link' => 'required' // New field for product link
-        ]);
+        $cart = $this->cart->getCart();
+        $this->cart->calculateDiscountedPrices($cart);
 
-        $cart = $this->getCart();
-        $productId = $request->input('product_id');
+        return view('partials.cart', ['cart' => $cart]);
+    }
 
-        // Check if product already exists in cart
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $request->input('quantity');
-        } else {
-            $cart[$productId] = [
-                'product_id' => $productId,
-                'product_name' => $request->input('product_name'),
-                'price' => $request->input('price'),
-                'quantity' => $request->input('quantity'),
-                'image' => $request->input('image'), // Save product image
-                'link' => $request->input('link') // Save product link
-            ];
-        }
 
-        $cookie = $this->updateCart($cart);
+    public function addToCart(ProductVariant $ProductVariant, Request $request)
+    {
+        $this->cart->addToCart($ProductVariant);
 
         return response()->json([
             'success' => true,
             'message' => 'Product added to cart successfully',
-            'cart' => $cart,
-            'total_items' => $this->getTotalItems($cart)
-        ])->withCookie($cookie);
+            'cart' => $this->cart->getCart()
+        ]);
     }
 
+
+    // @todo ProductVariant $ProductVariant injection
     public function removeFromCart(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'product_id' => 'required|integer'
         ]);
 
-        $cart = $this->getCart();
-        $productId = $request->input('product_id');
+        $items = $this->cart->removeFromCart($this->cart->getCart(), $data['product_id']);
 
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
-            $cookie = $this->updateCart($cart);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Product removed from cart',
-                'cart' => $cart,
-                'total_items' => $this->getTotalItems($cart)
-            ])->withCookie($cookie);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Product not found in cart'
-        ], 404);
+        return response()->json($items);
     }
 
+    // @todo ProductVariant $ProductVariant injection
     public function updateQuantity(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'product_id' => 'required|integer',
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $cart = $this->getCart();
-        $productId = $request->input('product_id');
+        $cart = $this->cart->getCart();
 
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] = $request->input('quantity');
-            $cookie = $this->updateCart($cart);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Quantity updated successfully',
-                'cart' => $cart,
-                'total_items' => $this->getTotalItems($cart)
-            ])->withCookie($cookie);
-        }
+        $this->cart->updateQuantity($data['product_id'], $data['quantity']);
 
         return response()->json([
-            'success' => false,
-            'message' => 'Product not found in cart'
-        ], 404);
+            'success' => true,
+            'message' => 'Quanity updated successfully',
+            'total' => $cart->lines->firstWhere('purchasable_id', $data['product_id'])->total->formatted(),
+            'cart' => $cart,
+        ], 200);
     }
 
-    public function getCart()
+    public function canvasItems()
     {
-        $cart = Cookie::get('cart');
-        return $cart ? json_decode($cart, true) : [];
-    }
+        $cart = $this->cart->getCart();
+        $this->cart->calculateDiscountedPrices($cart);
 
-    private function updateCart($cart)
-    {
-        return Cookie::make('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+        $html = view('partials.off-canvas-cart', ['cart' => $cart])->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
     }
 
     private function getTotalItems($cart)

@@ -20,6 +20,22 @@ if (!function_exists('currency')) {
     }
 }
 
+if (!function_exists('format_price')) {
+    /**
+     * Format discounted price
+     */
+    function format_price(int $value): Price
+    {
+        $currency = Currency::where('code', 'EUR')->first();
+        $price = new Price(
+            $value, // value in smallest unit (cents/pence)
+            $currency,
+        );
+
+        return $price;
+    }
+}
+
 if (!function_exists('discounted_single_product_price')) {
     /**
      * Format discounted price

@@ -1,157 +1,31 @@
 const curCurrency = '€';
+let $form;
 
+// @todo Probably remove this function. Loading items in HTML blade file
 function loadCartItems() {
     fetch('/cartItems')
         .then(response => response.json())
         .then(data => {
-            cartElement = document.querySelector('.cart');
-            // Generate the HTML structure
-            let cartHtml = `
-                <div class="card-body p-0">
-            `;
-            
-            if (data && Object.keys(data).length > 0) {
-                cartHtml += `
-                    <div class="list-group list-group-flush">
-                `;
-                
-                // Loop through cart items
-                for (const [productId, item] of Object.entries(data)) {
-                    const itemTotal = (parseFloat(item.price.replace(curCurrency, '')) * item.quantity).toFixed(2);
-                    
-                    cartHtml += `
-                        <div class="list-group-item py-3 cart-item">
-                            <div class="row align-items-center">
-                                <div class="col-md-1">
-                                    <a href="${item.link}" class="flex-shrink-0 me-3">
-                                        <img src="${item.image || 'placeholder.jpg'}" alt="${item.product_name}" class="rounded" width="80" height="auto">
-                                    </a>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6 class="mb-1 fw-bold">${item.product_name}</h6>
-                                    <small class="text-muted">Price: ${item.price}</small>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="input-group">
-                                        <input type="number" 
-                                               class="form-control quantity-input" 
-                                               value="${item.quantity}" 
-                                               min="1" 
-                                               data-id="${productId}">
-                                    </div>
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <span class="item-total">€${itemTotal}</span>
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <button class="btn btn-sm btn-outline-danger btn-remove" data-id="${productId}">
-                                        <span class="material-symbols-outlined product-icon">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                cartHtml += `
-                    </div>
-                `;
-            } else {
-                cartHtml += `
-                    <div class="p-4 text-center">
-                        <i class="material-icons display-4 text-muted">remove_shopping_cart</i>
-                        <h5 class="mt-3">Your cart is empty</h5>
-                        <a href="/" class="btn btn-primary mt-3">
-                            <i class="material-icons">shopping_bag</i> Start Shopping
-                        </a>
-                    </div>
-                `;
-            }
-            
-            cartHtml += `
-                </div>
-            `;
-            
-            // Insert the generated HTML
-            cartElement.innerHTML = cartHtml;
-            
-            // Update cart counter if exists
-            const cartCounter = document.querySelector('.cart-count');
-            if (cartCounter) cartCounter.textContent = Object.keys(data).length;
+            document.querySelector('.cart').innerHTML = data.html
         })
-        .catch(error => console.error('Error loading cart:', error));
+        .catch(error => console.error('Error fetching cart items:', error));
 }
 
 function loadOffcanvasCartItems(showElement = true) {
-    fetch('/cartItems')
+    fetch('/canvasItems')
         .then(response => response.json())
         .then(data => {
             cartElement = document.querySelector('#shoppingCart .offcanvas-body');
+            if(!cartElement) {
+                return false;
+            }
+
             if(showElement) {
                 $('#shoppingCart').offcanvas('show');
             }
             // Generate the HTML structure
-            let cartHtml = `
-                <div class="d-flex flex-column h-100">
-                    <div class="flex-grow-1 overflow-auto">
-                        <ul class="list-group list-group-flush">
-            `;
+            cartElement.innerHTML = data.html; 
 
-            if (data && Object.keys(data).length > 0) {
-                // Loop through cart items
-                for (const [productId, item] of Object.entries(data)) {
-                    const itemTotal = (parseFloat(item.price.replace(curCurrency, '')) * item.quantity).toFixed(2);
-
-                    cartHtml += `
-                        <li class="cart-item list-group-item py-3">
-                            <div class="d-flex align-items-start">
-                                <a href="${item.link}" class="flex-shrink-0 me-3">
-                                    <img src="${item.image || 'placeholder.jpg'}" alt="${item.product_name}" class="rounded" width="80" height="auto">
-                                </a>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <h6 class="mb-1">${item.product_name}</h6>
-                                        <button type="button" class="btn-close btn-sm btn-remove" data-id="${productId}" aria-label="Remove"></button>
-                                    </div>
-                                    <p class="mb-1">${item.quantity} × ${item.price}</p>
-                                    <small class="text-muted">Total: €${itemTotal}</small>
-                                </div>
-                            </div>
-                        </li>
-                    `;
-                }
-            } else {
-                cartHtml += `
-                    <li class="list-group-item py-3 text-center">
-                        <i class="material-icons display-4 text-muted">remove_shopping_cart</i>
-                        <h5 class="mt-3">Your cart is empty</h5>
-                        <a href="/" class="btn btn-primary mt-3">
-                            <i class="material-icons">shopping_bag</i> Start Shopping
-                        </a>
-                    </li>
-                `;
-            }
-
-            cartHtml += `
-                        </ul>
-                    </div>
-                    <div class="border-top p-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <h6 class="mb-0">Subtotal:</h6>
-                            <span class="fw-bold">€${calculateCartTotal(data)}</span>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <a href="/cart" class="btn btn-outline-dark">View cart</a>
-                            <a href="/checkout" class="btn btn-dark">Checkout</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Insert the generated HTML
-            cartElement.innerHTML = cartHtml;
-
-            // Update cart counter if exists
             const cartCounter = document.querySelector('.cart-count');
             if (cartCounter) cartCounter.textContent = Object.keys(data).length;
         })
@@ -162,19 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadOffcanvasCartItems(false);
 });
 
-function calculateCartTotal(cartItems) {
-    return Object.values(cartItems).reduce((total, item) => {
-        const itemTotal = parseFloat(item.price.replace(curCurrency, '')) * item.quantity;
-        return total + itemTotal;
-    }, 0).toFixed(2);
-}
-
 let isLoading = false;
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadCartItems();
-});
-
 
 $(document).ready(function() {
 
@@ -202,55 +64,89 @@ $(document).ready(function() {
 
     var $pageInput = $('[name="page"]');
 
-    $(document).ready(function() {
-        // Handle form submission
-        // $('#ask-question-form').on('submit', function(e) {
-        $('form').on('submit', function(e) {
-                e.preventDefault(); // Prevent default form submission
-            
-            // Get form data
-            var formData = $(this).serialize();
-            var formAction = $(this).attr('action');
-            var submitButton = $(this).find('button[type="submit"]');
-            
-            // Disable submit button to prevent multiple submissions
-            submitButton.prop('disabled', true).html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
-            );
-            
-            // AJAX request
-            $.ajax({
-                url: formAction,
-                type: 'POST',
-                data: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message || 'Question submitted successfully!');
-                        $('#askQuestionModal').modal('hide');
-                        $('#question').val('');
-                    }
-                },
-                error: function(xhr) {
-                    // Handle errors
-                    var errorMessage = 'An error occurred. Please try again.';
-                    
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    } else if (xhr.statusText) {
-                        errorMessage = xhr.statusText;
-                    }
-                    
-                    toastr.error(errorMessage);
-                },
-                complete: function() {
-                    submitButton.prop('disabled', false).html('Submit Question');
-                }
-            });
+    $('#add-to-cart').on('submit', function(e) {
+        e.preventDefault();
+        
+        var $form = $(this);
+        var $button = $form.find('.btn-add-to-cart');
+        var originalText = $button.html();
+        
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...');
+        
+        $.ajax({
+            url: $form.attr('action'),
+            type: 'POST',
+            data: $form.serialize(),
+            dataType: 'json',
+            success: function(response) {
+                updateCartUI(response);
+            },
+            error: function(xhr) {
+                var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'An error occurred while adding to cart';
+                toastr.error(errorMessage);
+            },
+            complete: function() {
+                $button.prop('disabled', false).html(originalText);
+            }
         });
     });
+
+    // $('form').on('#ask-question-form', function(e) {
+
+    //     var notAjax = $(this).data('not-ajax');
+
+    //     if (notAjax == true) {
+    //         return false;
+    //     }
+
+    //     $form = $(this);
+
+    //     e.preventDefault(); // Prevent default form submission
+        
+    //     // Get form data
+    //     var formData = $(this).serialize();
+    //     var formAction = $(this).attr('action');
+    //     var submitButton = $(this).find('button[type="submit"]');
+        
+    //     // Disable submit button to prevent multiple submissions
+    //     submitButton.prop('disabled', true).html(
+    //         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
+    //     );
+        
+    //     // AJAX request
+    //     $.ajax({
+    //         url: formAction,
+    //         type: 'POST',
+    //         data: formData,
+    //         headers: {
+    //             'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
+    //         },
+    //         success: function(response) {
+    //             if (response.success) {
+    //                 toastr.success(response.message || 'Question submitted successfully!');
+    //                 $('#askQuestionModal').modal('hide');
+    //                 $('#question').val('');
+    //             }
+    //         },
+    //         error: function(xhr) {
+    //             // Handle errors
+    //             var errorMessage = 'An error occurred. Please try again.';
+                
+    //             if (xhr.responseJSON && xhr.responseJSON.message) {
+    //                 errorMessage = xhr.responseJSON.message;
+    //             } else if (xhr.statusText) {
+    //                 errorMessage = xhr.statusText;
+    //             }
+                
+    //             toastr.error(errorMessage);
+    //         },
+    //         complete: function() {
+    //             submitButton.prop('disabled', false).html('Submit Question');
+    //         }
+    //     });
+    // });
 
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !isLoading) {
@@ -294,8 +190,6 @@ $(document).ready(function() {
         });
     }
 
-    
-
     $('#ajax-search-form').on('submit', function(e) {
         e.preventDefault();
         fetchResults();
@@ -308,44 +202,19 @@ $(document).ready(function() {
         $(this).data('timer', setTimeout(fetchResults, 500));
     });
     
-    // Add to cart
-    $('#add-to-cart').on('submit', function(e) {
-        e.preventDefault();
-        
-        var $form = $(this);
-        var $button = $form.find('.btn-add-to-cart');
-        var originalText = $button.html();
-        
-        // Show loading state
-        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...');
-        
-        $.ajax({
-            url: $form.attr('action'),
-            type: 'POST',
-            data: $form.serialize(),
-            dataType: 'json',
-            success: function(response) {
-                updateCartUI(response);
-                toastr.success(response.message);
-            },
-            error: function(xhr) {
-                var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
-                    ? xhr.responseJSON.message 
-                    : 'An error occurred while adding to cart';
-                toastr.error(errorMessage);
-            },
-            complete: function() {
-                $button.prop('disabled', false).html(originalText);
-            }
-        });
+
+    $('.variant-value-btn').on('click', function() {
+        const formLink = $(this).data('form-link');
+        $('#add-to-cart').attr('action', formLink);
     });
+
 
     // Remove item
     $(document).on('click', '.btn-remove', function(e) {
         e.preventDefault();
         
         var $button = $(this);
-        var productId = $button.data('id');
+        var productId = $button.data('variant-id');
         var $cartItem = $button.closest('.cart-item');
         
         // Show loading state
@@ -361,9 +230,7 @@ $(document).ready(function() {
             success: function(response) {
                 $cartItem.fadeOut(300, function() {
                     $(this).remove();
-                    updateCartUI(response);
                 });
-                toastr.success(response.message);
             },
             error: function(xhr) {
                 var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
@@ -392,9 +259,7 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function(response) {
-                $cartItem.find('.item-total').text(calculateItemTotal(response.cart[productId]));
-                updateCartUI(response);
-                toastr.success(response.message);
+                $cartItem.find('.item-total').text(response.total);
             },
             error: function(xhr) {
                 var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
@@ -412,12 +277,6 @@ $(document).ready(function() {
         $(this).data('previous-value', $(this).val());
     });
 
-    function calculateItemTotal(item) {
-        // Remove $ sign and calculate total
-        const price = parseFloat(item.price.replace(curCurrency, ''));
-        return curCurrency + (price * item.quantity).toFixed(2);
-    }
-
     function updateCartUI(response) {
         if (response.total_items !== undefined) {
             $('.cart-counter').text(response.total_items);
@@ -426,6 +285,5 @@ $(document).ready(function() {
             $('.cart-total').text(curCurrency + response.cart_total.toFixed(2));
         }
         loadOffcanvasCartItems();
-        loadCartItems();
     }
 });

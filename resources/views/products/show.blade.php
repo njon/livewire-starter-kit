@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
 
-@include('partials.cart-element')
 @include('partials.breadcrumbs')
+
 
 
 <div class="product-detail mt-3">
@@ -63,16 +63,16 @@
                     {{ $product->translateAttribute('short_description') }}</p>
 
                 <div class="pricing mb-3">
-                    @if ($product->discount)
-                        <span class="original-price">{{ $product->original_price }}</span>
+                    @if ($product->hasDiscount)
+                        <span class="original-price">{{ $product->price_without_discount }}</span>
                     @endif
                     <span class="current-price">{{ $product->price }}</span>
-                    @if ($product->discount)
-                        <span class="discount-percentage">-{{ $product->discount }}%</span>
+                    @if ($product->hasDiscount)
+                        <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
 
-                @if($product->price)
+                @if($product->hasDiscount)
                     <div class="d-flex align-items-center special-offer" role="alert">
                         <span class="material-symbols-outlined">schedule</span> Special offer: <span class="countdown"
                             data-end="{{ $product->price }}">04:25:15</span>
@@ -93,12 +93,15 @@
                                         <button 
                                             type="button"
                                             class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
+                                            data-form-link="/cart/add/{{ $value->id }}"
                                             data-variant-id="{{ $variant->id }}"
                                             data-value-id="{{ $value->id }}"
                                             @if($value->disabled) disabled @endif
                                         >
                                             {{ $value->translate('name') }}
                                             {{ $variant->basePrices()->first()->price->formatted()}}
+                                            {{ $variant->price }}
+
                                             @if($value->price)
                                                 <span class="text-sm text-gray-600 ml-1">
                                                     (+{{ $value->price->formatted }})
@@ -111,28 +114,7 @@
                         </div>
                     @endforeach
                 </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Handle variant selection logic here
-                        const variantButtons = document.querySelectorAll('.variant-value-btn');
-                        
-                        variantButtons.forEach(button => {
-                            button.addEventListener('click', function() {
-                                // Remove active class from siblings
-                                const siblings = this.parentNode.querySelectorAll('.variant-value-btn');
-                                siblings.forEach(sib => sib.classList.remove('bg-blue-500', 'text-white'));
-                                
-                                // Add active class to clicked button
-                                this.classList.add('bg-blue-500', 'text-white');
-                                
-                                // Update product price, image, etc. based on selection
-                                // You would typically make an AJAX call or update state here
-                            });
-                        });
-                    });
-                </script>
-@endif
+                @endif
 
                 <div class="product-attributes d-flex justify-content-between mt-2">
                 <div class="attribute">
@@ -154,17 +136,13 @@
                 </div>
 
                 <div class="action-buttons">
-                    <form id="add-to-cart" action="/cart/add" method="POST">
+                    <form id="add-to-cart" action="/cart/add/5" method="POST">
                         <button class="btn btn-success btn-add-to-cart" id="btn-add-to-cart">
                             <span class="material-symbols-outlined icon-bottom">shopping_cart</span> Add to Cart
                         </button>
                         @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="image" value="{{ $product->images->first()->getUrl() }}">
-                        <input type="hidden" name="link" value="{{ $product->id }}">
+                        <input type="hidden" name="product_id" value="{{ $product->variants()->first()->id }}">
                         <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="price" value="{{ $product->price }}">
-                        <input type="hidden" name="product_name" value="{{ $product->translateAttribute('name') }}">
                     </form>
                     <button class="btn btn-dark btn-buy-now">
                         <span class="material-symbols-outlined icon-bottom">bolt</span> Buy Now
