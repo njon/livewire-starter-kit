@@ -53,16 +53,24 @@ use Illuminate\Support\Facades\URL;
 
 
 // @ todo Resource routes for cart. Inject CartService in the controller
-Route::post('/cart/add/{ProductVariant}', [CartController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('canvas.items');
+// Route::post('/cart/add/{cart}', [CartController::class, 'store']);
+// Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+// Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
+// Route::get('/cart', [CartController::class, 'index'])->name('cart');
+// Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('canvas.items');
+
+Route::resource('cart', CartController::class)
+    ->only(['index', 'update', 'destroy'])
+    ->parameters(['cart' => 'ProductVariant']);
+    
+    
+Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.canvas-items');
+
+
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/checkout', [ProductController::class, 'checkout'])->name('checkout');
-Route::post('/checkout', [ProductController::class, 'checkoutx'])->name('checkoutx');
-Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show'); // Added this line
+Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
 
 
 Route::resource('products.questions', ProductQuestionController::class)

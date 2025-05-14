@@ -5,20 +5,6 @@ use Lunar\Facades\CartSession;
 use Lunar\DataTypes\Price;
 use Lunar\Models\Currency;
 
-if (!function_exists('currency')) {
-    /**
-     * Format money with currency symbol
-     */
-    function currency($amount, $currency = null): string
-    {
-        $currency = $currency ?? config('lunar.pricing.default_currency');
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
-        $after_discount = new Price($value, $currency);
-        $discounted_price = $after_discount->formatted();
-
-        return $formatter->formatCurrency($amount, $currency);
-    }
-}
 
 if (!function_exists('format_price')) {
     /**

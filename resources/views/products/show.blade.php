@@ -63,16 +63,16 @@
                     {{ $product->translateAttribute('short_description') }}</p>
 
                 <div class="pricing mb-3">
-                    @if ($product->hasDiscount)
+                    @if ($product->has_discount)
                         <span class="original-price">{{ $product->price_without_discount }}</span>
                     @endif
                     <span class="current-price">{{ $product->price }}</span>
-                    @if ($product->hasDiscount)
+                    @if ($product->has_discount)
                         <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
 
-                @if($product->hasDiscount)
+                @if($product->has_discount)
                     <div class="d-flex align-items-center special-offer" role="alert">
                         <span class="material-symbols-outlined">schedule</span> Special offer: <span class="countdown"
                             data-end="{{ $product->price }}">04:25:15</span>
@@ -93,7 +93,7 @@
                                         <button 
                                             type="button"
                                             class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
-                                            data-form-link="/cart/add/{{ $value->id }}"
+                                            data-form-link="/cart/{{ $value->id }}"
                                             data-variant-id="{{ $variant->id }}"
                                             data-value-id="{{ $value->id }}"
                                             @if($value->disabled) disabled @endif
@@ -136,11 +136,12 @@
                 </div>
 
                 <div class="action-buttons">
-                    <form id="add-to-cart" action="/cart/add/5" method="POST">
+                    <form id="add-to-cart" action="/cart/5" method="PUT">
                         <button class="btn btn-success btn-add-to-cart" id="btn-add-to-cart">
                             <span class="material-symbols-outlined icon-bottom">shopping_cart</span> Add to Cart
                         </button>
                         @csrf
+                        <input type="hidden" name="to_cart" value="1">
                         <input type="hidden" name="product_id" value="{{ $product->variants()->first()->id }}">
                         <input type="hidden" name="quantity" value="1">
                     </form>

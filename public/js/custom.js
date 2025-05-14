@@ -75,11 +75,11 @@ $(document).ready(function() {
         
         $.ajax({
             url: $form.attr('action'),
-            type: 'POST',
+            type: 'PUT',
             data: $form.serialize(),
             dataType: 'json',
             success: function(response) {
-                updateCartUI(response);
+                loadOffcanvasCartItems();
             },
             error: function(xhr) {
                 var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
@@ -150,7 +150,7 @@ $(document).ready(function() {
 
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !isLoading) {
-            loadMoreProducts();
+            // loadMoreProducts();
         }
     });
 
@@ -220,11 +220,10 @@ $(document).ready(function() {
         // Show loading state
         
         $.ajax({
-            url: '/cart/remove',
-            type: 'POST',
+            url: '/cart/' + productId,
+            type: 'DELETE',
             data: {
                 _token: csrf_token,
-                product_id: productId
             },
             dataType: 'json',
             success: function(response) {
@@ -250,11 +249,10 @@ $(document).ready(function() {
         var $cartItem = $input.closest('.cart-item');
         
         $.ajax({
-            url: '/cart/update-quantity',
-            type: 'POST',
+            url: '/cart/' + productId,
+            type: 'PUT',
             data: {
                 _token: csrf_token,
-                product_id: productId,
                 quantity: quantity
             },
             dataType: 'json',
@@ -277,13 +275,4 @@ $(document).ready(function() {
         $(this).data('previous-value', $(this).val());
     });
 
-    function updateCartUI(response) {
-        if (response.total_items !== undefined) {
-            $('.cart-counter').text(response.total_items);
-        }
-        if (response.cart_total !== undefined) {
-            $('.cart-total').text(curCurrency + response.cart_total.toFixed(2));
-        }
-        loadOffcanvasCartItems();
-    }
 });

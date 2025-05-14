@@ -1,4 +1,4 @@
-<div class="col-6 col-lg-4 mb-4">
+<div class="col-6  mb-4 col-lg-3">
     <div class="card">
         <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
             @if($product->thumbnail)

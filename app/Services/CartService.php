@@ -129,7 +129,7 @@ class CartService
     /**
      * Update item quantity in cart
      */
-    public function updateQuantity(int $variantId, int $quantity)
+    public function updateQuantity($ProductVariant, int $quantity)
     {
         $cart = $this->getCart();
         
@@ -138,11 +138,11 @@ class CartService
         }
 
         if ($quantity <= 0) {
-            return $this->removeFromCart($variantId);
+            return $this->removeFromCart($ProductVariant->id);
         }
 
         // Find existing line for this variant
-        $line = $cart->lines->firstWhere('purchasable_id', $variantId);
+        $line = $cart->lines->firstWhere('purchasable_id', $ProductVariant->id);
 
         if ($line) {
             // Update existing line

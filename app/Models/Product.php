@@ -19,9 +19,13 @@ use Lunar\Models\Discount;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use \App\Services\DiscountService;
 
 class Product extends LunarProduct
 {
+    protected $appends = [
+
+    ];
   
     public static array $listingWith = [
         'variants.basePrices.currency',
@@ -39,6 +43,8 @@ class Product extends LunarProduct
         'productType.mappedAttributes',
         'associations',
         'questions',
+        'discounts',
+        'prices'
     ];
 
     /**
@@ -72,6 +78,37 @@ class Product extends LunarProduct
         ];
     }
 
+    public function getAttribute($key)
+    {
+        if (array_key_exists($key, $this->computedAttributes())) {
+            return $this->computedAttributes()[$key]();
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    protected function computedAttributes(): array
+    {
+        return [
+            'price_without_discount' => fn() => formatted_price($this->getDefaultPrice())->formatted(),
+            'has_discount' => fn() => $this->getDiscountedPrice() !== $this->getDefaultPrice(),
+            'discount_value' => fn() => formatted_price($this->getDefaultPrice() - $this->getDiscountedPrice())->formatted(),
+            'discount_percentage' => fn() => number_format(100 - ($this->getDiscountedPrice()/$this->getDefaultPrice() * 100), 0),
+        ];
+    }
+
+    public function getDiscountedPrice()
+    {
+        $discount = $this->discounts->first() ?? new Discount();
+
+        return (new DiscountService($this->prices->first(), $discount))->calculate();
+    }
+
+    public function getDefaultPrice()
+    {
+        return $this->prices->first()->price->value;
+    }
+
     /**
      * Get discount information for the product
      */
@@ -80,6 +117,7 @@ class Product extends LunarProduct
         if(!$price) {
             $price = $this->prices->first();
         }
+
 
         $priceValue = $price->price->value;
         $discounts = $this->discounts;
@@ -171,25 +209,6 @@ class Product extends LunarProduct
         return $taxRateAmount;
     }
 
-    public function getHasDiscountAttribute(): bool
-    {
-        return $this->discount_info['has_discount'];
-    }
-
-    public function getDiscountValueAttribute(): ?string
-    {
-        return $this->discount_info['discount_value'];
-    }
-
-    public function getDiscountPercentageAttribute(): ?float
-    {
-        return $this->discount_info['discount_percentage'];
-    }
-
-    public function getPriceWithoutDiscountAttribute(): string
-    {
-        return $this->discount_info['price_without_discount'];
-    }
 
     public function getPriceAttribute()
     {
@@ -233,6 +252,11 @@ class Product extends LunarProduct
         return $this->hasMany(ProductReview::class);
     }
 
+    public function attributes()
+    {
+         return $this->hasmany('Lunar\Models\AttributeGroup', 'id');
+    }
+
     /**
      * Get all active discounts for this product
      * @todo Add multiple discount types
@@ -274,10 +298,6 @@ class Product extends LunarProduct
     
     protected static function booted()
     {
-        static::retrieved(function ($product) {
-            $product->getDiscountInfoAttribute();
-        });
-
         static::addGlobalScope(new \App\Models\Scopes\PriceBetweenScope);
     }
 }

@@ -16,35 +16,37 @@
       </div>
       <div class="offcanvas-body">
         <ul class="navbar-nav flex-grow-1">
-          
-      @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $item)
-                @if($item->parent_id == null)
-                    <li class="dropdown nav-item">
-                        <a href="{{ $item->defaultUrl->slug }}" class="nav-link 
-                            @if(!$item->children->isEmpty())
-                                dropdown-toggle
-                            @endif
-                        " data-toggle="dropdown">
-                            {{ $item->translateAttribute('name') }}
-                            @if(!$item->children->isEmpty())
-                                <span class="caret"></span>
-                            @endif
+          @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $item)
+            @if($item->parent_id == null)
+              <li class="dropdown nav-item">
+                <a href="{{ $item->defaultUrl->slug }}" class="nav-link 
+                  @if(!$item->children->isEmpty())
+                    dropdown-toggle
+                  @endif
+                  @if(request()->url() == url($item->defaultUrl->slug))
+                    active
+                  @endif
+                " data-toggle="dropdown">
+                  {{ $item->translateAttribute('name') }}
+                  @if(!$item->children->isEmpty())
+                    <span class="caret"></span>
+                  @endif
+                </a>
+                @if(!$item->children->isEmpty())
+                  <ul class="dropdown-menu">
+                    @foreach($item->children as $child)
+                      <li>
+                        <a href="{{ route('products.show', $child->defaultUrl->slug) }}" 
+                           class="@if(request()->url() == route('products.show', $child->defaultUrl->slug)) active @endif">
+                          {{ $child->translateAttribute('name') }}
                         </a>
-                        @if(!$item->children->isEmpty())
-                            <ul class="dropdown-menu">
-                                @foreach($item->children as $child)
-                                    <li>
-                                        <a href="{{ route('products.show', $child->defaultUrl->slug) }}">
-                                            {{ $child->translateAttribute('name') }}
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </li>
+                      </li>
+                    @endforeach
+                  </ul>
                 @endif
-            @endforeach
-            <svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#cart"></use></svg>
+              </li>
+            @endif
+          @endforeach    <svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#cart"></use></svg>
           </a></li>
         </ul>
       </div>

@@ -44,50 +44,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Add product to cart
-     */
-    public function addToCart()
-    {
-        // Dummy data instead of request input
-        $dummyData = [
-            'id' => 12, // product_id = 1
-            'quantity' => 2, // default quantity
-        ];
-    
-        try {
-            $product = Product::findOrFail($dummyData['id']);
-            
-            $purchasable = $product->variants()->first();
-    
-            if (!$purchasable) {
-                return redirect()->back()->with('error', 'Selected variant not available');
-            }
-    
-            // Check stock - using dummy quantity 2
-            if ($purchasable->stock < $dummyData['quantity']) {
-                return redirect()->back()->with('error', 'Not enough stock available');
-            }
-            // Check if the product is purchasable
-
-            // Add to cart with dummy data
-            $cart = $this->cartService->addToCart(
-                purchasable: $purchasable,
-                quantity: $dummyData['quantity'],
-                meta: [
-                    'product_name' => $product->translateAttribute('name'),
-                ]
-            );
-
-            return redirect()->route('cart.view')
-                ->with('success', __('Product added to cart successfully'));
-    
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', __('Failed to add product to cart: ') . $e->getMessage());
-        }
-    }
-
-    /**
      * Display a listing of all published products.
      */
     public function index(): View
@@ -134,7 +90,7 @@ class ProductController extends Controller
             ->whereHas('defaultUrl', fn($q) => $q->where('slug', $collectionSlug))
             ->first()->id;
 
-        $products = Product::paginate(3);
+        $products = Product::paginate(32);
 
         $collection = Collection::with(['defaultUrl'])
             ->whereHas('defaultUrl', fn($q) => $q->where('slug', $collectionSlug))
@@ -152,13 +108,12 @@ class ProductController extends Controller
     public function ajaxResults()
     {
         // Get the current page from the request, default to 1
-        $currentPage = request()->get('page', 2);
+        $currentPage = request()->get('page', 1);
     
         // Paginate the products with 10 items per page
-        $products = Product::paginate(3, ['*'], 'page', $currentPage);
-
+        $products = Product::paginate(32, ['*'], 'page', $currentPage);
         
-    
+        
         // Return a JSON response with the rendered view and pagination data
         return view('products.ajax', [
             'products' => $products,
