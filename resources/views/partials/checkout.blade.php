@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('content')
 
+@php
+    $products = $cart->lines;
+    $sub_total = $cart->subTotal->formatted();
+    $total = $cart->total->formatted();
+    $total_discount = $cart->discountTotal->formatted();
+    $sub_total_discounted = $cart->subTotalDiscounted->formatted();
+    $tax = $cart->taxTotal->formatted();
+@endphp
+
 <div class="container py-5">
     <div class="row">
         <!-- Order Summary Column -->
@@ -112,11 +121,6 @@
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Sub Total:</span>
-                        <span>{{ $sub_total_discounted }}</span>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-2">
                         <span>VAT 24%:</span>
                         <span>{{ $tax }}</span>
                     </div>
@@ -163,9 +167,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Customer Information Section -->
-    <div class="row mt-4">
+<div class="row mt-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-light">

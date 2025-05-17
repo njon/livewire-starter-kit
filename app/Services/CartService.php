@@ -195,29 +195,4 @@ class CartService
             CartSession::use($cart->refresh());
         }
     }
-
-    public function getCartProducts()
-    {        
-        $cart = $this->getCart();
-
-        if (!$cart) {
-            return collect(); // Return empty collection if no cart exists
-        }
-
-        // Eager load the product relationships to avoid N+1 queries
-        $cart->load('lines.purchasable.product');
-        
-        // Extract products from cart lines
-        $products = $cart->lines->map(function ($line) {
-            // Check if this is a product variant line
-            if ($line->purchasable && $line->purchasable->product) {
-                return $line->purchasable->product;
-            }
-            return null;
-
-        })->filter()->unique('id');
-        
-        return $products;
-    }
-
 }

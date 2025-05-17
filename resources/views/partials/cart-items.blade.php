@@ -1,5 +1,5 @@
 @if($cart->lines->count() === 0)
-    <div class="alert alert-info text-center py-4">
+    <div class="text-center py-4">
         <span class="material-symbols-outlined" style="font-size: 2rem;">shopping_cart</span>
         <p class="mt-2 mb-0">Your cart is empty</p>
     </div>

@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+    @csrf
+    <!-- Add your form fields here -->
 <h1>Collection: {{ $collection->translateAttribute('name') }}</h1>
 <p>{{ $collection->translateAttribute('description') }}</p>
 
 <section class="pb-4">
     <div class="row">
-        <div class="col-md-3 col-lg-3 bg-light p-4" style="max-width: 30%;">
+        <div class="col-md-3 col-lg-3">
             @include('partials.search')
         </div>
 

@@ -1,5 +1,5 @@
 @if($cart->lines->count() === 0)
-    <div class="alert alert-info text-center py-4">
+    <div class="text-center py-4">
         <span class="material-symbols-outlined" style="font-size: 2rem;">shopping_cart</span>
         <p class="mt-2 mb-0">Your cart is empty</p>
     </div>
@@ -69,7 +69,7 @@
         <span class="fw-bold">{{ $cart->subTotal->formatted() }}</span>
     </div>
     <div class="d-grid gap-2">
-        <a href="#" class="btn btn-dark btn-lg rounded-pill fw-bold">
+        <a href="/checkout" class="btn btn-dark btn-lg rounded-pill fw-bold">
             Checkout
         </a>
         <button class="btn btn-outline-dark btn-lg rounded-pill fw-bold" 

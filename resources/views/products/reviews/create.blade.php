@@ -11,7 +11,7 @@
 
         <!-- Assuming you have a route named 'product.reviews.store' -->
         <!-- <form action="" method="POST"> -->
-        <form action="products/1/reviews" method="POST">
+        <form action="products/1/reviews" method="POST" id="review-form">
         
             @csrf
 

@@ -1,6 +1,52 @@
 const curCurrency = '€';
 let $form;
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Parse initial values from the HTML
+  const daysElement = document.getElementById('countdown-days');
+  const timeElement = document.getElementById('countdown-time');
+  
+  // Extract initial values (trim whitespace)
+  let days = parseInt(daysElement.textContent.trim());
+  let [hours, minutes, seconds] = timeElement.textContent.trim().split(':').map(Number);
+  
+  // Update the countdown every second
+  const countdown = setInterval(function() {
+    // Decrement seconds
+    seconds--;
+    
+    // Handle time rollover
+    if (seconds < 0) {
+      seconds = 59;
+      minutes--;
+      
+      if (minutes < 0) {
+        minutes = 59;
+        hours--;
+        
+        if (hours < 0) {
+          hours = 23;
+          days--;
+          daysElement.textContent = days >= 0 ? `\xa0${days}` : '0';
+        }
+      }
+    }
+    
+    // Stop if time is up
+    if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+      clearInterval(countdown);
+      timeElement.textContent = '00:00:00';
+      return;
+    }
+    
+    // Update display (with leading zeros)
+    timeElement.textContent = 
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+  }, 1000);
+});
+
 // @todo Probably remove this function. Loading items in HTML blade file
 function loadCartItems() {
     fetch('/cartItems')
@@ -40,7 +86,95 @@ let isLoading = false;
 
 $(document).ready(function() {
 
-    const csrf_token = $('[name="_token"]').val()
+    const csrf_token = $('[name="_token"]').val();
+
+    
+    $('#review-form').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        
+        var $form = $(this);
+        var $submitBtn = $form.find('button[type="submit"]');
+        var originalBtnText = $submitBtn.text();
+        
+        // Show loading state
+        $submitBtn.prop('disabled', true).text('Submitting...');
+        
+        $.ajax({
+        url: $form.attr('action'),
+        type: $form.attr('method'),
+        data: $form.serialize(),
+        dataType: 'json',
+        success: function(response) {
+            // Success feedback
+            if (response.success) {
+            $form.replaceWith(
+                '<div class="alert alert-success">' + 
+                response.message + 
+                '</div>'
+            );
+            
+            // Optional: Reload reviews if they're displayed separately
+            if (typeof loadReviews === 'function') {
+                loadReviews();
+            }
+            }
+        },
+        error: function(xhr) {
+            // Error handling
+            var errors = xhr.responseJSON.errors;
+            var errorHtml = '<div class="alert alert-danger"><ul>';
+            
+            $.each(errors, function(key, value) {
+            errorHtml += '<li>' + value + '</li>';
+            });
+            
+            errorHtml += '</ul></div>';
+            
+            $form.before(errorHtml);
+            $submitBtn.prop('disabled', false).text(originalBtnText);
+        },
+        complete: function() {
+            // Scroll to form if error
+            if ($('.alert-danger').length) {
+            $('html, body').animate({
+                scrollTop: $form.offset().top - 100
+            }, 300);
+            }
+        }
+        });
+    });
+    function updateWishlist() {
+        $.get('wishlist/ajax-items', function(response) {
+            $('.wishlist-add').each(function() {
+                const $btn = $(this);
+                const productId = $btn.data('product-id');
+                const isActive = response.hasOwnProperty(productId);
+                $btn.toggleClass('active', isActive);
+                $btn.closest('.btn-wishlist').toggleClass('active', isActive);
+            });
+        });
+    }
+
+    // Toggle wishlist item
+    $(document).on('click', '.wishlist-add', function(e) {
+        e.preventDefault();
+        const $btn = $(this);
+        const productId = $btn.data('product-id');
+        const isActive = $btn.hasClass('active');
+        
+        $.ajax({
+            url: 'wishlist',
+            method: isActive ? 'DELETE' : 'POST',
+            data: {
+                product_id: productId,
+                _token: csrf_token
+            },
+            success: updateWishlist
+        });
+    });
+
+    // Initial update
+    updateWishlist();
 
     $('.btn-helpful').click(function() {
         const button = $(this);

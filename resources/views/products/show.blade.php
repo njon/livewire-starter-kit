@@ -3,8 +3,6 @@
 
 @include('partials.breadcrumbs')
 
-
-
 <div class="product-detail mt-3">
     <!-- <div class="row gallery-row mb-5">
         <div class="col-md-3 gallery-thumbnails">
@@ -29,8 +27,9 @@
             <h2>{{ $product->translateAttribute('name') }}</h2>
         </div>
         <div class="col-md-6 text-end">
-            <span class="btn-wishlist">
-                <span class="material-symbols-outlined product-fav-icon">favorite</span>
+
+            <span class="btn-wishlist"> 
+                <span class="wishlist-add material-symbols-outlined product-fav-icon" data-product-id="{{ $product->id }}">favorite</span>
             </span>
         </div>
     </div>
@@ -54,7 +53,26 @@
                         {{ $product->city }} Athens, Thessaloniki
                     </div>
                     <div class="rating">
-                        ★★★★★ ( 4.7 rating{{ $product->rating }})
+                            <div class="average-rating mb-4">
+        @php
+            $averageRating = $product->reviews->avg('rating');
+            $reviewCount = $product->reviews->count();
+        @endphp
+        <div class="d-flex align-items-center">
+            <div class="star-rating-display me-3">
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <= floor($averageRating))
+                        ★
+                    @elseif($i - 0.5 <= $averageRating)
+                        ½
+                    @else
+                        ☆
+                    @endif
+                @endfor
+                <span class="ms-2">{{ number_format($averageRating, 1) }} rating</span>
+            </div>
+        </div>
+    </div>
                     </div>
                 </div>
 
@@ -63,25 +81,31 @@
                     {{ $product->translateAttribute('short_description') }}</p>
 
                 <div class="pricing mb-3">
+                    <span class="current-price">{{ $product->price }}</span>
                     @if ($product->has_discount)
                         <span class="original-price">{{ $product->price_without_discount }}</span>
                     @endif
-                    <span class="current-price">{{ $product->price }}</span>
                     @if ($product->has_discount)
                         <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
 
                 @if($product->has_discount)
-                    <div class="d-flex align-items-center special-offer" role="alert">
-                        <span class="material-symbols-outlined">schedule</span> Special offer: <span class="countdown"
-                            data-end="{{ $product->price }}">04:25:15</span>
-                    </div>
+                <div class="d-flex align-items-center special-offer" role="alert">
+                    <span class="material-symbols-outlined">schedule</span>&nbsp; Special offer:&nbsp;
+
+                    @if(!$end['ended'])
+                    <span class="countdown-timer">
+                        <span id="countdown-days-container"><span id="countdown-days">{{ $end['days'] }}</span> days</span>
+                        <span id="countdown-time">{{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}</span>
+                    @endif
+                </div>
+
                 @endif
 
-                @if($product->variants->isNotEmpty())
+                @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
                 <div class="product-variants">
-                    <h3 class="text-lg font-medium mb-4">Available Options</h3>
+                    <h6 class="text-lg font-medium mb-4">Available Options</h6>
                     
                     @foreach($product->variants as $variant)
                         <div class="variant-option mb-6">
@@ -90,24 +114,17 @@
                             @if($variant->values->isNotEmpty())
                                 <div class="variant-values flex flex-wrap gap-2">
                                     @foreach($variant->values as $value)
-                                        <button 
-                                            type="button"
-                                            class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
-                                            data-form-link="/cart/{{ $value->id }}"
-                                            data-variant-id="{{ $variant->id }}"
-                                            data-value-id="{{ $value->id }}"
-                                            @if($value->disabled) disabled @endif
-                                        >
-                                            {{ $value->translate('name') }}
-                                            {{ $variant->basePrices()->first()->price->formatted()}}
-                                            {{ $variant->price }}
-
-                                            @if($value->price)
-                                                <span class="text-sm text-gray-600 ml-1">
-                                                    (+{{ $value->price->formatted }})
-                                                </span>
-                                            @endif
-                                        </button>
+                                        <input type="radio" name="variant" id="variant-{{ $value->id }}">
+                                            <label for="variant-{{ $value->id }}"
+                                                type="button"
+                                                class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
+                                                data-form-link="/cart/{{ $value->id }}"
+                                                data-variant-id="{{ $variant->id }}"
+                                                data-value-id="{{ $value->id }}">
+                                                {{ $value->translate('name') }}
+                                                {{ $variant->price }}
+                                            </label>
+                                        </input>                            
                                     @endforeach
                                 </div>
                             @endif
@@ -119,19 +136,11 @@
                 <div class="product-attributes d-flex justify-content-between mt-2">
                 <div class="attribute">
                         <span class="material-symbols-outlined product-icon">person</span>
-                        {{ $product->translateAttribute('participants') }} participants
+                        3{{ $product->translateAttribute('participants') }} participants
                     </div>
                     <div class="attribute">
                         <span class="material-symbols-outlined product-icon">schedule</span>
-                        {{ $product->translateAttribute('length') }} minutes
-                    </div>
-                    <div class="attribute">
-                        <span class="material-symbols-outlined product-icon">person</span>
-                        {{ $product->translateAttribute('participants') }} participants
-                    </div>
-                    <div class="attribute">
-                        <span class="material-symbols-outlined product-icon">schedule</span>
-                        {{ $product->translateAttribute('length') }} minutes
+                        60{{ $product->translateAttribute('length') }} minutes
                     </div>
                 </div>
 

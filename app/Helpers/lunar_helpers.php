@@ -4,6 +4,7 @@ use Lunar\Models\Cart;
 use Lunar\Facades\CartSession;
 use Lunar\DataTypes\Price;
 use Lunar\Models\Currency;
+use Carbon\Carbon;
 
 
 if (!function_exists('format_price')) {
@@ -52,7 +53,31 @@ if (!function_exists('full_price')) {
     }
 }
 
+if (!function_exists('end_in_counter')) {
+    /**
+     * Get discounted price for a purchasable item
+     */
+    function end_in_counter($discount)
+    {
+        if ($discount->isEmpty()) {
+            return null;
+        }
 
+        $endDate = $discount->first();
+
+        $endDate = Carbon::parse($endDate->ends_at); // Your end date
+        $now = Carbon::now();
+        
+        return [
+            'days' => floor($now->diffInDays($endDate)),
+            'hours' => $now->diffInHours($endDate) % 24,
+            'minutes' => $now->diffInMinutes($endDate) % 60,
+            'seconds' => $now->diffInSeconds($endDate) % 60,
+            'total_seconds' => $now->diffInSeconds($endDate),
+            'ended' => $now->greaterThan($endDate)
+        ];
+    }
+}
 
 if (!function_exists('formatted_price')) {
     /**

@@ -6,104 +6,53 @@ use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Lunar\Models\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Models\Collection as Collect;
 use App\Services\CartService;
-use Illuminate\Support\Facades\Cookie;
-use Lunar\Facades\CartSession;
+use App\Models\FilterCategory;
+use App\Services\ProductSearchService;
 
 class ProductController extends Controller
 {
-
-    protected $cartService;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cartService = $cartService;
-    }
-
-    public function updateCart()
-    {
-        $cart = $this->cartService->getCart();
-
-        return [
-            'cart' => $cart, 
-            'products' => $cart->lines, 
-            'sub_total' => $cart->subTotal->formatted(), 
-            'total' => $cart->total->formatted(),
-            'total_discount' => $cart->discountTotal->formatted(),
-            'sub_total_discounted' => $cart->subTotalDiscounted->formatted(),
-            'tax' => $cart->taxTotal->formatted(),
-        ];
-    }
-
-    public function checkout()
-    {
-        $cart = $this->updateCart();
-
-        return view('partials.checkout', $cart);
-    }
-
     /**
      * Display a listing of all published products.
      */
     public function index(): View
     {
-        $products = Product::getAllPublished();
+        $products = Product::all();
         
-        $product = $products->first();
-
         return view('products.index', [
-            'products' => Product::getAllPublished()
+            'products' => Product::all()
         ]);
     }
 
     /**
      * Display the specified product.
      */
-    public function show(string $slug): View
+    public function show($product): View
     {
-        $product = Product::findBySlug($slug);
-
-        $product->updateVariants();
-
-        if (!$product) {
-            throw new NotFoundHttpException('Product not found');
-        }
-
-        // $dd = \App\Models\ProductQuestion::all();;
-        // dd($dd);
+        $counter = end_in_counter($product->discounts);
 
         return view('products.show', [
             'product' => $product,
             'relatedProducts' => $product->getRelatedProducts(),
-            'seoTitle' => $product->translateAttribute('name') . ' | Your Store',
+            'title' => $product->translateAttribute('name') . ' | Your Store',
+            'end' => $counter
         ]);
     }
 
     /**
      * Display products by collection.
      */
-    public function byCollection(string $collectionSlug): View
+    public function category($collection): View
     {
-        // Check if the collection exists
-        $id = Collection::with(['defaultUrl'])
-            ->whereHas('defaultUrl', fn($q) => $q->where('slug', $collectionSlug))
-            ->first()->id;
-
-        $products = Product::paginate(32);
-
-        $collection = Collection::with(['defaultUrl'])
-            ->whereHas('defaultUrl', fn($q) => $q->where('slug', $collectionSlug))
-            ->firstOrFail();
+        $filterCategories = FilterCategory::with('options')->get();
 
         return view('products.collection', [
-            'products' => $products,
+            'products' => $collection->products,
             'collection' => $collection,
-            'seoTitle' => $collection->translateAttribute('name') . ' Collection | Your Store'
+            'title' => $collection->translateAttribute('name') . ' Collection | Your Store',
+            'filterCategories' => $filterCategories,
         ]);
     }
-
-
 
     public function ajaxResults()
     {

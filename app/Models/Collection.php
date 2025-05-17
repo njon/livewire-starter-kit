@@ -230,4 +230,10 @@ class Collection extends LunarCollection
         
         return implode(' ', $classes);
     }
+
+    public static function findBySlug($slug)
+    {
+        return static::whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
+            ->first();
+    }
 }

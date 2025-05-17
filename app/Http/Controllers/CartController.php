@@ -31,6 +31,13 @@ class CartController extends Controller
         return view('partials.cart', ['cart' => $cart]);
     }
 
+    public function checkoutpage()
+    {
+        $cart = $this->cart->getCart();
+
+        return view('partials.checkout', compact('cart'));
+    }
+
     /**
      * Remove a product from the cart.
      */
@@ -139,7 +146,7 @@ class CartController extends Controller
             'type' => 'shipping', // or 'billing'
         ];
 
-        OrderAddress::create($addressData);
+        // OrderAddress::create($addressData);
 
         $addressData['type'] = 'billing';
         OrderAddress::create($addressData);

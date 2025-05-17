@@ -2,59 +2,43 @@
 // app/Models/ProductVariant.php
 namespace App\Models;
 
-use Lunar\Models\ProductVariant as LunarProductVariant;
+use App\Services\DiscountService;
+use Lunar\Models\Discount;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class ProductVariant extends LunarProductVariant
+
+class ProductVariant extends \Lunar\Models\ProductVariant
 {
-    protected $appends = [
-        'price',
-        'old_price',
-        'discount_value',
-        'discount_percentage',
-        'display_sku'
-    ];
-    protected $casts = [
-        'price' => 'integer',
-        'old_price' => 'integer',
-        'discount_value' => 'integer',
-        'discount_percentage' => 'integer',
-        'display_sku' => 'string'
-    ];
-
-    protected $fillable = [
-        'price',
-        'old_price',
-        'discount_value',
-        'discount_percentage',
-        'display_sku'
-    ];
-
-    protected $attributes = [
-        'price' => 0,
-        'old_price' => 0,
-        'discount_value' => 0,
-        'discount_percentage' => 0,
-        'display_sku' => ''
-    ];
-
-
-    protected function price(): Attribute
+    public function getAttribute($key)
     {
-        return Attribute::make(
-            get: fn () => 11111111
-        );
+        if (array_key_exists($key, $this->computedAttributes())) {
+            return $this->computedAttributes()[$key]();
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    public function getDiscountedPrice()
+    {
+        $discount = $this->product->discounts->first() ?? new Discount();
+
+        return (new DiscountService($this->prices->first(), $discount))->calculate();
+    }
+
+    public function getDefaultPrice()
+    {
+        return $this->prices->first()->price->value;
+    }
+
+    protected function computedAttributes(): array
+    {
+        return [
+            'price' => fn() => formatted_price($this->getDiscountedPrice())->formatted(),
+            'old_price' => fn() => formatted_price($this->getDefaultPrice())->formatted(),
+            'discount_value' => fn() => formatted_price($this->getDefaultPrice() - $this->getDiscountedPrice())->formatted(),
+            'discount_percentage' => fn() => number_format(100 - ($this->getDiscountedPrice()/$this->getDefaultPrice() * 100), 0),
+        ];
     }
 
 
-    protected function displaySku(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => 'XXXXXXXXXXX'
-        );
-    }
-
-    protected function getPriceInfo()
-    {
-        // Your price calculation logic here
-    }
 }

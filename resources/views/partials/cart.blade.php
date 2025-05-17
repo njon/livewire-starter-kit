@@ -3,6 +3,15 @@
 @section('content')
     @csrf
 
+    @php
+        $products = $cart->lines;
+        $sub_total = $cart->subTotal->formatted();
+        $total = $cart->total->formatted();
+        $total_discount = $cart->discountTotal->formatted();
+        $sub_total_discounted = $cart->subTotalDiscounted->formatted();
+        $tax = $cart->taxTotal->formatted();
+    @endphp
+
     <div class="container py-5">
     <div class="row">
         <div class="col-12">
@@ -37,25 +46,29 @@
                     <div class="border-top pt-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Subtotal:</span>
-                            <span class="fw-bold">$0.00</span>
+                            <span class="fw-bold">{{ $sub_total }}</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Shipping:</span>
-                            <span class="fw-bold">Free</span>
-                        </div>
+
                         <div class="d-flex justify-content-between mb-2 text-success">
                             <span>Discount:</span>
-                            <span class="fw-bold">-$0.00</span>
+                            <span class="fw-bold">-{{ $total_discount }}</span>
                         </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>VAT 24%:</span>
+                            <span>{{ $tax }}</span>
+                        </div>
+
+
                         <div class="d-flex justify-content-between mt-3 pt-3 border-top">
                             <span class="h5">Total:</span>
-                            <span class="h5 fw-bold">$0.00</span>
+                            <span class="h5 fw-bold">{{ $sub_total_discounted }}</span>
                         </div>
                     </div>
 
                     <!-- Checkout Button -->
                     <div class="d-grid mt-4">
-                        <button class="btn btn-primary btn-lg py-3">Proceed to Checkout</button>
+                        <a href="/checkout" class="btn btn-primary btn-lg py-3">Proceed to Checkout</a>
                     </div>
                 </div>
             </div>

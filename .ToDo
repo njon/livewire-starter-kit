@@ -1,0 +1,17 @@
+@ For filters add category_id, so it should be dislayed or hidden based on category
+@ From action="" search for old URLs, change to route()
+
+
+
+@ Backend tasks
+# Seach Filters page
+Add filters edit page:
+Filter, Filter options
+
+# Product options
+Display filters on product page
+Save selection in pivot table
+
+# Stores 
+Add stores management for partner:
+Name, Description, Address, Images
