@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Services\DiscountService;
 use Lunar\Models\Discount;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductVariant extends \Lunar\Models\ProductVariant
 {
@@ -39,6 +40,15 @@ class ProductVariant extends \Lunar\Models\ProductVariant
             'discount_percentage' => fn() => number_format(100 - ($this->getDiscountedPrice()/$this->getDefaultPrice() * 100), 0),
         ];
     }
+
+    /**
+     * Get the product that owns the variant
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
 
 
 }

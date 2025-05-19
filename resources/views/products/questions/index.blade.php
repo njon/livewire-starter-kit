@@ -1,90 +1,103 @@
-    <div class="d-flex justify-content-between mt-5">
-        <div>
-            <h2>Questions and Answers</h2>
-        </div>
+<!-- Price Range Accordion Item -->
+<div class="accordion-item">
+    <h2 class="accordion-header accordion-button collapsed" id="questions-container" type="button"
+        data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-controls="collapseQuestions">
+        Questions and Answers
+    </h2>
 
-        <div>
-            <button type="button" class="btn btn-outline-success p-3" data-bs-toggle="modal" data-bs-target="#askQuestionModal">
-                ASK QUESTION
-            </button>
-        </div>
-    </div>
+    <div id="collapseQuestions" class="accordion-collapse collapse" aria-labelledby="questions-container">
+        <div class="accordion-product">
+            <div class="mb-4">Showing {{ $questions->count() }} questions</div>
 
-    <div class="mb-4">Showing {{ $questions->count() }} questions</div>
+            @if($questions->isEmpty())
+            <div class="alert alert-light" role="alert">
+                No questions have been asked yet. Be the first to ask a question!
+            </div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                    data-bs-target="#askQuestionModal">
+                    Ask Question
+                </button>
+            </div>
+            @endif
 
-    @if($questions->isEmpty())
-        <div class="alert alert-light" role="alert">
-            No questions have been asked yet. Be the first to ask a question!
-        </div>
-    @endif
-
-    @foreach($questions as $question)
-    <div class="row mb-4">
-        <div class="col">
-            <div class="d-flex flex-start">
-                <img class="review-avatar me-3"
-                    src="{{ $question->user ? $question->user->avatar_url : 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp' }}" 
-                    alt="avatar" width="50" height="50">
-                <div class="flex-grow-1 flex-shrink-1">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-1">
-                                {{ $question->user ? $question->user->name : 'Guest' }} 
-                                <span class="small">- {{ $question->created_at->diffForHumans() }}</span>
-                            </p>
-                        </div>
-                        <p class="mb-2">
-                            {{ $question->question }}
-                        </p>
-                    </div>
-
-                    @if($question->answer)
-                    <div class="d-flex flex-start mt-4 bg-light p-3 rounded">
-                        <a class="me-3" href="#">
-                            <img class="review-avatar"
-                                src="{{ $question->answerer->avatar_url ?? 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp' }}" 
-                                alt="avatar" width="50" height="50">
-                        </a>
+            @foreach($questions as $question)
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="d-flex flex-start">
+                        <img class="review-avatar me-3"
+                            src="{{ $question->user ? $question->user->avatar_url : 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp' }}"
+                            alt="avatar" width="50" height="50">
                         <div class="flex-grow-1 flex-shrink-1">
                             <div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <p class="mb-1">
-                                        {{ $question->answerer->name ?? 'Admin' }}
-                                        <span class="small">- {{ $question->answered_at->diffForHumans() }}</span>
+                                        {{ $question->user ? $question->user->name : 'Guest' }}
+                                        <span class="small">-
+                                            {{ $question->created_at->diffForHumans() }}</span>
                                     </p>
-                                    @can('delete', $question)
-                                    <form action="{{ route('products.questions.destroy', [$product, $question]) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    @endcan
                                 </div>
-                                <p class="mb-0">
-                                    {{ $question->answer }}
+                                <p class="mb-2">
+                                    {{ $question->question }}
                                 </p>
                             </div>
+
+                            @if($question->answer)
+                            <div class="d-flex flex-start mt-4 bg-light p-3 rounded">
+                                <a class="me-3" href="#">
+                                    <img class="review-avatar"
+                                        src="{{ $question->answerer->avatar_url ?? 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp' }}"
+                                        alt="avatar" width="50" height="50">
+                                </a>
+                                <div class="flex-grow-1 flex-shrink-1">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="mb-1">
+                                                {{ $question->answerer->name ?? 'Admin' }}
+                                                <span class="small">-
+                                                    {{ $question->answered_at->diffForHumans() }}</span>
+                                            </p>
+                                            @can('delete', $question)
+                                            <form
+                                                action="{{ route('products.questions.destroy', [$product, $question]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            @endcan
+                                        </div>
+                                        <p class="mb-0">
+                                            {{ $question->answer }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @elseif(1 == 1)
+                            <div class="mt-3">
+                                <form action="product/{{ $product->id }}/answer/{{ $question->id }}" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <textarea name="answer" class="form-control" rows="3"
+                                            placeholder="Write your answer..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Submit
+                                        Answer</button>
+                                </form>
+                            </div>
+                            @endif
                         </div>
                     </div>
-                    @elseif(1 == 1)
-                    <div class="mt-3">
-                        <form action="product/{{ $product->id }}/answer/{{ $question->id }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <textarea name="answer" class="form-control" rows="3" placeholder="Write your answer..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm">Submit Answer</button>
-                        </form>
-                    </div>
-                    @endif
                 </div>
             </div>
+            @endforeach
         </div>
     </div>
-    @endforeach
+</div>
 
+@section('bottom-content')
 <!-- Ask Question Modal -->
 <div class="modal fade" id="askQuestionModal" tabindex="-1" aria-labelledby="askQuestionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -109,3 +122,4 @@
         </div>
     </div>
 </div>
+@endsection

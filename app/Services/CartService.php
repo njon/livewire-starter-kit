@@ -195,4 +195,15 @@ class CartService
             CartSession::use($cart->refresh());
         }
     }
+
+    public function priceVariables($cart) 
+    {
+        return [
+            'sub_total' => $cart->subTotal->formatted(),
+            'price_total' => $cart->total->formatted(),
+            'total_discount' => $cart->discountTotal->formatted(),
+            'sub_total_discounted' => $cart->subTotalDiscounted->formatted(),
+            'tax' => $cart->taxTotal->formatted(),
+        ];
+    }
 }

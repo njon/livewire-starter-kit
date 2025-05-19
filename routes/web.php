@@ -40,6 +40,9 @@ Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 
 Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])
     ->name('wishlist.ajaxItems');
 
+Route::get('/checkout/success/{order}', [CartController::class, 'order']);
+
+
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     if ($product = \App\Models\Product::findBySlug($slug)) {
@@ -51,3 +54,4 @@ Route::get('{slug}', function($slug) {
     }
 
 })->where('slug', '.*');
+

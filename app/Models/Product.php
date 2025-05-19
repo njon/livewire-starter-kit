@@ -38,11 +38,16 @@ class Product extends LunarProduct
     {
         return [
             'price' => fn() => formatted_price($this->getDiscountedPrice())->formatted(),
-            'average_rating' => fn() => (float) $this->reviews()->avg('rating'),
             'price_without_discount' => fn() => formatted_price($this->getDefaultPrice())->formatted(),
             'has_discount' => fn() => $this->getDiscountedPrice() !== $this->getDefaultPrice(),
             'discount_value' => fn() => formatted_price($this->getDefaultPrice() - $this->getDiscountedPrice())->formatted(),
             'discount_percentage' => fn() => number_format(100 - ($this->getDiscountedPrice()/$this->getDefaultPrice() * 100), 0),
+            'average_rating' => fn() => (float) $this->reviews()->avg('rating'),
+            'rating_stars' => fn() => str_repeat('★', floor($this->reviews()->avg('rating'))) . 
+                         (fmod($this->reviews()->avg('rating'), 1) >= 0.5 ? '½' : '☆') . 
+                         str_repeat('☆', 5 - ceil($this->reviews()->avg('rating'))),
+                         
+            'product_count' => fn() => (float) $this->reviews()->count(),
         ];
     }
 
@@ -94,16 +99,17 @@ class Product extends LunarProduct
             ->get();
     }
 
-    public function tax()
-    {
-        // THIS WILL BE CORRECT-> ADD TAX CLASS ID
-        $tax_class_id = $this->variants->first()->tax_class_id ?? null;
-        $taxRateAmount = TaxRateAmount::whereHas('taxRate', function($query) use ($tax_class_id) {
-            $query->where('id', $tax_class_id);
-        })->get(); 
+    // @todo Probably remove this
+    // public function tax()
+    // {
+    //     // THIS WILL BE CORRECT-> ADD TAX CLASS ID
+    //     $tax_class_id = $this->variants->first()->tax_class_id ?? null;
+    //     $taxRateAmount = TaxRateAmount::whereHas('taxRate', function($query) use ($tax_class_id) {
+    //         $query->where('id', $tax_class_id);
+    //     })->get(); 
 
-        return $taxRateAmount;
-    }
+    //     return $taxRateAmount;
+    // }
 
     public function answeredQuestions()
     {

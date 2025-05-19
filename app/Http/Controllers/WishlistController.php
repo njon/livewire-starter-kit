@@ -20,27 +20,19 @@ class WishlistController extends Controller
     public function store(Request $request)
     {
         $productId = $request['product_id'];
+        $remove = $request['destroy'];
         
         if (Auth::check()) {
-            Auth::user()->wishlist()->syncWithoutDetaching([$productId]);
+            $remove == 'true'
+                ? Auth::user()->wishlist()->syncWithoutDetaching([$productId])
+                : Auth::user()->wishlist()->detach($productId);
         } else {
             $wishlist = session()->get('wishlist', []);
-            $wishlist[$productId] = true;
-            session()->put('wishlist', $wishlist);
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    public function destroy(Request $request)
-    {
-        $productId = $request['product_id'];
-
-        if (Auth::check()) {
-            Auth::user()->wishlist()->detach($productId);
-        } else {
-            $wishlist = session()->get('wishlist', []);
-            unset($wishlist[$productId]);
+            if ($remove == 'true') {
+                unset($wishlist[$productId]);
+            } else {
+                 $wishlist[$productId] = true;
+            }
             session()->put('wishlist', $wishlist);
         }
 

@@ -9,23 +9,23 @@ class ProductSearchService
 {
     public function search(array $filters = [])
     {
-        $query = Product::query()->with(['filterOptions.category']);
 
-        foreach ($filters as $filterSlug => $values) {
-            if (empty($values)) continue;
 
-            $query->whereHas('filterOptions', function($q) use ($filterSlug, $values) {
-                $q->whereHas('category', function($q) use ($filterSlug) {
-                    $q->where('slug', $filterSlug);
-                });
-                
-                if (is_array($values)) {
-                    $q->whereIn('value', $values);
-                } else {
-                    $q->where('value', $values);
-                }
+        dd($filters);
+
+        $request = request();
+    
+        $query = $searchService->search($request->except(['min_price', 'max_price']));
+
+        if ($request->has('occasion')) {
+            $query->whereHas('filterOptions', function($q) use ($request) {
+                $q->whereHas('category', function($q) {
+                    $q->where('slug', 'occasion');
+                })
+                ->whereIn('value', (array)$request->occasion);
             });
         }
+
 
         return $query;
     }

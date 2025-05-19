@@ -1,6 +1,11 @@
 @ For filters add category_id, so it should be dislayed or hidden based on category
 @ From action="" search for old URLs, change to route()
 
+@ Page elements
+
+# Header tasks
+
+
 
 
 @ Backend tasks
@@ -15,3 +20,4 @@ Save selection in pivot table
 # Stores 
 Add stores management for partner:
 Name, Description, Address, Images
+

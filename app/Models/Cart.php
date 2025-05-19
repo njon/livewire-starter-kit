@@ -8,7 +8,6 @@ class Cart extends Lunar\Models\Cart
 {
 
     protected $appends = [
-        'xxx',
         'sub_total',
         'total',
         'total_discount',

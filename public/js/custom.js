@@ -164,10 +164,11 @@ $(document).ready(function() {
         
         $.ajax({
             url: 'wishlist',
-            method: isActive ? 'DELETE' : 'POST',
+            method: 'POST',
             data: {
                 product_id: productId,
-                _token: csrf_token
+                _token: csrf_token,
+                destroy: isActive
             },
             success: updateWishlist
         });
@@ -361,6 +362,7 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function(response) {
+                updateFields(response);
                 $cartItem.fadeOut(300, function() {
                     $(this).remove();
                 });
@@ -392,6 +394,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 $cartItem.find('.item-total').text(response.total);
+                updateFields(response);
             },
             error: function(xhr) {
                 var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
@@ -408,5 +411,13 @@ $(document).ready(function() {
     $(document).on('focusin', '.quantity-input', function() {
         $(this).data('previous-value', $(this).val());
     });
+
+    function updateFields(data) {
+    // Update cart summary fields with new values
+        $('#price-subtotal').html(data.sub_total);
+        $('#price-discount').html(data.total_discount);
+        $('#price-tax').html(data.tax);
+        $('#price-total').html(data.price_total);
+}
 
 });

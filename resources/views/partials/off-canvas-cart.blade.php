@@ -66,7 +66,7 @@
 <div class="card-footer border-top bg-white p-3 sticky-bottom">
     <div class="d-flex justify-content-between mb-3">
         <span class="fw-bold">Subtotal:</span>
-        <span class="fw-bold">{{ $cart->subTotal->formatted() }}</span>
+        <span class="fw-bold" id="price-total">{{ $cart->subTotal->formatted() }}</span>
     </div>
     <div class="d-grid gap-2">
         <a href="/checkout" class="btn btn-dark btn-lg rounded-pill fw-bold">

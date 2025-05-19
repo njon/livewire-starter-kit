@@ -29,6 +29,27 @@ class PriceBetweenScope implements Scope
             });
         }
 
+        // @todo fix backend exclude
+        // $request = request();
+        // $filters = $request->except(['min_price', 'max_price']);
+
+
+        // foreach ($filters as $filterSlug => $values) {
+        //     if (empty($values)) continue;
+
+        //     $builder->whereHas('filterOptions', function($q) use ($filterSlug, $values) {
+        //         $q->whereHas('category', function($q) use ($filterSlug) {
+        //             $q->where('slug', $filterSlug);
+        //         });
+                
+        //         if (is_array($values)) {
+        //             $q->whereIn('value', $values);
+        //         } else {
+        //             $q->where('value', $values);
+        //         }
+        //     });
+        // }
+
 
 // if (request()->has('test')) {
 //     $testValue = strtolower(request('test'));

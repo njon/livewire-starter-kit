@@ -46,23 +46,23 @@
                     <div class="border-top pt-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Subtotal:</span>
-                            <span class="fw-bold">{{ $sub_total }}</span>
+                            <span class="fw-bold" id="price-subtotal">{{ $sub_total }}</span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-2 text-success">
                             <span>Discount:</span>
-                            <span class="fw-bold">-{{ $total_discount }}</span>
+                            <span class="fw-bold" id="price-discount">-{{ $total_discount }}</span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
                             <span>VAT 24%:</span>
-                            <span>{{ $tax }}</span>
+                            <span id="price-tax">{{ $tax }}</span>
                         </div>
 
 
                         <div class="d-flex justify-content-between mt-3 pt-3 border-top">
                             <span class="h5">Total:</span>
-                            <span class="h5 fw-bold">{{ $sub_total_discounted }}</span>
+                            <span class="h5 fw-bold" id="price-total">{{ $sub_total_discounted }}</span>
                         </div>
                     </div>
 

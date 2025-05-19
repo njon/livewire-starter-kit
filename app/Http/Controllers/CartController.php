@@ -23,6 +23,14 @@ class CartController extends Controller
     /**
      * Display the cart.
      */
+    public function order(Order $order)
+    {
+        return view('checkout.order-complete', compact('order'));
+    }
+
+    /**
+     * Display the cart.
+     */
     public function index()
     {
         $cart = $this->cart->getCart();
@@ -45,7 +53,14 @@ class CartController extends Controller
     {
         $items = $this->cart->removeFromCart($this->cart->getCart(), $ProductVariant->id);
 
-        return response()->json($items);
+        $cart = $this->cart->getCart();
+
+        $response = array_merge([
+            'success' => true,
+            'message' => 'Quantity updated successfully',
+        ], $prices = $this->cart->priceVariables($cart));
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -60,12 +75,14 @@ class CartController extends Controller
         : $this->cart->updateQuantity($ProductVariant, $quantity);
 
         $cart = $this->cart->getCart();
-        
-        return response()->json([
+
+        $response = array_merge([
             'success' => true,
             'message' => 'Quantity updated successfully',
             'total' => $cart->lines->firstWhere('purchasable_id', $ProductVariant->id)->total->formatted(),
-        ], 200);
+        ], $prices = $this->cart->priceVariables($cart));
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -82,16 +99,6 @@ class CartController extends Controller
             'success' => true,
             'html' => $html
         ]);
-    }
-
-    /**
-     * Helper function to calculate total items in the cart.
-     */
-    private function getTotalItems($cart)
-    {
-        return array_reduce($cart, function ($carry, $item) {
-            return $carry + $item['quantity'];
-        }, 0);
     }
 
     public function checkout(Request $request)

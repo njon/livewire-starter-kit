@@ -3,8 +3,10 @@
 @section('content')
     @csrf
     <!-- Add your form fields here -->
-<h1>Collection: {{ $collection->translateAttribute('name') }}</h1>
-<p>{{ $collection->translateAttribute('description') }}</p>
+<h1 class="pt-5">Collection: {{ $collection->translateAttribute('name') }}</h1>
+<div class="text-muted mb-5 mt-3">
+    {!! $collection->translateAttribute('description') !!}
+</div>
 
 <section class="pb-4">
     <div class="row">

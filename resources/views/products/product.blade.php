@@ -4,7 +4,7 @@
         <div class="position-relative overflow-hidden">
             <!-- Wishlist Button -->
             <span class="btn-wishlist"> 
-                <span class="wishlist-add material-symbols-outlined product-fav-icon" data-product-id="{{ $product->id }}">favorite</span>
+                <span class="wishlist-add material-symbols-outlined product-fav-icon hoverable-icon" data-product-id="{{ $product->id }}">favorite</span>
             </span>
             
             @if($product->thumbnail)

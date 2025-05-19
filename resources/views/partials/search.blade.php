@@ -2,13 +2,14 @@
     <div class="accordion mb-4" id="filterAccordion">
 
         <!-- Price Range Accordion Item -->
-        <div class="accordion-item shadow-sm">
+        <div class="accordion-item">
             <h2 class="accordion-header" id="headingPrice">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-expanded="true" aria-controls="collapsePrice">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-controls="collapsePrice">
                     Price Range
                 </button>
             </h2>
-            <div id="collapsePrice" class="accordion-collapse collapse show" aria-labelledby="headingPrice">
+
+            <div id="collapsePrice" class="accordion-collapse @if(request()->filled('min_price') != '0' OR request()->filled('max_price') != '0') accordion-collapse collapse show @else collapse @endif" aria-labelledby="headingPrice">
                 <div class="accordion-body">
                     <div class="row g-2 align-items-center">
                         <div class="col">
@@ -32,7 +33,7 @@
         </div>
 
         <!-- Rating Accordion Item -->
-        <div class="accordion-item shadow-sm">
+        <div class="accordion-item">
             <h2 class="accordion-header" id="headingRating">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
                     Minimum Rating
@@ -55,13 +56,14 @@
         <!-- Categories Accordion Items -->
         @if(isset($filterCategories) && $filterCategories->count() > 0)
             @foreach($filterCategories as $category)
-                <div class="accordion-item shadow-sm">
+
+                <div class="accordion-item">
                     <h2 class="accordion-header" id="heading{{ $category->slug }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $category->slug }}" aria-expanded="false" aria-controls="collapse{{ $category->slug }}">
+                        <button class="accordion-button @if(request()->has($category->slug)) x @else collapsed @endif" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $category->slug }}" aria-expanded="{{ request()->has($category->slug) }}" aria-controls="collapse{{ $category->slug }}">
                             {{ $category->name }}
                         </button>
                     </h2>
-                    <div id="collapse{{ $category->slug }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $category->slug }}">
+                    <div id="collapse{{ $category->slug }}" class="accordion-collapse @if(request()->has($category->slug)) accordion-collapse collapse show @else collapse @endif" aria-labelledby="heading{{ $category->slug }}">
                         <div class="accordion-body">
                             @if($category->options->count() > 0)
                                 @foreach($category->options as $option)

@@ -1,25 +1,9 @@
 @extends('layouts.app')
 @section('content')
 
-@include('partials.breadcrumbs')
-
+@php $first = true; @endphp
 <div class="product-detail mt-3">
-    <!-- <div class="row gallery-row mb-5">
-        <div class="col-md-3 gallery-thumbnails">
-            <div class="thumbnail-column">
-                @foreach($product->images->take(6) as $image)
-                    <div class="thumbnail-item {{ $loop->first ? 'active' : '' }}"
-                        data-target="{{ $image->getUrl() }}">
-                    </div>
-                @endforeach
-            </div>
-        </div>
-                
-        <div class="col-md-9 main-image">
-            <img src="{{ $product->images->first()->getUrl() }}" id="mainProductImage"
-                alt="{{ $product->translateAttribute('name') }}" class="img-fluid">
-        </div>
-    </div> -->
+    @include('partials.breadcrumbs')
 
     <!-- Tide + Wishlist Row -->
     <div class="row mb-4">
@@ -33,17 +17,48 @@
             </span>
         </div>
     </div>
+    <div class="row gallery-row mb-5">
+        <div class="col-md-2 gallery-thumbnails">
+            <div class="thumbnail-column gap-3">
+                <!-- @foreach($product->images->take(6) as $image)
+                    <div class="thumbnail-item {{ $loop->first ? 'active' : '' }}"
+                        data-target="{{ $image->getUrl() }}">
+                    </div>
+                @endforeach -->
+                <div class="thumbnail-item first"
+                    data-target="{{ $product->images->first()->getUrl() }}">
+                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
+                </div>
+                <div class="thumbnail-item"
+                    data-target="{{ $product->images->first()->getUrl() }}">
+                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
+                </div>
+                <div class="thumbnail-item"
+                    data-target="{{ $product->images->first()->getUrl() }}">
+                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
+                </div>
+            </div>
+        </div>
+                
+        <div class="col-md-10 main-image">
+            <img src="{{ $product->images->first()->getUrl() }}" id="mainProductImage"
+                alt="{{ $product->translateAttribute('name') }}" class="img-fluid">
+        </div>
+    </div>
+
+
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
         <div class="col-md-8 product-description">
-            {!! $product->translateAttribute('description') !!}
+            <h2 class="mb-4">Service Description</h2>
+            <p>{!! $product->translateAttribute('description') !!}</p>
 
 
-
-            @include('products.questions.index', ['product' => $product, 'questions' => $product->questions()->paginate(10)])
-            @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
-
+            <div class="accordion mb-4 mt-4">
+                @include('products.questions.index', ['product' => $product, 'questions' => $product->questions()->paginate(10)])
+                @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
+            </div>
         </div>
 
         <div class="col-md-4">
@@ -53,26 +68,19 @@
                         {{ $product->city }} Athens, Thessaloniki
                     </div>
                     <div class="rating">
-                            <div class="average-rating mb-4">
-        @php
-            $averageRating = $product->reviews->avg('rating');
-            $reviewCount = $product->reviews->count();
-        @endphp
-        <div class="d-flex align-items-center">
-            <div class="star-rating-display me-3">
-                @for($i = 1; $i <= 5; $i++)
-                    @if($i <= floor($averageRating))
-                        ★
-                    @elseif($i - 0.5 <= $averageRating)
-                        ½
-                    @else
-                        ☆
-                    @endif
-                @endfor
-                <span class="ms-2">{{ number_format($averageRating, 1) }} rating</span>
-            </div>
-        </div>
-    </div>
+                        <div class="average-rating mb-4">
+                            <div class="d-flex align-items-center">
+                                @if($product->average_rating == 0) 
+                                <span class="no-rating">Not rated yet</span>
+                                @else
+                                <div class="star-rating-display me-3">
+                        {{ $product->rating_stars }}
+
+                                    <span class="ms-2">{{ number_format($product->average_rating, 1) }} rating</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -105,7 +113,7 @@
 
                 @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
                 <div class="product-variants">
-                    <h6 class="text-lg font-medium mb-4">Available Options</h6>
+                    <h6 class="text-lg font-medium mb-4">More Options Available:</h6>
                     
                     @foreach($product->variants as $variant)
                         <div class="variant-option mb-6">
@@ -114,7 +122,7 @@
                             @if($variant->values->isNotEmpty())
                                 <div class="variant-values flex flex-wrap gap-2">
                                     @foreach($variant->values as $value)
-                                        <input type="radio" name="variant" id="variant-{{ $value->id }}">
+                                        <input type="radio" name="variant" id="variant-{{ $value->id }}" @if($first) checked @endif>
                                             <label for="variant-{{ $value->id }}"
                                                 type="button"
                                                 class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
@@ -124,7 +132,8 @@
                                                 {{ $value->translate('name') }}
                                                 {{ $variant->price }}
                                             </label>
-                                        </input>                            
+                                        </input>      
+                                        @php $first = false; @endphp                      
                                     @endforeach
                                 </div>
                             @endif
@@ -145,7 +154,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <form id="add-to-cart" action="/cart/5" method="PUT">
+                    <form id="add-to-cart" action="/cart/{{ $product->variants()->first()->id }}" method="PUT">
                         <button class="btn btn-success btn-add-to-cart" id="btn-add-to-cart">
                             <span class="material-symbols-outlined icon-bottom">shopping_cart</span> Add to Cart
                         </button>
