@@ -68,4 +68,9 @@ class ProductController extends Controller
             'products' => $products,
         ])->render();
     }
+
+    public function page() 
+    {
+        return view('articles.index');
+    }
 }

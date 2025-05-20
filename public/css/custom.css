@@ -42,14 +42,14 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 .thumbnail-item       {cursor: pointer;height: 100%;width: 100%;}
 .thumbnail-item:hover,
 .thumbnail-item.active{ border-color: #007bff; }
-.thumbnail-item img   {width: 100%;object-fit: cover;border-radius: 10px;}
+.thumbnail-item img   {width: 100%;object-fit: cover;}
+.thumb-image, .main-image img { border-radius: 5px; }
 
-.main-image           { padding-left: 20px; }
+.main-image           { padding-left: 5px !important; }
 .main-image img       {
     width: 100%;
-    height: auto;
+    height: 500px;
     object-fit: cover;
-    border-radius: 10px;
 }
 
 .sticky-box {
@@ -76,17 +76,9 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 .bottom-info   { line-height: 16px; }
 
 /* Wishlist icon on product cards */
-.product .btn-wishlist {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: #fff;
+.product span.btn-wishlist {
     width: 30px;
     height: 26px;
-    text-align: center;
-    border-bottom-left-radius: 3px;
-    box-shadow: -1px 1px 3px 0 #aeaeae;
-    z-index: 999;
 }
 .wishlist-add.active { color: #dc3545; }
 
@@ -119,10 +111,10 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 
 /* =================  Top bar  ================= */
 #top-bar {
-    background: #98B68A;
     color: #fff;
-    font-size: 14px;
-    padding: 3px 0;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 0;
 }
 
 body .accordion-item {
@@ -192,3 +184,243 @@ h2.accordion-button {
 }
 
 .thumbnail-item {display: flex;}
+.product-item-list .material-symbols-outlined.product-icon {
+    font-size: 19px;
+    line-height: 23px;
+}
+.product-price.fs-5.text-success {
+    font-weight: 600;
+}
+
+/* @todo Replace class name */
+body .text-success {
+    color: rgb(99 160 118) !important;
+}
+.fw-600 {
+    font-weight: 600;
+}
+
+/* @todo rework. avoid important */
+.input-group > * {
+    background: #f1f1f1 !important;
+    border: 0 !important;
+    font-size: 14px !important;
+    padding-top: 7px !important;
+}
+
+.text-shallow {
+    color: #aab2bd;
+}
+.relative {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+#imageGalleryModal .modal-body.text-center {
+    padding: 0;
+}
+.position-absolute.h-100 {
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+button#nextImage {
+    margin-right: -150px;
+}
+button#prevImage {
+    margin-left: -150px;
+}
+.gallery-control:hover {
+    opacity: 0.7;
+}
+.classic-color-bg {
+    background: #98B68A;
+}
+.classic-color {
+    color: #98B68A;
+}
+.fs-30 {
+    font-size: 30px;
+}
+.fs-18 {
+    font-size: 18px;
+}
+.ls-1 {
+    letter-spacing: -0.3px;
+}
+
+
+
+
+.button-animated {
+  color: #aab2bd;
+  padding: 0.2em 0.6em;
+  border-radius: 0.2em;
+  outline: none;
+  transition: background 0.2s;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  outline: none;
+}
+.button-animated i {
+  transition: 0.2s;
+}
+.button-animated:hover, .button-animated:focus {
+  color: #8d98a7;
+}
+.button-animated:hover:active i, .button-animated:focus:active i {
+  transform: scale(0.8);
+}
+.button-animated.rounded {
+  border-radius: 2em;
+}
+.button-animated.is-loading {
+  pointer-events: none;
+  position: relative;
+  color: transparent !important;
+}
+.button-animated.is-loading:after {
+  z-index: 1;
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 1em;
+  width: 1em;
+  margin-left: -0.5em;
+  margin-top: -0.5em;
+  -webkit-animation: loader-animation 600ms infinite linear;
+          animation: loader-animation 600ms infinite linear;
+  font-size: inherit;
+  color: #aab2bd !important;
+  border: 0.2em solid;
+  border-radius: 0.7em;
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+@-webkit-keyframes loader-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.button-animated.is-active {
+  z-index: 2;
+  color: #e55757;
+  -webkit-animation: 0.8s;
+  animation: 0.8s;
+}
+.button-animated.is-active:before, .button-animated.is-active:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -2px;
+  margin-top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 100%;
+  transform: scale(0);
+  color: #aab2bd;
+  border: 1px solid transparent;
+  box-shadow: -0.8em 0 0 -2px, 0.8em 0 0 -2px, 0 -0.8em 0 -2px, 0 0.8em 0 -2px, -0.6em -0.6em 0 -2px, -0.6em 0.6em 0 -2px, 0.6em -0.6em 0 -2px, 0.6em 0.6em 0 -2px;
+}
+.button-animated.is-active:before {
+  -webkit-animation: effect-01-animation 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          animation: effect-01-animation 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.button-animated.is-active:after {
+  -webkit-animation: effect-02-animation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          animation: effect-02-animation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@-webkit-keyframes effect-01-animation {
+  from {
+    transform: rotate(-15deg) scale(0);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(-30deg) scale(2.5);
+    opacity: 0;
+  }
+}
+@keyframes effect-01-animation {
+  from {
+    transform: rotate(-15deg) scale(0);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(-30deg) scale(2.5);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes effect-02-animation {
+  from {
+    transform: rotate(10deg) scale(0);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(30deg) scale(2);
+    opacity: 0;
+  }
+}
+@keyframes effect-02-animation {
+  from {
+    transform: rotate(10deg) scale(0);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(30deg) scale(2);
+    opacity: 0;
+  }
+}
+.button-animated.like:before, .button-animated.like:after {
+  color: #cc4896;
+}
+.button-animated.like.is-active {
+  background: #ffffff;
+}
+.button-animated.plus:before, .button-animated.plus:after {
+  color: #8cc152;
+}
+.button-animated.plus.is-active {
+  background: #8cc152;
+}
+.button-animated.fav:before, .button-animated.fav:after {
+  color: #f6bb42;
+}
+.button-animated.fav.is-active {
+  background: #f6bb42;
+}
+.button-animated.thumb:before, .button-animated.thumb:after {
+  color: #3b5998;
+}
+.button-animated.thumb.is-active {
+  background: #3b5998;
+}
+
+

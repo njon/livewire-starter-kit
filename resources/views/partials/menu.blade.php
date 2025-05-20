@@ -1,23 +1,28 @@
-<div id="top-bar" class="p-2">
+<div id="top-bar" class="classic-color-bg">
   <div class="container">
-    <div class="row">
-      <div class="col-md-3 col-lg-12">
+    <div class="d-flex flex-wrap justify-content-between align-items-center">
+      <div class="mb-1 mb-md-0">
         MORE THAN 400 EXPERIENCES TO CHOOSE FROM
+      </div>
+      <div class="d-flex gap-3">
+        <a href="#" class="text-white text-decoration-none hover-opacity">F.A.Q</a>
+        <a href="#" class="text-white text-decoration-none hover-opacity">NEWSLETTER</a>
+        <a href="#" class="text-white text-decoration-none hover-opacity">CONTACTS</a>
       </div>
     </div>
   </div>
 </div>
 
-<header class="bg-white shadow-sm">
+<header>
   <div id="header-container">
     <div class="container">
       <div class="row align-items-center">
         <!-- Logo/Title Column -->
-        <div class="justify-content-between d-flex p-3 align-items-center">
+        <div class="justify-content-between d-flex py-3 align-items-center">
 
           <div>
-            <h1 class="h3 mb-0 text-uppercase fw-bold">
-              <a href="/" class="text-dark link-underline-light">@ Your Company</a>  
+            <h1 class="h3 mb-0">
+              <a href="/" class="text-dark link-underline-light fs-4">@ Your Company</a>  
             </h1>
           </div>
 
@@ -50,9 +55,9 @@
                 </div>
                 <div class="text-nowrap d-flex align-items-center gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
+                    <span class="input-group-text">
                       <span class="material-symbols-outlined hoverable-icon">search</span> </span>
-                    <input type="search" class="form-control border-start-0" placeholder="Search for Experience..."
+                    <input type="search" class="form-control border-start-0" placeholder="Search for experiences"
                       aria-label="Search">
                   </div>
                 </div>
@@ -90,7 +95,7 @@
         <nav class="navbar navbar-expand-lg">
           <div class="container">
             <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav mx-auto">
+              <!-- <ul class="navbar-nav mx-auto">
                 @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $item)
                 @if($item->parent_id == null)
                 <li class="dropdown nav-item">
@@ -122,7 +127,45 @@
                 </li>
                 @endif
                 @endforeach
-              </ul>
+              </ul> -->
+              <ul class="navbar-nav d-flex justify-content-between w-100 mx-auto">
+    <li class="dropdown nav-item">
+        <a href="shoes" class="nav-link" data-toggle="dropdown">Shoes</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="trousers" class="nav-link" data-toggle="dropdown">Trousers</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="hoodies" class="nav-link" data-toggle="dropdown">Hoodies</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="sale" class="nav-link" data-toggle="dropdown">Sale</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="new-arrivals" class="nav-link" data-toggle="dropdown">New Arrivals</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="accessories" class="nav-link" data-toggle="dropdown">Accessories</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="outerwear" class="nav-link" data-toggle="dropdown">Outerwear</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="athletic" class="nav-link" data-toggle="dropdown">Athletic</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="formal" class="nav-link" data-toggle="dropdown">Formal</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="vintage" class="nav-link" data-toggle="dropdown">Vintage</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="beachwear" class="nav-link" data-toggle="dropdown">Beachwear</a>
+    </li>
+    <li class="dropdown nav-item">
+        <a href="workwear" class="nav-link" data-toggle="dropdown">Workwear</a>
+    </li>
+</ul>
             </div>
           </div>
         </nav>

@@ -6,6 +6,9 @@ use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomepageController;
+
+Route::get('/', [HomepageController::class, 'index']);
 
 Route::resource('cart', CartController::class)
     ->only(['index', 'update', 'destroy'])
@@ -18,6 +21,7 @@ Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.c
 // Product Routes
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
+Route::get('/privacy-policy', [ProductController::class, 'page']);
 
 // Product Questions Routes
 Route::resource('products.questions', ProductQuestionController::class)

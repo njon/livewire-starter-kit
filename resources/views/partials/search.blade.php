@@ -1,8 +1,148 @@
 <form action="" method="GET">
+  <div class=" p-3 mb-4">
+  <h5 class="mb-3">Price range</h5>
+  
+  <!-- Price Display -->
+  <div class="d-flex justify-content-between mb-4">
+    <div class="border p-2 rounded bg-light">$<span id="min-price">50</span></div>
+    <div class="border p-2 rounded bg-light">$<span id="max-price">250</span></div>
+  </div>
+  
+  <!-- Combined Slider + Histogram Container -->
+   <div class="price-filter-container position-relative mb-4" style="height: 80px;">
+
+<div class="d-flex h-100 align-items-end position-absolute w-100" style="bottom: 0;     left: 0;">
+    <!-- $0-$300 range with $10 increments -->
+    <div class="histogram-bar" style="height: 5%;" data-min="0" data-max="10"></div>
+    <div class="histogram-bar" style="height: 8%;" data-min="10" data-max="20"></div>
+    <div class="histogram-bar" style="height: 12%;" data-min="20" data-max="30"></div>
+    <div class="histogram-bar" style="height: 15%;" data-min="30" data-max="40"></div>
+    <div class="histogram-bar" style="height: 18%;" data-min="40" data-max="50"></div>
+    <div class="histogram-bar" style="height: 25%;" data-min="50" data-max="60"></div>
+    <div class="histogram-bar" style="height: 35%;" data-min="60" data-max="70"></div>
+    <div class="histogram-bar" style="height: 45%;" data-min="70" data-max="80"></div>
+    <div class="histogram-bar" style="height: 55%;" data-min="80" data-max="90"></div>
+    <div class="histogram-bar" style="height: 65%;" data-min="90" data-max="100"></div>
+    <div class="histogram-bar" style="height: 75%;" data-min="100" data-max="110"></div>
+    <div class="histogram-bar" style="height: 85%;" data-min="110" data-max="120"></div>
+    <div class="histogram-bar" style="height: 95%;" data-min="120" data-max="130"></div>
+    <div class="histogram-bar" style="height: 100%;" data-min="130" data-max="140"></div>
+    <div class="histogram-bar" style="height: 90%;" data-min="140" data-max="150"></div>
+    <div class="histogram-bar" style="height: 80%;" data-min="150" data-max="160"></div>
+    <div class="histogram-bar" style="height: 70%;" data-min="160" data-max="170"></div>
+    <div class="histogram-bar" style="height: 60%;" data-min="170" data-max="180"></div>
+    <div class="histogram-bar" style="height: 50%;" data-min="180" data-max="190"></div>
+    <div class="histogram-bar" style="height: 40%;" data-min="190" data-max="200"></div>
+    <div class="histogram-bar" style="height: 30%;" data-min="200" data-max="210"></div>
+    <div class="histogram-bar" style="height: 20%;" data-min="210" data-max="220"></div>
+    <div class="histogram-bar" style="height: 15%;" data-min="220" data-max="230"></div>
+    <div class="histogram-bar" style="height: 10%;" data-min="230" data-max="240"></div>
+    <div class="histogram-bar" style="height: 8%;" data-min="240" data-max="250"></div>
+    <div class="histogram-bar" style="height: 12%;" data-min="250" data-max="260"></div>
+    <div class="histogram-bar" style="height: 18%;" data-min="260" data-max="270"></div>
+    <div class="histogram-bar" style="height: 22%;" data-min="270" data-max="280"></div>
+    <div class="histogram-bar" style="height: 28%;" data-min="280" data-max="290"></div>
+    <div class="histogram-bar" style="height: 35%;" data-min="290" data-max="300"></div>
+    <!-- Slider Track -->
+    <div id="price-slider" class="position-absolute w-100" style="bottom: -8px;"></div>
+</div>
+</div>
+</div>
+
+
+
+
+<style>
+  .price-filter-container {
+    padding: 0 15px;
+  }
+  .histogram-bar {
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0 1px;
+    transition: background-color 0.2s;
+  }
+  .histogram-bar:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  /* Slider styling */
+  .noUi-target {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    height: 4px;
+  }
+  .noUi-connects {
+    background: rgba(0, 0, 0, 0.2);
+    height: 4px;
+  }
+  .noUi-connect {
+    background: #000;
+  }
+  .noUi-handle {
+    width: 16px;
+    height: 16px;
+    top: -6px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    box-shadow: none;
+  }
+  .noUi-handle::before, 
+  .noUi-handle::after {
+    display: none;
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+<link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const priceSlider = document.getElementById('price-slider');
+  const minPrice = document.getElementById('min-price');
+  const maxPrice = document.getElementById('max-price');
+  const histogramBars = document.querySelectorAll('.histogram-bar');
+  
+  // Initialize slider
+  noUiSlider.create(priceSlider, {
+    start: [50, 250],
+    connect: true,
+    range: {
+      'min': 0,
+      'max': 300
+    },
+    margin: 50, // Minimum range between handles
+    step: 10
+  });
+  
+  // Update displayed prices
+  priceSlider.noUiSlider.on('update', function(values) {
+    minPrice.textContent = Math.round(values[0]);
+    maxPrice.textContent = Math.round(values[1]);
+  });
+  
+  // Highlight histogram bars within selected range
+  priceSlider.noUiSlider.on('update', function(values) {
+    const min = Math.round(values[0]);
+    const max = Math.round(values[1]);
+    
+    histogramBars.forEach(bar => {
+      const barMin = parseInt(bar.dataset.min);
+      const barMax = parseInt(bar.dataset.max);
+      
+      if (barMin >= min && barMax <= max) {
+        bar.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+      } else {
+        bar.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+      }
+    });
+  });
+});
+</script>
     <div class="accordion mb-4" id="filterAccordion">
 
         <!-- Price Range Accordion Item -->
-        <div class="accordion-item">
+        <!-- <div class="accordion-item">
             <h2 class="accordion-header" id="headingPrice">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-controls="collapsePrice">
                     Price Range
@@ -30,7 +170,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Rating Accordion Item -->
         <div class="accordion-item">
@@ -89,11 +229,8 @@
     </div>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-        <button type="submit" class="btn btn-primary px-4">
-            <i class="fas fa-filter me-1"></i> Apply Filters
-        </button>
-        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary px-4">
-            <i class="fas fa-undo me-1"></i> Reset
+        <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-undo me-1"></i> Reset Search
         </a>
     </div>
 </form>

@@ -1,11 +1,75 @@
 const curCurrency = '€';
 let $form;
 
+$(document).ready(function() {
+    // Initialize variables
+    let currentImageIndex = 0;
+    let images = [];
+    
+    // Collect all images from the gallery
+    function initGallery() {
+        images = [];
+        
+        // Add main image first
+        images.push($('#mainProductImage').attr('src'));
+        
+        // Add thumbnail images
+        $('.thumbnail-item').each(function() {
+            images.push($(this).data('target'));
+        });
+    }
+    
+    // Initialize the gallery
+    initGallery();
+    
+    // Click handler for thumbnails
+    $('.thumbnail-item').click(function() {
+        currentImageIndex = $(this).index() + 1; // +1 because main image is first
+        $('#modalImage').attr('src', $(this).data('target'));
+        $('#imageGalleryModal').modal('show');
+    });
+    
+    // Click handler for main image
+    $('#mainProductImage').click(function() {
+        currentImageIndex = 0;
+        $('#modalImage').attr('src', $(this).attr('src'));
+        $('#imageGalleryModal').modal('show');
+    });
+    
+    // Previous image button
+    $('#prevImage').click(function() {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        $('#modalImage').attr('src', images[currentImageIndex]);
+    });
+    
+    // Next image button
+    $('#nextImage').click(function() {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        $('#modalImage').attr('src', images[currentImageIndex]);
+    });
+    
+    // Keyboard navigation
+    $(document).keydown(function(e) {
+        if ($('#imageGalleryModal').hasClass('show')) {
+            if (e.keyCode == 37) { // Left arrow
+                $('#prevImage').click();
+            } else if (e.keyCode == 39) { // Right arrow
+                $('#nextImage').click();
+            }
+        }
+    });
+});
+
 document.addEventListener('DOMContentLoaded', function() {
+
+
   // Parse initial values from the HTML
   const daysElement = document.getElementById('countdown-days');
   const timeElement = document.getElementById('countdown-time');
   
+  if(!daysElement || !timeElement) {
+    return false;
+  }
   // Extract initial values (trim whitespace)
   let days = parseInt(daysElement.textContent.trim());
   let [hours, minutes, seconds] = timeElement.textContent.trim().split(':').map(Number);
@@ -86,6 +150,26 @@ let isLoading = false;
 
 $(document).ready(function() {
 
+
+function loadBtn(btn) {
+    const $button = btn;
+      // Button Off
+  if ($button.hasClass('is-active')) {
+    $button
+      .removeClass('is-active');
+    return;
+  }
+  
+  // Button On (with a loader)
+  $button.addClass('is-loading');  
+  setTimeout(function () {
+    $button
+      .removeClass('is-loading')
+      .addClass('is-active');
+  }, 500);
+}
+
+
     const csrf_token = $('[name="_token"]').val();
 
     
@@ -149,8 +233,8 @@ $(document).ready(function() {
                 const $btn = $(this);
                 const productId = $btn.data('product-id');
                 const isActive = response.hasOwnProperty(productId);
-                $btn.toggleClass('active', isActive);
-                $btn.closest('.btn-wishlist').toggleClass('active', isActive);
+                $btn.toggleClass('is-active', isActive);
+                $btn.closest('.btn-wishlist').toggleClass('is-active', isActive);
             });
         });
     }
@@ -158,9 +242,15 @@ $(document).ready(function() {
     // Toggle wishlist item
     $(document).on('click', '.wishlist-add', function(e) {
         e.preventDefault();
-        const $btn = $(this);
-        const productId = $btn.data('product-id');
-        const isActive = $btn.hasClass('active');
+        const $button = $(this);
+        const productId = $button.data('product-id');
+        const isActive = $button.hasClass('is-active');
+
+        if (isActive) {
+            $button.removeClass('is-active');
+        }
+  
+        $button.addClass('is-loading');  
         
         $.ajax({
             url: 'wishlist',
@@ -170,7 +260,15 @@ $(document).ready(function() {
                 _token: csrf_token,
                 destroy: isActive
             },
-            success: updateWishlist
+            success: function() {
+                $button.removeClass('is-loading');
+                
+                if(!isActive) {
+                    $button.addClass('is-active');
+                }
+
+                updateWishlist();
+            }
         });
     });
 

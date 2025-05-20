@@ -11,10 +11,11 @@
             <h2>{{ $product->translateAttribute('name') }}</h2>
         </div>
         <div class="col-md-6 text-end">
-
-            <span class="btn-wishlist"> 
-                <span class="wishlist-add material-symbols-outlined product-fav-icon" data-product-id="{{ $product->id }}">favorite</span>
-            </span>
+            <div class="btn-wishlist">
+                <button class="button-animated like wishlist-add" data-product-id="{{ $product->id }}">
+                    <i class="fa fa-heart"></i>
+                </button>
+            </div>
         </div>
     </div>
     <div class="row gallery-row mb-5">
@@ -26,27 +27,27 @@
                     </div>
                 @endforeach -->
                 <div class="thumbnail-item first"
-                    data-target="{{ $product->images->first()->getUrl() }}">
-                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
+                    data-target="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80">
+                    <img src="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80"
+                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
+                </div>
+                <div class="thumbnail-item" data-target="{{ $product->images->first()->getUrl() }}">
+                    <img src="{{ $product->images->first()->getUrl() }}"
+                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
                 </div>
                 <div class="thumbnail-item"
-                    data-target="{{ $product->images->first()->getUrl() }}">
-                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
-                </div>
-                <div class="thumbnail-item"
-                    data-target="{{ $product->images->first()->getUrl() }}">
-                    <img src="{{ $product->images->first()->getUrl() }}" alt="{{ $product->translateAttribute('name') }}" class="img-fluid">    
+                    data-target="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80">
+                    <img src="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80"
+                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
                 </div>
             </div>
         </div>
-                
+
         <div class="col-md-10 main-image">
             <img src="{{ $product->images->first()->getUrl() }}" id="mainProductImage"
                 alt="{{ $product->translateAttribute('name') }}" class="img-fluid">
         </div>
     </div>
-
-
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
@@ -54,9 +55,9 @@
             <h2 class="mb-4">Service Description</h2>
             <p>{!! $product->translateAttribute('description') !!}</p>
 
-
             <div class="accordion mb-4 mt-4">
-                @include('products.questions.index', ['product' => $product, 'questions' => $product->questions()->paginate(10)])
+                @include('products.questions.index', ['product' => $product, 'questions' =>
+                $product->questions()->paginate(10)])
                 @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
             </div>
         </div>
@@ -70,11 +71,11 @@
                     <div class="rating">
                         <div class="average-rating mb-4">
                             <div class="d-flex align-items-center">
-                                @if($product->average_rating == 0) 
+                                @if($product->average_rating == 0)
                                 <span class="no-rating">Not rated yet</span>
                                 @else
                                 <div class="star-rating-display me-3">
-                        {{ $product->rating_stars }}
+                                    {{ $product->rating_stars }}
 
                                     <span class="ms-2">{{ number_format($product->average_rating, 1) }} rating</span>
                                 </div>
@@ -91,10 +92,10 @@
                 <div class="pricing mb-3">
                     <span class="current-price">{{ $product->price }}</span>
                     @if ($product->has_discount)
-                        <span class="original-price">{{ $product->price_without_discount }}</span>
+                    <span class="original-price">{{ $product->price_without_discount }}</span>
                     @endif
                     @if ($product->has_discount)
-                        <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
+                    <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
 
@@ -104,9 +105,11 @@
 
                     @if(!$end['ended'])
                     <span class="countdown-timer">
-                        <span id="countdown-days-container"><span id="countdown-days">{{ $end['days'] }}</span> days</span>
-                        <span id="countdown-time">{{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}</span>
-                    @endif
+                        <span id="countdown-days-container"><span id="countdown-days">{{ $end['days'] }}</span>
+                            days</span>
+                        <span
+                            id="countdown-time">{{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}</span>
+                        @endif
                 </div>
 
                 @endif
@@ -114,36 +117,34 @@
                 @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
                 <div class="product-variants">
                     <h6 class="text-lg font-medium mb-4">More Options Available:</h6>
-                    
+
                     @foreach($product->variants as $variant)
-                        <div class="variant-option mb-6">
-                            <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
-                            
-                            @if($variant->values->isNotEmpty())
-                                <div class="variant-values flex flex-wrap gap-2">
-                                    @foreach($variant->values as $value)
-                                        <input type="radio" name="variant" id="variant-{{ $value->id }}" @if($first) checked @endif>
-                                            <label for="variant-{{ $value->id }}"
-                                                type="button"
-                                                class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
-                                                data-form-link="/cart/{{ $value->id }}"
-                                                data-variant-id="{{ $variant->id }}"
-                                                data-value-id="{{ $value->id }}">
-                                                {{ $value->translate('name') }}
-                                                {{ $variant->price }}
-                                            </label>
-                                        </input>      
-                                        @php $first = false; @endphp                      
-                                    @endforeach
-                                </div>
-                            @endif
+                    <div class="variant-option mb-6">
+                        <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
+
+                        @if($variant->values->isNotEmpty())
+                        <div class="variant-values flex flex-wrap gap-2">
+                            @foreach($variant->values as $value)
+                            <input type="radio" name="variant" id="variant-{{ $value->id }}" @if($first) checked @endif>
+                            <label for="variant-{{ $value->id }}" type="button"
+                                class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
+                                data-form-link="/cart/{{ $value->id }}" data-variant-id="{{ $variant->id }}"
+                                data-value-id="{{ $value->id }}">
+                                {{ $value->translate('name') }}
+                                {{ $variant->price }}
+                            </label>
+                            </input>
+                            @php $first = false; @endphp
+                            @endforeach
                         </div>
+                        @endif
+                    </div>
                     @endforeach
                 </div>
                 @endif
 
                 <div class="product-attributes d-flex justify-content-between mt-2">
-                <div class="attribute">
+                    <div class="attribute">
                         <span class="material-symbols-outlined product-icon">person</span>
                         3{{ $product->translateAttribute('participants') }} participants
                     </div>
@@ -177,6 +178,38 @@
     </div>
 </div>
 
+<!-- Add this modal structure at the bottom of your body -->
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="" id="modalImage" class="img-fluid" alt="Gallery Image">
+                <div class="position-absolute h-100">
+                    <div
+                        class="h-100 d-flex align-items-center justify-content-between position-absolute top-0 start-0 end-0 px-3">
+                        <div>
+                            <button type="button" class="gallery-control" id="prevImage">
+                                <svg width="40" height="40" viewBox="0 0 60 60">
+                                    <path d="M35 15 L15 30 L35 45 Z" fill="white" stroke="#333" stroke-width="2" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="gallery-control" id="nextImage">
+                                <svg width="40" height="40" viewBox="0 0 60 60">
+                                    <path d="M25 15 L45 30 L25 45 Z" fill="white" stroke="#333" stroke-width="2" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="mini-cart"></div>
 @endsection
