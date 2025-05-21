@@ -51,12 +51,5 @@ class PriceBetweenScope implements Scope
         // }
 
 
-// if (request()->has('test')) {
-//     $testValue = strtolower(request('test'));
-//     $builder->whereHas('variants', function ($query) use ($testValue) {
-//         $query->where('attribute_data->test->value', $testValue);
-//     });
-// }
-
     }
 }

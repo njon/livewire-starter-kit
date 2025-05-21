@@ -64,114 +64,148 @@
 
         <div class="col-md-4">
             <div class="sticky-box">
-                <div class="availability-rating d-flex justify-content-between">
-                    <div class="cities">
-                        {{ $product->city }} Athens, Thessaloniki
-                    </div>
-                    <div class="rating">
-                        <div class="average-rating mb-4">
+                <div class="card shadow-lg border-0 rounded-2 overflow-hidden"
+                    style="max-width: 400px; margin: 2rem auto;">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <div class="text-muted small">
+                                <i class="bi bi-geo-alt-fill me-1"></i> {{ $product->city }} Athens, Thessaloniki
+                            </div>
                             <div class="d-flex align-items-center">
                                 @if($product->average_rating == 0)
-                                <span class="no-rating">Not rated yet</span>
+                                <span class="text-muted small">Not rated yet</span>
                                 @else
-                                <div class="star-rating-display me-3">
+                                <div class="text-warning h5 mb-0 me-2" role="img"
+                                    aria-label="{{ number_format($product->average_rating, 1) }} out of 5 stars">
                                     {{ $product->rating_stars }}
-
-                                    <span class="ms-2">{{ number_format($product->average_rating, 1) }} rating</span>
                                 </div>
+                                <span class="text-muted small">{{ number_format($product->average_rating, 1) }}
+                                    rating</span>
                                 @endif
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <h4 class="mt-4 mb-4">{{ $product->translateAttribute('name') }}</h4>
-                <p class="short-description">
-                    {{ $product->translateAttribute('short_description') }}</p>
+                        <h4 class="card-title fw-bold text-dark">{{ $product->translateAttribute('name') }}</h4>
+                        <p class="card-text text-muted mb-4">
+                            {{ $product->translateAttribute('short_description') }}
+                        </p>
 
-                <div class="pricing mb-3">
-                    <span class="current-price">{{ $product->price }}</span>
-                    @if ($product->has_discount)
-                    <span class="original-price">{{ $product->price_without_discount }}</span>
-                    @endif
-                    @if ($product->has_discount)
-                    <span class="discount-percentage">-{{ $product->discount_percentage }}%</span>
-                    @endif
-                </div>
+                        <div class="d-flex align-items-baseline my-3">
+                            <span class="fs-3 fw-bolder me-2">{{ $product->price }}</span>
+                            @if ($product->has_discount)
+                            <span
+                                class="text-decoration-line-through text-muted me-2">{{ $product->price_without_discount }}</span>
+                            <span
+                                class="badge bg-success-subtle text-success fw-bold">-{{ $product->discount_percentage }}%</span>
+                            @endif
+                        </div>
 
-                @if($product->has_discount)
-                <div class="d-flex align-items-center special-offer" role="alert">
-                    <span class="material-symbols-outlined">schedule</span>&nbsp; Special offer:&nbsp;
-
-                    @if(!$end['ended'])
-                    <span class="countdown-timer">
-                        <span id="countdown-days-container"><span id="countdown-days">{{ $end['days'] }}</span>
-                            days</span>
-                        <span
-                            id="countdown-time">{{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}</span>
+                        @if($product->has_discount)
+                        <div class="alert alert-success border-0 d-flex align-items-center p-2 px-3 rounded-1 my-0"
+                            role="alert">
+                            <i class="material-symbols-outlined me-2 fs-5">schedule</i>
+                            <small class="fw-semibold text-info-emphasis">Special offer:&nbsp;</small>
+                            @if(!$end['ended'])
+                            <div class="countdown-timer d-flex align-items-center flex-grow-1 ms-1">
+                                <span class="badge bg-warning text-dark me-1" id="countdown-days-container">
+                                    <span id="countdown-days">{{ $end['days'] }}</span> days
+                                </span>
+                                <span class="text-info-emphasis fw-bold" id="countdown-time">
+                                    {{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}
+                                </span>
+                            </div>
+                            @endif
+                        </div>
                         @endif
-                </div>
 
-                @endif
+                        <div class="row text-center my-3">
+                            <div class="col-6">
+                                <div class="attribute bg-light py-3 rounded-3">
+                                    <i class="material-symbols-outlined product-icon text-muted d-block mb-1">person</i>
+                                    <small class="fw-semibold text-dark">2
+                                        {{ $product->translateAttribute('participants') }}
+                                        participants</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="attribute bg-light py-3 rounded-3">
+                                    <i
+                                        class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
+                                    <small class="fw-semibold text-dark">45 {{ $product->translateAttribute('length') }}
+                                        minutes</small>
+                                </div>
+                            </div>
 
-                @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
-                <div class="product-variants">
-                    <h6 class="text-lg font-medium mb-4">More Options Available:</h6>
+                        </div>
 
-                    @foreach($product->variants as $variant)
-                    <div class="variant-option mb-6">
-                        <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
+                        @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
+                        <div class="product-variants mb-4">
+                            <h6 class="text-lg font-medium mb-3">More Options Available:</h6>
 
-                        @if($variant->values->isNotEmpty())
-                        <div class="variant-values flex flex-wrap gap-2">
-                            @foreach($variant->values as $value)
-                            <input type="radio" name="variant" id="variant-{{ $value->id }}" @if($first) checked @endif>
-                            <label for="variant-{{ $value->id }}" type="button"
-                                class="variant-value-btn px-4 py-2 border rounded hover:bg-gray-100 transition"
-                                data-form-link="/cart/{{ $value->id }}" data-variant-id="{{ $variant->id }}"
-                                data-value-id="{{ $value->id }}">
-                                {{ $value->translate('name') }}
-                                {{ $variant->price }}
-                            </label>
-                            </input>
-                            @php $first = false; @endphp
+                            @foreach($product->variants as $variant)
+                            <div class="variant-option mb-3">
+                                <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
+
+                                @if($variant->values->isNotEmpty())
+                                <div class="variant-values d-flex flex-wrap gap-2">
+                                    @foreach($variant->values as $value)
+                                    <input type="radio" class="btn-check" name="variant" id="variant-{{ $value->id }}"
+                                        autocomplete="off" @if($first) checked @endif>
+                                    <label for="variant-{{ $value->id }}"
+                                        class="btn btn-outline-secondary px-3 py-2 rounded-pill text-black"
+                                        data-form-link="/cart/{{ $value->id }}" data-variant-id="{{ $variant->id }}"
+                                        data-value-id="{{ $value->id }}">
+                                        {{ $value->translate('name') }}
+                                        {{ $variant->price }}
+                                    </label>
+                                    @php $first = false; @endphp
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
                             @endforeach
                         </div>
                         @endif
-                    </div>
-                    @endforeach
-                </div>
-                @endif
 
-                <div class="product-attributes d-flex justify-content-between mt-2">
-                    <div class="attribute">
-                        <span class="material-symbols-outlined product-icon">person</span>
-                        3{{ $product->translateAttribute('participants') }} participants
-                    </div>
-                    <div class="attribute">
-                        <span class="material-symbols-outlined product-icon">schedule</span>
-                        60{{ $product->translateAttribute('length') }} minutes
-                    </div>
-                </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <form id="add-to-cart" action="/cart/1" method="PUT">
+                                    <button type="submit" class="btn btn-success rounded-2 animate-btn-hover w-100 p-2"
+                                        id="btn-add-to-cart">
+                                        Add to Cart
+                                    </button>
+                                    @csrf
+                                    <input type="hidden" name="to_cart" value="1">
+                                    <input type="hidden" name="product_id" value="1">
+                                    <input type="hidden" name="quantity" value="1">
+                                </form>
+                            </div>
 
-                <div class="action-buttons">
-                    <form id="add-to-cart" action="/cart/{{ $product->variants()->first()->id }}" method="PUT">
-                        <button class="btn btn-success btn-add-to-cart" id="btn-add-to-cart">
-                            <span class="material-symbols-outlined icon-bottom">shopping_cart</span> Add to Cart
-                        </button>
-                        @csrf
-                        <input type="hidden" name="to_cart" value="1">
-                        <input type="hidden" name="product_id" value="{{ $product->variants()->first()->id }}">
-                        <input type="hidden" name="quantity" value="1">
-                    </form>
-                    <button class="btn btn-dark btn-buy-now">
-                        <span class="material-symbols-outlined icon-bottom">bolt</span> Buy Now
-                    </button>
-                </div>
+                            <div class="col-12 mt-2">
+                                <form id="add-to-cart" action="/cart/1" data-redirect="true" method="PUT">
+                                    <button class="btn btn-dark btn btn-success rounded-2 animate-btn-hover w-100 p-2"
+                                        id="btn-add-to-cart">
+                                        <i class="fa fa-cart"></i>
+                                        Buy Now
+                                    </button>
+                                    <input type="hidden" name="to_cart" value="1">
+                                    <input type="hidden" name="product_id" value="1">
+                                    <input type="hidden" name="quantity" value="1">
+                                </form>
+                            </div>
+                        </div>
 
-                <div class="footer-links">
-                    <a href="#">Terms And Services</a> |
-                    <a href="#">Refund Policy</a>
+                        <div class="small text-muted right">
+                            <a href="#" class="text-decoration-none text-muted me-2">Terms And Services</a> |
+                            <a href="#" class="text-decoration-none text-muted mx-2">Refund Policy</a>
+                        </div>
+
+                        <!-- 
+                                                <div class="d-flex justify-content-between small text-muted" bis_skin_checked="1">
+                            <a href="#" class="text-decoration-none text-muted">Terms And Services</a>
+                            <a href="#" class="text-decoration-none text-muted">Refund Policy</a>
+                        </div> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -179,7 +213,7 @@
 </div>
 
 <!-- Add this modal structure at the bottom of your body -->
-<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+<div class="modal" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content bg-transparent border-0">
             <div class="modal-header border-0">

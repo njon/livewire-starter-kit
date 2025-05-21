@@ -1,236 +1,251 @@
-<form action="" method="GET">
-  <div class=" p-3 mb-4">
-  <h5 class="mb-3">Price range</h5>
-  
-  <!-- Price Display -->
-  <div class="d-flex justify-content-between mb-4">
-    <div class="border p-2 rounded bg-light">$<span id="min-price">50</span></div>
-    <div class="border p-2 rounded bg-light">$<span id="max-price">250</span></div>
-  </div>
-  
-  <!-- Combined Slider + Histogram Container -->
-   <div class="price-filter-container position-relative mb-4" style="height: 80px;">
+<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/shoes" method="GET" id="ajax-search-form">
+  <div class="accordion mb-4" id="filterAccordion">
 
-<div class="d-flex h-100 align-items-end position-absolute w-100" style="bottom: 0;     left: 0;">
-    <!-- $0-$300 range with $10 increments -->
-    <div class="histogram-bar" style="height: 5%;" data-min="0" data-max="10"></div>
-    <div class="histogram-bar" style="height: 8%;" data-min="10" data-max="20"></div>
-    <div class="histogram-bar" style="height: 12%;" data-min="20" data-max="30"></div>
-    <div class="histogram-bar" style="height: 15%;" data-min="30" data-max="40"></div>
-    <div class="histogram-bar" style="height: 18%;" data-min="40" data-max="50"></div>
-    <div class="histogram-bar" style="height: 25%;" data-min="50" data-max="60"></div>
-    <div class="histogram-bar" style="height: 35%;" data-min="60" data-max="70"></div>
-    <div class="histogram-bar" style="height: 45%;" data-min="70" data-max="80"></div>
-    <div class="histogram-bar" style="height: 55%;" data-min="80" data-max="90"></div>
-    <div class="histogram-bar" style="height: 65%;" data-min="90" data-max="100"></div>
-    <div class="histogram-bar" style="height: 75%;" data-min="100" data-max="110"></div>
-    <div class="histogram-bar" style="height: 85%;" data-min="110" data-max="120"></div>
-    <div class="histogram-bar" style="height: 95%;" data-min="120" data-max="130"></div>
-    <div class="histogram-bar" style="height: 100%;" data-min="130" data-max="140"></div>
-    <div class="histogram-bar" style="height: 90%;" data-min="140" data-max="150"></div>
-    <div class="histogram-bar" style="height: 80%;" data-min="150" data-max="160"></div>
-    <div class="histogram-bar" style="height: 70%;" data-min="160" data-max="170"></div>
-    <div class="histogram-bar" style="height: 60%;" data-min="170" data-max="180"></div>
-    <div class="histogram-bar" style="height: 50%;" data-min="180" data-max="190"></div>
-    <div class="histogram-bar" style="height: 40%;" data-min="190" data-max="200"></div>
-    <div class="histogram-bar" style="height: 30%;" data-min="200" data-max="210"></div>
-    <div class="histogram-bar" style="height: 20%;" data-min="210" data-max="220"></div>
-    <div class="histogram-bar" style="height: 15%;" data-min="220" data-max="230"></div>
-    <div class="histogram-bar" style="height: 10%;" data-min="230" data-max="240"></div>
-    <div class="histogram-bar" style="height: 8%;" data-min="240" data-max="250"></div>
-    <div class="histogram-bar" style="height: 12%;" data-min="250" data-max="260"></div>
-    <div class="histogram-bar" style="height: 18%;" data-min="260" data-max="270"></div>
-    <div class="histogram-bar" style="height: 22%;" data-min="270" data-max="280"></div>
-    <div class="histogram-bar" style="height: 28%;" data-min="280" data-max="290"></div>
-    <div class="histogram-bar" style="height: 35%;" data-min="290" data-max="300"></div>
-    <!-- Slider Track -->
-    <div id="price-slider" class="position-absolute w-100" style="bottom: -8px;"></div>
-</div>
-</div>
-</div>
+    <div class="">
+      <h5 class="mb-3 fs-6 fw-600">Price Selector</h5>
+      <h6 class="mb-5 fw-normal info-text text-muted">Select Your Preferred Price Range</h6>
 
+      <!-- Price Display -->
+      <div class="d-flex justify-content-between mb-4">
+        <div class=" p-2 rounded filter-prices">€<span id="min-price">50</span></div>
+        <div class=" p-2 rounded filter-prices">€<span id="max-price">250</span></div>
+      </div>
 
+      <!-- Combined Slider + Histogram Container -->
+      <div class="price-filter-container position-relative mb-4" style="height: 80px;">
 
-
-<style>
-  .price-filter-container {
-    padding: 0 15px;
-  }
-  .histogram-bar {
-    flex: 1;
-    background-color: rgba(0, 0, 0, 0.05);
-    margin: 0 1px;
-    transition: background-color 0.2s;
-  }
-  .histogram-bar:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  /* Slider styling */
-  .noUi-target {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    height: 4px;
-  }
-  .noUi-connects {
-    background: rgba(0, 0, 0, 0.2);
-    height: 4px;
-  }
-  .noUi-connect {
-    background: #000;
-  }
-  .noUi-handle {
-    width: 16px;
-    height: 16px;
-    top: -6px;
-    border-radius: 50%;
-    border: 2px solid #000;
-    box-shadow: none;
-  }
-  .noUi-handle::before, 
-  .noUi-handle::after {
-    display: none;
-  }
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
-<link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const priceSlider = document.getElementById('price-slider');
-  const minPrice = document.getElementById('min-price');
-  const maxPrice = document.getElementById('max-price');
-  const histogramBars = document.querySelectorAll('.histogram-bar');
-  
-  // Initialize slider
-  noUiSlider.create(priceSlider, {
-    start: [50, 250],
-    connect: true,
-    range: {
-      'min': 0,
-      'max': 300
-    },
-    margin: 50, // Minimum range between handles
-    step: 10
-  });
-  
-  // Update displayed prices
-  priceSlider.noUiSlider.on('update', function(values) {
-    minPrice.textContent = Math.round(values[0]);
-    maxPrice.textContent = Math.round(values[1]);
-  });
-  
-  // Highlight histogram bars within selected range
-  priceSlider.noUiSlider.on('update', function(values) {
-    const min = Math.round(values[0]);
-    const max = Math.round(values[1]);
-    
-    histogramBars.forEach(bar => {
-      const barMin = parseInt(bar.dataset.min);
-      const barMax = parseInt(bar.dataset.max);
-      
-      if (barMin >= min && barMax <= max) {
-        bar.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-      } else {
-        bar.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-      }
-    });
-  });
-});
-</script>
-    <div class="accordion mb-4" id="filterAccordion">
-
-        <!-- Price Range Accordion Item -->
-        <!-- <div class="accordion-item">
-            <h2 class="accordion-header" id="headingPrice">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-controls="collapsePrice">
-                    Price Range
-                </button>
-            </h2>
-
-            <div id="collapsePrice" class="accordion-collapse @if(request()->filled('min_price') != '0' OR request()->filled('max_price') != '0') accordion-collapse collapse show @else collapse @endif" aria-labelledby="headingPrice">
-                <div class="accordion-body">
-                    <div class="row g-2 align-items-center">
-                        <div class="col">
-                            <label for="min_price" class="visually-hidden">Min Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" name="min_price" id="min_price" placeholder="Min" value="{{ request('min_price') }}">
-                            </div>
-                        </div>
-                        <div class="col-auto">-</div>
-                        <div class="col">
-                            <label for="max_price" class="visually-hidden">Max Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" name="max_price" id="max_price" placeholder="Max" value="{{ request('max_price') }}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Rating Accordion Item -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingRating">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
-                    Minimum Rating
-                </button>
-            </h2>
-            <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
-                <div class="accordion-body">
-                    <label for="ratingRange" class="form-label">
-                        Selected: <span id="ratingValueDisplay" class="fw-bold">{{ request('rating', 0) }}</span> stars
-                    </label>
-                    <input type="range" class="form-range" min="0" max="5" step="0.5" id="ratingRange" name="rating" value="{{ request('rating', 0) }}" oninput="document.getElementById('ratingValueDisplay').textContent = this.value">
-                    <div class="d-flex justify-content-between mt-1 text-muted small">
-                        <span>0 stars</span>
-                        <span>5 stars</span>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex h-100 align-items-end position-absolute w-100" style="bottom: 0;     left: 0;">
+          <!-- $0-$300 range with $10 increments -->
+          <div class="histogram-bar" style="height: 5%;" data-min="0" data-max="10"></div>
+          <div class="histogram-bar" style="height: 8%;" data-min="10" data-max="20"></div>
+          <div class="histogram-bar" style="height: 12%;" data-min="20" data-max="30"></div>
+          <div class="histogram-bar" style="height: 15%;" data-min="30" data-max="40"></div>
+          <div class="histogram-bar" style="height: 18%;" data-min="40" data-max="50"></div>
+          <div class="histogram-bar" style="height: 25%;" data-min="50" data-max="60"></div>
+          <div class="histogram-bar" style="height: 35%;" data-min="60" data-max="70"></div>
+          <div class="histogram-bar" style="height: 45%;" data-min="70" data-max="80"></div>
+          <div class="histogram-bar" style="height: 55%;" data-min="80" data-max="90"></div>
+          <div class="histogram-bar" style="height: 65%;" data-min="90" data-max="100"></div>
+          <div class="histogram-bar" style="height: 75%;" data-min="100" data-max="110"></div>
+          <div class="histogram-bar" style="height: 85%;" data-min="110" data-max="120"></div>
+          <div class="histogram-bar" style="height: 95%;" data-min="120" data-max="130"></div>
+          <div class="histogram-bar" style="height: 100%;" data-min="130" data-max="140"></div>
+          <div class="histogram-bar" style="height: 90%;" data-min="140" data-max="150"></div>
+          <div class="histogram-bar" style="height: 80%;" data-min="150" data-max="160"></div>
+          <div class="histogram-bar" style="height: 70%;" data-min="160" data-max="170"></div>
+          <div class="histogram-bar" style="height: 60%;" data-min="170" data-max="180"></div>
+          <div class="histogram-bar" style="height: 50%;" data-min="180" data-max="190"></div>
+          <div class="histogram-bar" style="height: 40%;" data-min="190" data-max="200"></div>
+          <div class="histogram-bar" style="height: 30%;" data-min="200" data-max="210"></div>
+          <div class="histogram-bar" style="height: 20%;" data-min="210" data-max="220"></div>
+          <div class="histogram-bar" style="height: 15%;" data-min="220" data-max="230"></div>
+          <div class="histogram-bar" style="height: 10%;" data-min="230" data-max="240"></div>
+          <div class="histogram-bar" style="height: 8%;" data-min="240" data-max="250"></div>
+          <div class="histogram-bar" style="height: 12%;" data-min="250" data-max="260"></div>
+          <div class="histogram-bar" style="height: 18%;" data-min="260" data-max="270"></div>
+          <div class="histogram-bar" style="height: 22%;" data-min="270" data-max="280"></div>
+          <div class="histogram-bar" style="height: 28%;" data-min="280" data-max="290"></div>
+          <div class="histogram-bar" style="height: 35%;" data-min="290" data-max="300"></div>
+          <!-- Slider Track -->
+          <div id="price-slider" class="position-absolute w-100"></div>
         </div>
-
-        <!-- Categories Accordion Items -->
-        @if(isset($filterCategories) && $filterCategories->count() > 0)
-            @foreach($filterCategories as $category)
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading{{ $category->slug }}">
-                        <button class="accordion-button @if(request()->has($category->slug)) x @else collapsed @endif" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $category->slug }}" aria-expanded="{{ request()->has($category->slug) }}" aria-controls="collapse{{ $category->slug }}">
-                            {{ $category->name }}
-                        </button>
-                    </h2>
-                    <div id="collapse{{ $category->slug }}" class="accordion-collapse @if(request()->has($category->slug)) accordion-collapse collapse show @else collapse @endif" aria-labelledby="heading{{ $category->slug }}">
-                        <div class="accordion-body">
-                            @if($category->options->count() > 0)
-                                @foreach($category->options as $option)
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox"
-                                               name="{{ $category->slug }}[]"
-                                               value="{{ $option->value }}"
-                                               id="filter-{{ $category->slug }}-{{ $option->id }}"
-                                               {{ in_array($option->value, (array)request($category->slug, [])) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="filter-{{ $category->slug }}-{{ $option->id }}">
-                                            {{ $option->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p class="text-muted">No options available.</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        @endif
+      </div>
     </div>
 
-    <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-        <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
-            <i class="fas fa-undo me-1"></i> Reset Search
-        </a>
+    <style>
+      .price-filter-container {
+        padding: 0 15px;
+      }
+
+      .histogram-bar {
+        flex: 1;
+        background-color: rgba(0, 0, 0, 0.05);
+        margin: 0 1px;
+        transition: background-color 0.2s;
+      }
+
+      .histogram-bar:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Slider styling */
+      .noUi-target {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        height: 4px;
+      }
+
+      .noUi-connects {
+        background: rgba(0, 0, 0, 0.2);
+        height: 4px;
+      }
+
+      .noUi-connect {
+        background: #000;
+      }
+
+      .noUi-handle {
+        width: 16px;
+        height: 16px;
+        top: -6px;
+        border-radius: 50%;
+        border: 2px solid #000;
+        box-shadow: none;
+      }
+
+      .noUi-handle::before,
+      .noUi-handle::after {
+        display: none;
+      }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+    <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const priceSlider = document.getElementById('price-slider');
+        const minPrice = document.getElementById('min-price');
+        const maxPrice = document.getElementById('max-price');
+        const histogramBars = document.querySelectorAll('.histogram-bar');
+        // Initialize slider
+        min = 0;
+        max = 300;
+        noUiSlider.create(priceSlider, {
+          start: [min, max],
+          connect: true,
+          // tooltips: [true, true],
+          range: {
+            'min': min,
+            'max': max
+          },
+          margin: 10, // Minimum range between handles
+          step: 5
+        });
+        // Update displayed prices
+        priceSlider.noUiSlider.on('update', function(values) {
+          minPrice.textContent = Math.round(values[0]);
+          maxPrice.textContent = Math.round(values[1]);
+        });
+        // Highlight histogram bars within selected range
+        priceSlider.noUiSlider.on('update', function(values) {
+          const min = Math.round(values[0]);
+          const max = Math.round(values[1]);
+          histogramBars.forEach(bar => {
+            const barMin = parseInt(bar.dataset.min);
+            const barMax = parseInt(bar.dataset.max);
+            if (barMin >= min && barMax <= max) {
+              bar.style.backgroundColor = 'rgb(238 238 238)';
+            } else {
+              bar.style.backgroundColor = '#f6f6f6';
+            }
+          });
+        });
+      });
+    </script>
+
+    <!-- Rating Accordion Item -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingRating">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
+          Minimum Rating
+        </button>
+      </h2>
+      <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
+        <div class="accordion-body">
+          <label for="ratingRange" class="form-label">
+            Selected: <span id="ratingValueDisplay" class="fw-bold">{{ request('rating', 0) }}</span> stars
+          </label>
+          <input type="range" class="form-range" min="0" max="5" step="0.5" id="ratingRange" name="rating"
+            value="{{ request('rating', 0) }}"
+            oninput="document.getElementById('ratingValueDisplay').textContent = this.value">
+          <div class="d-flex justify-content-between mt-1 text-muted small">
+            <span>0 stars</span>
+            <span>5 stars</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingRating">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
+          Minimum Rating
+        </button>
+      </h2>
+      <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
+        <div class="accordion-body">
+          <div class="row text-center my-1" bis_skin_checked="1">
+            <div class="col-4" bis_skin_checked="1">
+              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
+                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">person</i>
+                <small class="fw-semibold text-dark fs-12">2 participants</small>
+              </div>
+            </div>
+            <div class="col-4" bis_skin_checked="1">
+              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
+                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
+                <small class="fw-semibold text-dark fs-12">45 minutes</small>
+              </div>
+            </div>
+            <div class="col-4" bis_skin_checked="1">
+              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
+                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
+                <small class="fw-semibold text-dark fs-12">45 minutes</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Accordion Items -->
+    @if(isset($filterCategories) && $filterCategories->count() > 0)
+    @foreach($filterCategories as $category)
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ $category->slug }}">
+        <button class="accordion-button @if(request()->has($category->slug)) x @else collapsed @endif" type="button"
+          data-bs-toggle="collapse" data-bs-target="#collapse{{ $category->slug }}"
+          aria-expanded="{{ request()->has($category->slug) }}" aria-controls="collapse{{ $category->slug }}">
+          {{ $category->name }}
+        </button>
+      </h2>
+      <div id="collapse{{ $category->slug }}"
+        class="accordion-collapse @if(request()->has($category->slug)) accordion-collapse collapse show @else collapse @endif"
+        aria-labelledby="heading{{ $category->slug }}">
+        <div class="accordion-body">
+          @if($category->options->count() > 0)
+          @foreach($category->options as $option)
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="{{ $category->slug }}[]" value="{{ $option->value }}"
+              id="filter-{{ $category->slug }}-{{ $option->id }}"
+              {{ in_array($option->value, (array)request($category->slug, [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="filter-{{ $category->slug }}-{{ $option->id }}">
+              {{ $option->name }}
+            </label>
+          </div>
+          @endforeach
+          @else
+          <p class="text-muted">No options available.</p>
+          @endif
+        </div>
+      </div>
+    </div>
+    @endforeach
+    @endif
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+    <button type="submit" class="btn btn-primary px-4 me-md-2">
+      <i class="fas fa-filter me-1"></i> Apply Filters
+    </button>
+
+    <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
+      <i class="fas fa-undo me-1"></i> Reset Search
+    </a>
+  </div>
 </form>

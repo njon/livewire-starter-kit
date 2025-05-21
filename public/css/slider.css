@@ -1,3 +1,14 @@
+.price-filter-container {
+    width: calc(100% - 20px);
+    margin-left: 10px;
+}
+.filter-prices {
+    font-size: 14px;
+    min-width: 54px;
+    text-align: center;
+    color: #323232;
+    border: 1px solid #ececec;
+}
 .noUi-target,.noUi-target * {
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
@@ -77,14 +88,14 @@
 }
 
 .noUi-horizontal {
-    height: 9px;
+    height: 6px;
 }
 
 .noUi-horizontal .noUi-handle {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     right: -10px;
-    top: -7px;
+    top: -9px;
 }
 
 .noUi-vertical {
@@ -104,10 +115,11 @@
 }
 
 .noUi-target {
-    background: #FAFAFA;
+    background: #ffffff;
     border-radius: 4px;
     border: 1px solid #D3D3D3;
-    box-shadow: inset 0 1px 1px #F0F0F0,0 3px 6px -5px #BBB
+    box-shadow: inset 0 1px 1px #F0F0F0,0 3px 6px -5px #BBB;
+    bottom: -6px;
 }
 
 .noUi-connects {

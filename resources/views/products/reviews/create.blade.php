@@ -1,53 +1,45 @@
-
 <div class="modal fade" id="reviewRestrictionModal" tabindex="-1" aria-labelledby="reviewRestrictionModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            
             @if(!Auth::check())
             <div class="card mb-4 mt-4 collapse" id="write-review">
-    <div class="card-body">
-        <h5 class="card-title">Write a Review</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Write a Review</h5>
+                    <form action="products/1/reviews" method="POST" id="review-form">
+                        @csrf
+                        @guest
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                        @endguest
 
-        <!-- Assuming you have a route named 'product.reviews.store' -->
-        <!-- <form action="" method="POST"> -->
-        <form action="products/1/reviews" method="POST" id="review-form">
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="star-rating">
+                                @for($i = 5; $i >= 1; $i--)
+                                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" required>
+                                <label for="star{{ $i }}">★</label>
+                                @endfor
+                            </div>
+                        </div>
 
-            @csrf
+                        <div class="mb-3">
+                            <label for="review" class="form-label">Your Review</label>
+                            <textarea name="review" id="review" class="form-control" rows="5" required></textarea>
+                        </div>
 
-            @guest
-            <div class="mb-3">
-                <label for="name" class="form-label">Your Name</label>
-                <input type="text" name="name" id="name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" name="email" id="email" class="form-control" required>
-            </div>
-            @endguest
-
-            <div class="mb-3">
-                <label class="form-label">Rating</label>
-                <div class="star-rating">
-                    @for($i = 5; $i >= 1; $i--)
-                    <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" required>
-                    <label for="star{{ $i }}">★</label>
-                    @endfor
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </form>
                 </div>
             </div>
+            @endif
 
-            <div class="mb-3">
-                <label for="review" class="form-label">Your Review</label>
-                <textarea name="review" id="review" class="form-control" rows="5" required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit Review</button>
-        </form>
-    </div>
-</div>
-@endif
-        
-        
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="reviewRestrictionModalLabel">
                     <i class="bi bi-star-fill text-warning me-2"></i>
@@ -80,7 +72,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

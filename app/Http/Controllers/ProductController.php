@@ -31,6 +31,7 @@ class ProductController extends Controller
     {
         $counter = end_in_counter($product->discounts);
 
+
         return view('products.show', [
             'product' => $product,
             'relatedProducts' => $product->getRelatedProducts(),

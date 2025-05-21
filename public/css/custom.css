@@ -17,9 +17,14 @@ a:hover { opacity: .8; }
 /* Images */
 img { max-width: 100%; }
 img.review-avatar { border-radius: 50%; }
-img.card-img-top.object-fit-cover {
-    height: 260px !important;
-    object-position: top !important;
+.card-img-top.object-fit-cover {
+    height: 220px !important;
+    object-position: center !important;
+    transform: scale(1);
+    transition: 0.3s;
+}
+.object-fit-cover:hover {
+    transform: scale(1.2);
 }
 
 /* Icons */
@@ -55,10 +60,6 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 .sticky-box {
     position: sticky;
     top: 20px;
-    padding: 20px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background: #DFEDD6;
 }
 
 .action-buttons { display: flex; gap: 10px; margin: 20px 0; }
@@ -72,7 +73,10 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 .special-offer         { background: #F6FEF0; padding: 5px 10px; border-radius: 4px; margin: 15px 0; text-align: center; width: max-content; }
 
 /* Product attributes & info */
-.attribute     { line-height: 21px; margin-bottom: 10px; }
+.attribute     {line-height: 21px;margin-bottom: 10px;border: 1px solid transparent;}
+.attribute:hover {
+    border: 1px solid #d4d4d4;
+}
 .bottom-info   { line-height: 16px; }
 
 /* Wishlist icon on product cards */
@@ -116,7 +120,9 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
     font-weight: 600;
     padding: 10px 0;
 }
-
+.accordion-body .row [class^="col-"] {
+  padding: 0 5px;
+}
 body .accordion-item {
     border: 0;
     border-bottom: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
@@ -248,11 +254,24 @@ button#prevImage {
 .fs-18 {
     font-size: 18px;
 }
+.fs-12 {
+    font-size: 12px !important;
+}
+
 .ls-1 {
     letter-spacing: -0.3px;
 }
-
-
+a.nav-link {
+    color: #3f3f3f;
+    font-size: 14px;
+    font-weight: 500;
+}
+footer a {
+    color: #414141;
+    text-decoration: none;
+    line-height: 29px;
+    font-size: 15px;
+}
 
 
 .button-animated {
@@ -321,7 +340,7 @@ button#prevImage {
     transform: rotate(360deg);
   }
 }
-.button-animated.is-active {
+.button-animated.is-active.wishlist-add {
   z-index: 2;
   color: #e55757;
   -webkit-animation: 0.8s;

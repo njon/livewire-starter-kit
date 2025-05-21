@@ -2,7 +2,7 @@
     $col = isset($col) ? $col : '4';
 @endphp
 
-<div class="col-6 mb-5 col-lg-{{ $col }} product">
+<div class="col-6 mb-5 mt-0 col-lg-{{ $col }} product">
     <div class="product-item-list">
         <!-- Product Image with Hover Effects -->
         <div class="position-relative overflow-hidden">
@@ -16,8 +16,7 @@
             @endif
 
             <!-- Product Image -->
-            <img src="{{ $product->thumbnail->getUrl() }}" class="card-img-top object-fit-cover rounded"
-                alt="{{ $product->translateAttribute('name') }}" style="height: 200px;">
+            <img src="{{ $product->thumbnail->getUrl() }}" class="card-img-top object-fit-cover rounded" alt="{{ $product->translateAttribute('name') }}">
 
             <!-- View Product Link -->
             <a href="{{ $product->defaultUrl->slug }}" class="stretched-link"></a>
