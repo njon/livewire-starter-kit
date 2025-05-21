@@ -8,7 +8,7 @@
     <!-- Tide + Wishlist Row -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2>{{ $product->translateAttribute('name') }}</h2>
+            <h2 class="fs-3 fs">{{ $product->translateAttribute('name') }}</h2>
         </div>
         <div class="col-md-6 text-end">
             <div class="btn-wishlist">
@@ -52,10 +52,22 @@
     <!-- Description + Sticky Box Row -->
     <div class="row">
         <div class="col-md-8 product-description">
-            <h2 class="mb-4">Service Description</h2>
-            <p>{!! $product->translateAttribute('description') !!}</p>
-
             <div class="accordion mb-4 mt-4">
+                <div class="accordion-item">
+                    <h2 class="accordion-header accordion-button collapsed sf" id="description-container" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#descriptionReviews"
+                        aria-controls="descriptionReviews">
+                        Service description
+                    </h2>
+
+                    <div id="descriptionReviews" class="accordion-collapse collapse"
+                        aria-labelledby="description-container">
+                        <div class="accordion-product">
+                            <p>{!! $product->translateAttribute('description') !!}</p>
+                        </div>
+                    </div>
+                </div>
+
                 @include('products.questions.index', ['product' => $product, 'questions' =>
                 $product->questions()->paginate(10)])
                 @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
@@ -67,7 +79,7 @@
                 <div class="card shadow-lg border-0 rounded-2 overflow-hidden"
                     style="max-width: 400px; margin: 2rem auto;">
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="text-muted small">
                                 <i class="bi bi-geo-alt-fill me-1"></i> {{ $product->city }} Athens, Thessaloniki
                             </div>
@@ -85,8 +97,8 @@
                             </div>
                         </div>
 
-                        <h4 class="card-title fw-bold text-dark">{{ $product->translateAttribute('name') }}</h4>
-                        <p class="card-text text-muted mb-4">
+                        <h4 class="card-title text-dark lh-35">{{ $product->translateAttribute('name') }}</h4>
+                        <p class="card-text text-muted mb-4 sf">
                             {{ $product->translateAttribute('short_description') }}
                         </p>
 

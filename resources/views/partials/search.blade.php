@@ -1,14 +1,20 @@
-<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/shoes" method="GET" id="ajax-search-form">
-  <div class="accordion mb-4" id="filterAccordion">
+<script>
+    min = 0;
+    max = 300;
 
+    curMin = {{ request()->get('min_price', 0) }};
+    curMax = {{ request()->get('max_price', 300) }};
+</script>
+<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form">
+  <div class="accordion mb-4" id="filterAccordion">
     <div class="">
       <h5 class="mb-3 fs-6 fw-600">Price Selector</h5>
       <h6 class="mb-5 fw-normal info-text text-muted">Select Your Preferred Price Range</h6>
 
       <!-- Price Display -->
       <div class="d-flex justify-content-between mb-4">
-        <div class=" p-2 rounded filter-prices">€<span id="min-price">50</span></div>
-        <div class=" p-2 rounded filter-prices">€<span id="max-price">250</span></div>
+        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="min-price" data-default="0" value="{{ request()->get('min_price') }}" name="min_price"></input></div>
+        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="max-price" data-default="300" value="{{ request()->get('max_price') }}" name="max_price"></input></div>
       </div>
 
       <!-- Combined Slider + Histogram Container -->
@@ -51,99 +57,9 @@
         </div>
       </div>
     </div>
-
-    <style>
-      .price-filter-container {
-        padding: 0 15px;
-      }
-
-      .histogram-bar {
-        flex: 1;
-        background-color: rgba(0, 0, 0, 0.05);
-        margin: 0 1px;
-        transition: background-color 0.2s;
-      }
-
-      .histogram-bar:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-      }
-
-      /* Slider styling */
-      .noUi-target {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        height: 4px;
-      }
-
-      .noUi-connects {
-        background: rgba(0, 0, 0, 0.2);
-        height: 4px;
-      }
-
-      .noUi-connect {
-        background: #000;
-      }
-
-      .noUi-handle {
-        width: 16px;
-        height: 16px;
-        top: -6px;
-        border-radius: 50%;
-        border: 2px solid #000;
-        box-shadow: none;
-      }
-
-      .noUi-handle::before,
-      .noUi-handle::after {
-        display: none;
-      }
-    </style>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
     <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const priceSlider = document.getElementById('price-slider');
-        const minPrice = document.getElementById('min-price');
-        const maxPrice = document.getElementById('max-price');
-        const histogramBars = document.querySelectorAll('.histogram-bar');
-        // Initialize slider
-        min = 0;
-        max = 300;
-        noUiSlider.create(priceSlider, {
-          start: [min, max],
-          connect: true,
-          // tooltips: [true, true],
-          range: {
-            'min': min,
-            'max': max
-          },
-          margin: 10, // Minimum range between handles
-          step: 5
-        });
-        // Update displayed prices
-        priceSlider.noUiSlider.on('update', function(values) {
-          minPrice.textContent = Math.round(values[0]);
-          maxPrice.textContent = Math.round(values[1]);
-        });
-        // Highlight histogram bars within selected range
-        priceSlider.noUiSlider.on('update', function(values) {
-          const min = Math.round(values[0]);
-          const max = Math.round(values[1]);
-          histogramBars.forEach(bar => {
-            const barMin = parseInt(bar.dataset.min);
-            const barMax = parseInt(bar.dataset.max);
-            if (barMin >= min && barMax <= max) {
-              bar.style.backgroundColor = 'rgb(238 238 238)';
-            } else {
-              bar.style.backgroundColor = '#f6f6f6';
-            }
-          });
-        });
-      });
-    </script>
 
     <!-- Rating Accordion Item -->
     <div class="accordion-item">
@@ -240,7 +156,7 @@
   </div>
 
   <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-    <button type="submit" class="btn btn-primary px-4 me-md-2">
+    <button type="submit" id="search-button" class="d-none">
       <i class="fas fa-filter me-1"></i> Apply Filters
     </button>
 

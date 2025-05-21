@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +38,7 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\Product::class,
             // \App\Models\CustomProduct::class,
         );
+
+        Paginator::useBootstrapFive(); // or Paginator::useBootstrapFive();
     }
 }

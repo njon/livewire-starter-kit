@@ -43,31 +43,36 @@ class ProductController extends Controller
     /**
      * Display products by collection.
      */
-    public function category($collection): View
+    public function category($collection)
     {
+        $ajax = request()->get('ajax', false);
+        $products = $collection->products()->paginate(4);
         $filterCategories = FilterCategory::with('options')->get();
 
+        if($ajax == 'true') {
+            // Get the current page from the request, default to 1
+            $currentPage = request()->get('page', 1);
+        
+            // Return a JSON response with the rendered view and pagination data
+            return view('products.ajax', [
+                'products' => $products,
+                'pagination' => $products->links(),
+                'filterCategories' => $filterCategories,
+            ])->render();
+        }
+
         return view('products.collection', [
-            'products' => $collection->products,
+            'products' => $products,
             'collection' => $collection,
             'title' => $collection->translateAttribute('name') . ' Collection | Your Store',
             'filterCategories' => $filterCategories,
+            'pagination' => $products->links()
         ]);
     }
 
     public function ajaxResults()
     {
-        // Get the current page from the request, default to 1
-        $currentPage = request()->get('page', 1);
-    
-        // Paginate the products with 10 items per page
-        $products = Product::paginate(32, ['*'], 'page', $currentPage);
-        
-        
-        // Return a JSON response with the rendered view and pagination data
-        return view('products.ajax', [
-            'products' => $products,
-        ])->render();
+
     }
 
     public function page() 

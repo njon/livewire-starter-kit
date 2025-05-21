@@ -26,9 +26,9 @@
         <!-- Card Body -->
         <div class="d-flex flex-column mt-4">
             <!-- Product Title -->
-            <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="d-flex flex-row justify-content-between align-items-start">
                 <div>
-                    <h3 class="card-title fs-6">
+                    <h3 class="card-title fs-17">
                         <a href="{{ $product->defaultUrl->slug }}" class="text-decoration-none text-dark">
                             {{ $product->translateAttribute('name') }}
                         </a>
@@ -44,12 +44,12 @@
             </div>
 
             <!-- Location -->
-            <div class="product-city text-muted small  mt-3">
+            <div class="product-city text-muted fs-13 mt-3">
                 {{ $product->translateAttribute('city') ?? 'Athens, Thessaloniki' }}
             </div>
 
             <!-- Product Meta -->
-            <div class="d-flex flex-row text-muted small mb-2 mt-2 gap-2">
+            <div class="d-flex flex-row text-muted fs-13 mb-2 mt-2 gap-2">
                 <div class="attribute">
                     <span class="material-symbols-outlined product-icon">person</span>
                     2{{ $product->translateAttribute('participants') }} participants

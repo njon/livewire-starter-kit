@@ -2,16 +2,6 @@
 html { box-sizing: border-box; }
 *, *::before, *::after { box-sizing: inherit; }
 
-body {
-    /* font-family: 'Roboto', sans-serif;           ⬅︎  uncomment to enable   */
-    font-size: 16px;          /* consolidated size */
-    line-height: 30px;        /* consolidated lh   */
-}
-
-a {
-    color: #000;
-    text-decoration: none;
-}
 a:hover { opacity: .8; }
 
 /* Images */
@@ -24,7 +14,10 @@ img.review-avatar { border-radius: 50%; }
     transition: 0.3s;
 }
 .object-fit-cover:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
+}
+.object-fit-cover {
+    transition: 0.15s;
 }
 
 /* Icons */
@@ -71,6 +64,7 @@ button.btn.btn-sm.btn-remove:hover { opacity: .6; }
 .current-price         { font-size: 1.5rem; font-weight: 700; color: #14694bb1; }
 .discount-percentage   { background: #eeffe3; padding: 5px 10px; border-radius: 5px; }
 .special-offer         { background: #F6FEF0; padding: 5px 10px; border-radius: 4px; margin: 15px 0; text-align: center; width: max-content; }
+.price-input { border: 0; width: 31px; outline: 0 !important; text-align: center; }
 
 /* Product attributes & info */
 .attribute     {line-height: 21px;margin-bottom: 10px;border: 1px solid transparent;}
@@ -194,9 +188,6 @@ h2.accordion-button {
     font-size: 19px;
     line-height: 23px;
 }
-.product-price.fs-5.text-success {
-    font-weight: 600;
-}
 
 /* @todo Replace class name */
 body .text-success {
@@ -205,7 +196,7 @@ body .text-success {
 .fw-600 {
     font-weight: 600;
 }
-
+.sf { font-family: "Plus Jakarta Sans"; }
 /* @todo rework. avoid important */
 .input-group > * {
     background: #f1f1f1 !important;
@@ -224,7 +215,14 @@ body .text-success {
     top: 0;
     left: 0;
 }
+li.breadcrumb-item {
+    font-size: 14px;
+}
 
+li.breadcrumb-item a {
+    text-decoration: none;
+    color: #385e25;
+}
 #imageGalleryModal .modal-body.text-center {
     padding: 0;
 }
@@ -248,6 +246,7 @@ button#prevImage {
 .classic-color {
     color: #98B68A;
 }
+.lh-35 { line-height: 35px; }
 .fs-30 {
     font-size: 30px;
 }
@@ -257,7 +256,12 @@ button#prevImage {
 .fs-12 {
     font-size: 12px !important;
 }
-
+.fs-13 {
+    font-size: 13px !important;
+}
+.fs-17 {
+    font-size: 17px !important;
+}
 .ls-1 {
     letter-spacing: -0.3px;
 }

@@ -1,6 +1,6 @@
 <!-- Price Range Accordion Item -->
 <div class="accordion-item">
-    <h2 class="accordion-header accordion-button collapsed" id="questions-container" type="button"
+    <h2 class="accordion-header accordion-button collapsed sf" id="questions-container" type="button"
         data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-controls="collapseQuestions">
         Questions and Answers
     </h2>

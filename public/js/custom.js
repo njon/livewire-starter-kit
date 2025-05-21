@@ -2,6 +2,117 @@ const curCurrency = '€';
 let $form;
 
 $(document).ready(function() {
+    // Variables for control
+    let searchTimeout;
+    let isSubmitting = false;
+    let isInitialLoad = true; // New flag for initial load detection
+
+    // Elements
+    const $searchButton = $('#search-button');
+    const $minPriceInput = $('#min-price');
+    const $maxPriceInput = $('#max-price');
+    const $priceSlider = $('#price-slider');
+    const $histogramBars = $('.histogram-bar');
+
+
+    noUiSlider.create($priceSlider[0], {
+        start: [curMin, curMax],
+        connect: true,
+        range: { 'min': min, 'max': max },
+        margin: 10,
+        step: 5
+    });
+
+    // Modified handler with initial load check
+    function handlePriceChange() {
+        if (isInitialLoad) return; // Skip during initial load
+        
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(triggerSearch, 500);
+    }
+
+    function triggerSearch() {
+        if (isSubmitting) return;
+        isSubmitting = true;
+        $searchButton.trigger('click');
+        setTimeout(() => { isSubmitting = false; }, 1000);
+    }
+
+    // Set up event listeners
+    $minPriceInput.add($maxPriceInput).on('input change', handlePriceChange);
+
+    $priceSlider[0].noUiSlider.on('update', function(values) {
+        const minVal = Math.round(values[0]);
+        const maxVal = Math.round(values[1]);
+
+        $minPriceInput.val(minVal);
+        $maxPriceInput.val(maxVal);
+
+        $histogramBars.each(function() {
+            const barMin = parseInt($(this).data('min'));
+            const barMax = parseInt($(this).data('max'));
+            $(this).css('background-color', 
+                (barMin >= minVal && barMax <= maxVal) ? 'rgb(238, 238, 238)' : '#f6f6f6'
+            );
+        });
+
+        handlePriceChange();
+    });
+
+    // Mark initial load as complete after short delay
+    setTimeout(() => {
+        isInitialLoad = false;
+    }, 500);
+});
+
+
+
+$(document).ready(function() {
+
+
+    $(document).on('click', '.filter-tag-remove', function() {
+        var $button = $(this);
+        var form = $('#ajax-search-form');
+        var keys = $button.data('keys').split(',');
+        var value = $button.data('value');
+        
+        $.each(keys, function(index, key) {
+            console.log(paramName);
+            if (key.endsWith('[]')) {
+                // Handle array parameters (like occasion[])
+                var paramName = key.replace('[]', '');
+                var $inputs = form.find('input[name="' + paramName + '[]"]');
+                
+                $inputs.each(function() {
+                    if ($(this).val() === value) {
+                        $(this).prop('checked', false);
+                    }
+                });
+            } else {
+                // Handle regular parameters
+                var $input = form.find('[name="' + key + '"]');
+                var default_value = $input.data('default');
+                $input.val(default_value);
+
+                // if ($input.length) {
+                //     if ($input.attr('type') === 'range') {
+                //         $input.val(min); // Reset to minimum
+                //         $input.val(max); // Reset to minimum
+                //         $('#ratingValueDisplay').text($input.attr('min'));
+                //     } else {
+                //         $input.val('');
+                //     }
+                // }
+            }
+        });
+        
+        // Trigger form submission
+        $('#search-button').click();
+        $button.closest('.filter-tag').remove();
+    });
+
+
+
     // Initialize variables
     let currentImageIndex = 0;
     let images = [];
@@ -399,12 +510,14 @@ function loadBtn(btn) {
 
     $('#ajax-search-form').on('submit', function(e) {
         e.preventDefault();
-
         const formData = $('#ajax-search-form').serialize();
+        const URL = location.protocol + '//' + location.host + location.pathname + '?' + formData;
+        window.history.pushState('page2', 'Title', URL);
+        
         $('#search-results').html('<div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div><div class="col-6 mb-5 col-lg-4 product" bis_skin_checked="1"> <div class="product-item-list" bis_skin_checked="1"> <!-- Product Image Placeholder --> <div class="position-relative overflow-hidden placeholder-glow" bis_skin_checked="1"> <div class="card-img-top placeholder rounded card-img-top object-fit-cover rounded" background-color: #e9ecef;" bis_skin_checked="1"></div> <a class="stretched-link placeholder"></a> </div> <!-- Card Body Placeholders --> <div class="d-flex flex-column mt-4" bis_skin_checked="1"> <!-- Title & Wishlist --> <div class="d-flex justify-content-between align-items-center mb-2" bis_skin_checked="1"> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-8" style="width: 250px;"></span> </div> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder" style="width: 24px; height: 24px;"></span> </div> </div> <!-- Location --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Meta (Participants/Duration) --> <div class="placeholder-glow my-2" bis_skin_checked="1"> <span class="placeholder col-5" style="height: 14px;"></span> </div> <!-- Price Placeholder --> <div class="placeholder-glow" bis_skin_checked="1"> <span class="placeholder col-3" style="height: 24px;"></span> <span class="placeholder col-2 ms-2" style="height: 16px;"></span> <span class="placeholder col-1 ms-2" style="height: 16px;"></span> </div> </div> </div> </div>');
 
         $.ajax({
-            url: "/ajax-search",
+            url: URL + '&ajax=true',
             type: "GET",
             data: formData,
             success: function(response) {

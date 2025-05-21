@@ -1,5 +1,5 @@
 <div class="accordion-item">
-    <h2 class="accordion-header accordion-button collapsed" id="reviews-container" type="button"
+    <h2 class="accordion-header accordion-button collapsed sf" id="reviews-container" type="button"
         data-bs-toggle="collapse" data-bs-target="#collapseReviews" aria-controls="collapseReviews">
         Customer Reviews
     </h2>
