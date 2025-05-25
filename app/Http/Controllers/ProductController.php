@@ -9,6 +9,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Services\CartService;
 use App\Models\FilterCategory;
 use App\Services\ProductSearchService;
+use Illuminate\Support\Facades\DB;
+use App\Models\FilterOption;
+
 
 class ProductController extends Controller
 {
@@ -46,13 +49,10 @@ class ProductController extends Controller
     public function category($collection)
     {
         $ajax = request()->get('ajax', false);
-        $products = $collection->products()->paginate(4);
+        $products = $collection->products()->paginate(10);
         $filterCategories = FilterCategory::with('options')->get();
 
         if($ajax == 'true') {
-            // Get the current page from the request, default to 1
-            $currentPage = request()->get('page', 1);
-        
             // Return a JSON response with the rendered view and pagination data
             return view('products.ajax', [
                 'products' => $products,
@@ -68,11 +68,6 @@ class ProductController extends Controller
             'filterCategories' => $filterCategories,
             'pagination' => $products->links()
         ]);
-    }
-
-    public function ajaxResults()
-    {
-
     }
 
     public function page() 

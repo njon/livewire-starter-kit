@@ -69,12 +69,43 @@ $(document).ready(function() {
 
 $(document).ready(function() {
 
+    function updBdgs() {
+        $('.filter-occasion input[type="checkbox"]').each(function() {
+            updateBadgeState($(this));
+        });
+    }
+
+
+    $('.filter-occasion').on('change', 'input[type="checkbox"]', function() {
+        updBdgs();
+    });
+
+
+
+    function updateBadgeState(checkbox) {
+        const badge = checkbox.next('.search-selector');
+        if (badge.length) {
+            const isChecked = checkbox.prop('checked');
+            
+            // Toggle active state class
+            badge.toggleClass('selection-active', isChecked);
+            
+            // Toggle icon color
+            badge.find('i').toggleClass('text-white', isChecked);
+            
+            // Optional: Toggle text color if needed
+            badge.find('span:not(.fa)').toggleClass('text-white', isChecked);
+        }
+    }
 
     $(document).on('click', '.filter-tag-remove', function() {
         var $button = $(this);
         var form = $('#ajax-search-form');
         var keys = $button.data('keys').split(',');
         var value = $button.data('value');
+                setTimeout(function() {
+           updBdgs(); 
+        } , 11);
         
         $.each(keys, function(index, key) {
             console.log(paramName);
@@ -259,26 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 $(document).ready(function() {
-
-
-function loadBtn(btn) {
-    const $button = btn;
-      // Button Off
-  if ($button.hasClass('is-active')) {
-    $button
-      .removeClass('is-active');
-    return;
-  }
-  
-  // Button On (with a loader)
-  $button.addClass('is-loading');  
-  setTimeout(function () {
-    $button
-      .removeClass('is-loading')
-      .addClass('is-active');
-  }, 500);
-}
-
 
     const csrf_token = $('[name="_token"]').val();
 

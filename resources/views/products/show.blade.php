@@ -52,22 +52,10 @@
     <!-- Description + Sticky Box Row -->
     <div class="row">
         <div class="col-md-8 product-description">
+            <h2 class="mb-4 fs-4 sf">Service description</h2>
+            <p>{!! $product->translateAttribute('description') !!}</p>
+
             <div class="accordion mb-4 mt-4">
-                <div class="accordion-item">
-                    <h2 class="accordion-header accordion-button collapsed sf" id="description-container" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#descriptionReviews"
-                        aria-controls="descriptionReviews">
-                        Service description
-                    </h2>
-
-                    <div id="descriptionReviews" class="accordion-collapse collapse"
-                        aria-labelledby="description-container">
-                        <div class="accordion-product">
-                            <p>{!! $product->translateAttribute('description') !!}</p>
-                        </div>
-                    </div>
-                </div>
-
                 @include('products.questions.index', ['product' => $product, 'questions' =>
                 $product->questions()->paginate(10)])
                 @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])

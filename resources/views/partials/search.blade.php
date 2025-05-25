@@ -1,11 +1,10 @@
 <script>
-    min = 0;
-    max = 300;
-
-    curMin = {{ request()->get('min_price', 0) }};
-    curMax = {{ request()->get('max_price', 300) }};
+  min = 0;
+  max = 300;
+  curMin = {{ request()->get('min_price', 0) }}
+  curMax = {{ request()->get('max_price', 300) }}
 </script>
-<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form">
+<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form">
   <div class="accordion mb-4" id="filterAccordion">
     <div class="">
       <h5 class="mb-3 fs-6 fw-600">Price Selector</h5>
@@ -13,8 +12,10 @@
 
       <!-- Price Display -->
       <div class="d-flex justify-content-between mb-4">
-        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="min-price" data-default="0" value="{{ request()->get('min_price') }}" name="min_price"></input></div>
-        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="max-price" data-default="300" value="{{ request()->get('max_price') }}" name="max_price"></input></div>
+        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="min-price" data-default="0"
+            value="{{ request()->get('min_price') }}" name="min_price"></input></div>
+        <div class=" p-2 rounded filter-prices">€<input type="text" class="price-input" id="max-price"
+            data-default="300" value="{{ request()->get('max_price') }}" name="max_price"></input></div>
       </div>
 
       <!-- Combined Slider + Histogram Container -->
@@ -60,63 +61,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
     <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
 
-
     <!-- Rating Accordion Item -->
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingRating">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
           data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
-          Minimum Rating
+          Filter by Rating
         </button>
       </h2>
       <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
         <div class="accordion-body">
-          <label for="ratingRange" class="form-label">
-            Selected: <span id="ratingValueDisplay" class="fw-bold">{{ request('rating', 0) }}</span> stars
-          </label>
-          <input type="range" class="form-range" min="0" max="5" step="0.5" id="ratingRange" name="rating"
-            value="{{ request('rating', 0) }}"
-            oninput="document.getElementById('ratingValueDisplay').textContent = this.value">
-          <div class="d-flex justify-content-between mt-1 text-muted small">
-            <span>0 stars</span>
-            <span>5 stars</span>
-          </div>
+            @include('products.filters.rating')
         </div>
       </div>
     </div>
 
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingRating">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-          data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
-          Minimum Rating
-        </button>
-      </h2>
-      <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
-        <div class="accordion-body">
-          <div class="row text-center my-1" bis_skin_checked="1">
-            <div class="col-4" bis_skin_checked="1">
-              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
-                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">person</i>
-                <small class="fw-semibold text-dark fs-12">2 participants</small>
-              </div>
-            </div>
-            <div class="col-4" bis_skin_checked="1">
-              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
-                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
-                <small class="fw-semibold text-dark fs-12">45 minutes</small>
-              </div>
-            </div>
-            <div class="col-4" bis_skin_checked="1">
-              <div class="attribute bg-light py-3 rounded-3" bis_skin_checked="1">
-                <i class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
-                <small class="fw-semibold text-dark fs-12">45 minutes</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <script>
+      // Toggle "& Up" text when selecting lower ratings
+      document.querySelectorAll('.rating-filter input').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            // Uncheck higher ratings
+            const higherRatings = Array.from(document.querySelectorAll('.rating-filter input'))
+              .filter(input => input.value > this.value);
+            higherRatings.forEach(input => input.checked = false);
+          }
+        });
+      });
+    </script>
 
     <!-- Categories Accordion Items -->
     @if(isset($filterCategories) && $filterCategories->count() > 0)
@@ -135,16 +107,21 @@
         aria-labelledby="heading{{ $category->slug }}">
         <div class="accordion-body">
           @if($category->options->count() > 0)
-          @foreach($category->options as $option)
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="{{ $category->slug }}[]" value="{{ $option->value }}"
-              id="filter-{{ $category->slug }}-{{ $option->id }}"
-              {{ in_array($option->value, (array)request($category->slug, [])) ? 'checked' : '' }}>
-            <label class="form-check-label" for="filter-{{ $category->slug }}-{{ $option->id }}">
-              {{ $option->name }}
-            </label>
-          </div>
-          @endforeach
+
+            @if($category->slug == 'occasion')
+              @include('products.filters.box', [
+              'options' => $category->options,
+              'category' => $category,
+              ])
+
+            @else
+              @include('products.filters.default', [
+              'options' => $category->options,
+              'category' => $category,
+              ])
+
+            @endif
+
           @else
           <p class="text-muted">No options available.</p>
           @endif
@@ -155,6 +132,7 @@
     @endif
   </div>
 
+  <input type="text" name="page" value="{{ request()->get('page', '1') }}">
   <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
     <button type="submit" id="search-button" class="d-none">
       <i class="fas fa-filter me-1"></i> Apply Filters

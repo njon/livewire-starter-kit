@@ -20,7 +20,7 @@
                 </div>
 
                 @foreach($reviews as $review)
-                <div class="review-card mb-4 p-3 border rounded">
+                <div class="review-card mb-4 pb-4 border-bottom">
                     <div class="d-flex justify-content-between">
                         <div class="reviewer-name fw-bold">
                             {{ $review->user ? $review->user->name : $review->name }}
@@ -66,7 +66,7 @@
                 @else
                 <div class="mt-4">
                     <!-- Button to trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewRestrictionModal">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#reviewRestrictionModal">
                         Leave a Review
                     </button>
                 </div>

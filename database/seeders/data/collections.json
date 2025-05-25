@@ -1,18 +1,74 @@
 [
     {
-        "name": "Shoes",
-        "description": "Collection of Shoes"
+        "name": "Tours",
+        "description": "Guided tours and sightseeing"
     },
     {
-        "name": "Trousers",
-        "description": "Collection of Trousers"
+        "name": "Wellness",
+        "description": "Spas, massages, and relaxation"
     },
     {
-        "name": "Hoodies",
-        "description": "Collection of Hoodies"
+        "name": "Adventure",
+        "description": "Extreme sports and outdoor activities"
     },
     {
-        "name": "Sale",
-        "description": "50% OFF Selected Items"
+        "name": "Dining",
+        "description": "Restaurants and culinary experiences"
+    },
+    {
+        "name": "Events",
+        "description": "Concerts, shows, and tickets"
+    },
+    {
+        "name": "Leisure",
+        "description": "Fun activities and entertainment"
+    },
+    {
+        "name": "Beauty",
+        "description": "Salons and grooming services"
+    },
+    {
+        "name": "Nightlife",
+        "description": "Clubs, bars, and parties"
+    },
+    {
+        "name": "Workshops",
+        "description": "Classes and learning experiences"
+    },
+    {
+        "name": "Outdoors",
+        "description": "Nature and hiking adventures"
+    },
+    {
+        "name": "Water",
+        "description": "Boat tours and water sports"
+    },
+    {
+        "name": "Culture",
+        "description": "Museums and local traditions"
+    },
+    {
+        "name": "Family",
+        "description": "Kids-friendly activities"
+    },
+    {
+        "name": "Virtual",
+        "description": "Online experiences and VR"
+    },
+    {
+        "name": "Photography",
+        "description": "Photo shoots and videography"
+    },
+    {
+        "name": "Rentals",
+        "description": "Vehicle and equipment rentals"
+    },
+    {
+        "name": "Gaming",
+        "description": "VR and esports entertainment"
+    },
+    {
+        "name": "Unique Experiences",
+        "description": "Exclusive and special experiences"
     }
 ]

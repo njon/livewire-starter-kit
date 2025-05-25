@@ -95,7 +95,7 @@
         <nav class="navbar navbar-expand-lg">
           <div class="container">
             <div class="collapse navbar-collapse" id="navbarNav">
-              <!-- <ul class="navbar-nav mx-auto">
+              <ul class="navbar-nav mx-auto">
                 @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $item)
                 @if($item->parent_id == null)
                 <li class="dropdown nav-item">
@@ -127,45 +127,7 @@
                 </li>
                 @endif
                 @endforeach
-              </ul> -->
-              <ul class="navbar-nav d-flex justify-content-between w-100 mx-auto">
-    <li class="dropdown nav-item">
-        <a href="shoes" class="nav-link" data-toggle="dropdown">Shoes</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="trousers" class="nav-link" data-toggle="dropdown">Trousers</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="hoodies" class="nav-link" data-toggle="dropdown">Hoodies</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="sale" class="nav-link" data-toggle="dropdown">Sale</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="new-arrivals" class="nav-link" data-toggle="dropdown">New Arrivals</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="accessories" class="nav-link" data-toggle="dropdown">Accessories</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="outerwear" class="nav-link" data-toggle="dropdown">Outerwear</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="athletic" class="nav-link" data-toggle="dropdown">Athletic</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="formal" class="nav-link" data-toggle="dropdown">Formal</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="vintage" class="nav-link" data-toggle="dropdown">Vintage</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="beachwear" class="nav-link" data-toggle="dropdown">Beachwear</a>
-    </li>
-    <li class="dropdown nav-item">
-        <a href="workwear" class="nav-link" data-toggle="dropdown">Workwear</a>
-    </li>
-</ul>
+              </ul>
             </div>
           </div>
         </nav>

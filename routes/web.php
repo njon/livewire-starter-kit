@@ -21,7 +21,6 @@ Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.c
 // Product Routes
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
-Route::get('/privacy-policy', [ProductController::class, 'page']);
 
 // Product Questions Routes
 Route::resource('products.questions', ProductQuestionController::class)
@@ -47,6 +46,12 @@ Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])
 Route::get('/checkout/success/{order}', [CartController::class, 'order']);
 
 
+foreach (['privacy-policy', 'refund-policy', 'terms-of-service'] as $page) {
+    Route::get("/{$page}", [ProductController::class, 'page']);
+}
+
+
+
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     if ($product = \App\Models\Product::findBySlug($slug)) {
@@ -56,6 +61,8 @@ Route::get('{slug}', function($slug) {
     if ($collection = App\Models\Collection::findBySlug($slug)) {
         return app(ProductController::class)->category($collection);
     }
+
+    return view('errors.404', ['message' => 'Page not found']);
 
 })->where('slug', '.*');
 

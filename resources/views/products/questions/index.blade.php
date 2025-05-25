@@ -14,7 +14,7 @@
                 No questions have been asked yet. Be the first to ask a question!
             </div>
             <div class="mt-3">
-                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                <button type="button" class="btn btn-outline-success mb-4" data-bs-toggle="modal"
                     data-bs-target="#askQuestionModal">
                     Ask Question
                 </button>

@@ -16,7 +16,7 @@
             @endif
 
             <!-- Product Image -->
-            <img src="{{ $product->thumbnail->getUrl() }}" class="card-img-top object-fit-cover rounded" alt="{{ $product->translateAttribute('name') }}">
+            <img src="{{ $product->thumbnail->getUrl() }}" class="card-img-top object-fit-cover rounded-4" alt="{{ $product->translateAttribute('name') }}">
 
             <!-- View Product Link -->
             <a href="{{ $product->defaultUrl->slug }}" class="stretched-link"></a>
@@ -62,8 +62,7 @@
 
             <!-- Price -->
             <div class="mt-auto">
-                <div class="product-price fw-600 fs-5 {{ $product->has_discount ? 'text-success' : 'text-dark' }}">
-
+                <div class="product-price fw-500 fs-5 text-dark">
                     <span class="sale-price">
                         {{ $product->price }}
                     </span>
@@ -75,9 +74,7 @@
 
                     <!-- Discount Badge -->
                     @if($product->has_discount)
-                    <span class="badge bg-success fw-normal text-white ms-2">
-                        -{{ $product->discount_percentage }}%
-                    </span>
+                    <span class="badge bg-success fw-normal text-white ms-2 fs-13">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
             </div>

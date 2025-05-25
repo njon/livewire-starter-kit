@@ -1,4 +1,4 @@
-<div class="filter-tags-container mb-3">
+<div class="filter-tags-container mb-4">
     <!-- @todo Move to Service file or helper -->
     
     @php

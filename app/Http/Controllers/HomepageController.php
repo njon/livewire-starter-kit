@@ -10,7 +10,7 @@ class HomepageController extends Controller
 {
     function index()
     {
-        $products = Product::all();
+        $products = Product::paginate(8);
         $categories = Collection::all();
 
 
