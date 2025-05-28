@@ -23,12 +23,12 @@ class ProductVariant extends \Lunar\Models\ProductVariant
     {
         $discount = $this->product->discounts->first() ?? new Discount();
 
-        return (new DiscountService($this->prices->first(), $discount))->calculate();
+        return (new DiscountService($this->prices->sortBy('price')->first(), $discount))->calculate();
     }
 
     public function getDefaultPrice()
     {
-        return $this->prices->first()->price->value;
+        return $this->prices->sortBy('price')->first()->price->value;
     }
 
     protected function computedAttributes(): array

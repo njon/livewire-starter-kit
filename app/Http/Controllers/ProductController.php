@@ -49,8 +49,23 @@ class ProductController extends Controller
     public function category($collection)
     {
         $ajax = request()->get('ajax', false);
-        $products = $collection->products()->paginate(10);
+        $products = $collection->products()->orderByLowestPrice()->paginate(6);
         $filterCategories = FilterCategory::with('options')->get();
+        $xx = $collection->products()->orderByLowestPrice();
+
+        // dd($xx->toSql());
+
+        $collectionId = $collection->id;
+
+        $products = Product::whereHas('collections', function ($query) use ($collectionId) {
+            $query->where('collection_id', $collectionId);
+        })->orderByLowestPrice()->paginate(6);
+
+// dd($products->toSql());
+
+    
+
+
 
         if($ajax == 'true') {
             // Return a JSON response with the rendered view and pagination data
@@ -70,8 +85,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function page() 
+    public function page($name) 
     {
-        return view('articles.index');
+        return view('articles.' . $name);
     }
 }

@@ -4,6 +4,7 @@
   curMin = {{ request()->get('min_price', 0) }}
   curMax = {{ request()->get('max_price', 300) }}
 </script>
+
 <form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form">
   <div class="accordion mb-4" id="filterAccordion">
     <div class="">
@@ -75,20 +76,6 @@
         </div>
       </div>
     </div>
-
-    <script>
-      // Toggle "& Up" text when selecting lower ratings
-      document.querySelectorAll('.rating-filter input').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          if (this.checked) {
-            // Uncheck higher ratings
-            const higherRatings = Array.from(document.querySelectorAll('.rating-filter input'))
-              .filter(input => input.value > this.value);
-            higherRatings.forEach(input => input.checked = false);
-          }
-        });
-      });
-    </script>
 
     <!-- Categories Accordion Items -->
     @if(isset($filterCategories) && $filterCategories->count() > 0)

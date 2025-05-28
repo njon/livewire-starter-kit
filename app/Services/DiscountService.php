@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
-use Lunar\Models\Price;
+// use Lunar\Models\Price;
 use Lunar\Models\Discount;
 
 class DiscountService
 {
-    protected Price $price;
     protected Discount $discount;
 
-    public function __construct(Price $price, Discount $discount)
+    public function __construct($price, Discount $discount)
     {
         $this->price = $price;
         $this->discount = $discount;

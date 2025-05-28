@@ -5,53 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            height: 80px;
-            border-bottom: 1px solid #333;
-        }
-        .back-btn {
-            color: #e0e0e0;
-            font-size: 1.2rem;
-        }
-        .logo {
-            height: 40px;
-        }
-        .nav-menu {
-            border-bottom: 1px solid #333;
-            padding: 15px 0;
-        }
-        .nav-link {
-            color: #aaa;
-            padding: 0 15px;
-        }
-        .nav-link:hover {
-            color: #fff;
-        }
-        .content {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        h1 {
-            color: #fff;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
-        .footer {
-            margin-top: auto;
-            padding: 30px 0;
-            border-top: 1px solid #333;
-            color: #aaa;
-        }
-    </style>
+    <link href="css/black.css" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->

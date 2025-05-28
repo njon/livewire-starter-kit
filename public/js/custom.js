@@ -98,6 +98,20 @@ $(document).ready(function() {
         }
     }
 
+    $(document).on('click', '.pagination .page-link', function (e) {
+        e.preventDefault(); // Prevent default link behavior
+
+        const href = $(this).attr('href');
+        const urlParams = new URLSearchParams(href.split('?')[1]);
+        const page = urlParams.get('page');
+
+        if (page) {
+            $('input[name="page"]').val(page);
+            $('#search-button').click();
+        }
+    });
+
+
     $(document).on('click', '.filter-tag-remove', function() {
         var $button = $(this);
         var form = $('#ajax-search-form');
@@ -108,7 +122,6 @@ $(document).ready(function() {
         } , 11);
         
         $.each(keys, function(index, key) {
-            console.log(paramName);
             if (key.endsWith('[]')) {
                 // Handle array parameters (like occasion[])
                 var paramName = key.replace('[]', '');

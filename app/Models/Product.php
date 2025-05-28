@@ -13,6 +13,10 @@ use Lunar\Models\Discount;
 use Lunar\Models\TaxRateAmount;
 use App\Models\ProductVariant;
 use App\Services\DiscountService;
+use Lunar\Models\Currency;
+use App\Models\ProductQuestion;
+use App\Models\ProductReview;
+use Lunar\Models\Price;
 
 class Product extends LunarProduct
 {
@@ -55,12 +59,12 @@ class Product extends LunarProduct
     {
         $discount = $this->discounts->first() ?? new Discount();
 
-        return (new DiscountService($this->prices->first(), $discount))->calculate();
+        return (new DiscountService($this->prices->sortBy('price')->first(), $discount))->calculate();
     }
 
     public function getDefaultPrice()
-    {
-        return $this->prices->first()->price->value;
+    {        
+        return $this->prices->sortBy('price')->first()->price->value;
     }
 
     public static function findBySlug(string $slug): ?self
@@ -116,11 +120,6 @@ class Product extends LunarProduct
         return $this->questions()->whereNotNull('answered_at');
     }
 
-    public function scopeLatestProducts(Builder $query): Builder
-    {
-        return $query->orderBy('created_at', 'desc');
-    }
-
     public function questions()
     {
         return $this->hasMany(ProductQuestion::class);
@@ -170,4 +169,20 @@ class Product extends LunarProduct
     {
         return $this->belongsToMany(FilterOption::class, 'product_filters');
     }
+    
+
+    public function scopeOrderByLowestPrice(Builder $query, string $direction = 'asc', $currencyId = null)
+    {
+        $currencyId = $currencyId ?? \Lunar\Models\Currency::getDefault()?->id;
+
+        return $query->orderBy(
+            \Lunar\Models\Price::select('price')
+                ->join('lunar_product_variants', 'lunar_product_variants.id', '=', 'lunar_prices.priceable_id')
+                ->whereColumn('lunar_product_variants.product_id', 'lunar_products.id')
+                ->orderBy('price', $direction)
+                ->limit(1),
+            $direction
+        );
+    }
+
 }
