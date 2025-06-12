@@ -10,6 +10,16 @@ use Lunar\Models\ProductVariant;
 use Lunar\Models\Order;
 use Lunar\Models\OrderAddress;
 use Lunar\Models\BillingAddress;
+use Lunar\Base\DataTransferObjects\PaymentAuthorize;
+use Lunar\Models\Cart;
+use Lunar\PaymentTypes\AbstractPayment;
+use Illuminate\Support\Facades\App;
+use Lunar\Facades\Payments;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Stripe\StripeClient;
+use App\Events\OrderCompleted;
+
 
 class CartController extends Controller
 {
@@ -39,11 +49,166 @@ class CartController extends Controller
         return view('partials.cart', ['cart' => $cart]);
     }
 
+    public function xxx()
+    {
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $YOUR_DOMAIN = 'https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev';
+
+        $checkout_session = $stripe->checkout->sessions->create([
+        'ui_mode' => 'embedded',
+        'customer_email' => 'customer@example.com',
+        'billing_address_collection' => 'required',
+        // 'shipping_address_collection' => ['allowed_countries' => ['US', 'CA']],
+        'line_items' => [[
+                'price_data' => [  // No fixed Price ID needed
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => 'Order #123', // Custom product name
+                    ],
+                    'unit_amount' =>31233, // Convert to cents
+                ],
+                'quantity' => 1,
+            ]],
+        'mode' => 'payment',
+        'return_url' => $YOUR_DOMAIN . '/return.html?session_id={CHECKOUT_SESSION_ID}',
+        ]);
+
+        return response()->json(['clientSecret' => $checkout_session->client_secret]);
+    }
+
     public function checkoutpage()
     {
         $cart = $this->cart->getCart();
 
         return view('partials.checkout', compact('cart'));
+    }
+
+    protected function processStripePayment(Request $request)
+    {
+        // @todo Test in live
+        
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'order_id' => 'required|exists:lunar_orders,id',
+                'amount' => 'required|numeric|min:50', // Minimum 50 cents
+                'currency' => 'sometimes|string|size:3'
+            ]);
+
+            // Get the order
+            $order = Order::findOrFail($request->order_id);
+            
+            // Verify amount matches order total (in cents)
+            $orderAmount = $order->total->value;
+            if ($request->amount != $orderAmount) {
+                throw new \Exception('Payment amount does not match order total');
+            }
+            
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+            
+            // Create payment intent
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $orderAmount,
+                'currency' => strtolower($order->currency_code),
+                'metadata' => [
+                    'order_id' => $order->id,
+                    'cart_id' => CartSession::current()->id
+                ],
+                'description' => "Payment for Order #{$order->reference}"
+            ]);
+
+            // Update the order with payment information
+            $order->update([
+                'status' => 'payment-waiting', // Or your preferred status
+                'meta' => [
+                    'payment_intent_id' => $paymentIntent->id,
+                    'payment_method' => 'stripe',
+                    'payment_status' => 'requires_payment_method'
+                ]
+            ]);
+
+            return response()->json([
+                'clientSecret' => $paymentIntent->client_secret,
+                'payment_intent_id' => $paymentIntent->id,
+                'order_reference' => $order->reference,
+                'amount' => $paymentIntent->amount,
+                'currency' => $paymentIntent->currency
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Stripe Payment Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'error' => $e->getMessage(),
+                'order_id' => $request->order_id ?? null
+            ], 500);
+        }
+    }
+
+    public function completeOrder(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'payment_intent_id' => 'required|string',
+                'order_id' => 'required|exists:lunar_orders,id'
+            ]);
+
+            // Retrieve the order
+            $order = Order::findOrFail($request->order_id);
+            
+            // Verify the payment with Stripe
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+            $paymentIntent = PaymentIntent::retrieve($request->payment_intent_id);
+
+            // Check payment status
+            if ($paymentIntent->status !== 'succeeded') {
+                throw new \Exception('Payment not completed. Status: ' . $paymentIntent->status);
+            }
+
+            // Verify payment amount matches order total (in cents)
+            $orderAmountInCents = $order->total->value;
+            if ($paymentIntent->amount !== $orderAmountInCents) {
+                throw new \Exception('Payment amount mismatch');
+            }
+
+            // Update order status and payment info
+            $order->update([
+                'status' => 'payment-received', // Or your preferred status
+                'meta' => [
+                    'payment_status' => $paymentIntent->status,
+                    'payment_received_at' => now(),
+                    'payment_method' => $paymentIntent->payment_method_types[0] ?? 'card',
+                    'payment_intent' => $paymentIntent->id,
+                    'payment_details' => [
+                        'amount_received' => $paymentIntent->amount_received,
+                        'currency' => $paymentIntent->currency,
+                        'charges' => $paymentIntent->charges->data[0] ?? null
+                    ]
+                ]
+            ]);
+
+            // Clear the cart
+            if ($cart = CartSession::current()) {
+                $cart->delete();
+            }
+
+            event(new OrderCompleted($order));
+
+            return response()->json([
+                'success' => true,
+                'order_reference' => $order->reference,
+                'payment_status' => $paymentIntent->status
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Order Completion Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'error' => $e->getMessage(),
+                'order_id' => $request->order_id ?? null
+            ], 500);
+        }
     }
 
     /**
@@ -188,6 +353,7 @@ class CartController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Checkout done successfully',
+            'order_id' => $order->id,
         ]);
     }
 }

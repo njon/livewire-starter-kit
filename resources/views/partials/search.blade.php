@@ -119,14 +119,16 @@
     @endif
   </div>
 
-  <input type="text" name="page" value="{{ request()->get('page', '1') }}">
+  <input type="hidden" name="page" value="{{ request()->get('page', '1') }}">
+  <input type="hidden" name="sort" id="sort-input" value="{{ request('sort') }}">
+  
   <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
     <button type="submit" id="search-button" class="d-none">
       <i class="fas fa-filter me-1"></i> Apply Filters
     </button>
 
     <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
-      <i class="fas fa-undo me-1"></i> Reset Search
+      <i class="fa fa-undo" aria-hidden="true"></i> Reset Search
     </a>
   </div>
 </form>

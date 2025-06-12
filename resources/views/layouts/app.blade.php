@@ -16,7 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Plus Jakarta Sans:wght@200..800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@350" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- Latest compiled and minified JavaScript -->
@@ -31,6 +30,8 @@
 <body class="antialiased text-gray-900">
 
     @include('partials.menu')
+
+    @yield('top-content')
 
     <div class="container">
         <div class="row">

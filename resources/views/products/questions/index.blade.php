@@ -128,10 +128,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             @if(!Auth::check())
-            <div class="card mb-4 mt-4 collapse" id="write-review">
+            <div class="card mb-4 mt-4" id="write-review">
                 <div class="card-body">
                     <h5 class="card-title">Write a Review</h5>
-                    <form action="products/1/reviews" method="POST" id="review-form">
+                    <form action="products/{{ $product->id }}/reviews" method="POST" id="review-form">
                         @csrf
                         @guest
                         <div class="mb-3">

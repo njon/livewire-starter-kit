@@ -14,41 +14,48 @@
       @include('partials.search')
     </div>
 
-    <div class="col-md-9 col-lg-9">
-      <div class="d-flex align-items-center flex-row-reverse">
-        <div class="sorting">
-          <span class="me-2">Sort by:</span>
+    <div class="col-md-9 col-lg-9" id="content">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        
+        <div id="search-filters flex-grow-1">
+            <div class="filter-tags-container">
+              @include('products.search-tags', ['filterCategories' => $filterCategories])
+            </div>
+        </div>
+
+        <div class="sorting flex-shrink-0">
+          <span class="me-2 small">Sort by:</span>
           <span class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
               data-bs-toggle="dropdown" aria-expanded="false">
-              Featured
+              @switch(request('sort'))
+              @case('price_asc') Price: Low to High @break
+              @case('price_desc') Price: High to Low @break
+              @case('rating_desc') Best rated @break
+              @case('rating_asc') Lowest rated @break
+              @default Default
+              @endswitch
             </button>
             <ul class="dropdown-menu" aria-labelledby="sortDropdown">
               <li>
                 <h6 class="dropdown-header">Sort options</h6>
               </li>
-              <li><a class="dropdown-item active" href="#" data-sort="featured">Featured</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="price_asc">Price: Low to High</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="price_desc">Price: High to Low</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#" data-sort="price-asc">Price: Low to High</a></li>
-              <li><a class="dropdown-item" href="#" data-sort="price-desc">Price: High to Low</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#" data-sort="rating">Customer Rating</a></li>
-              <li><a class="dropdown-item" href="#" data-sort="newest">Newest Arrivals</a></li>
-              <li><a class="dropdown-item" href="#" data-sort="bestsellers">Best Sellers</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="rating_desc">Best rated</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="rating_asc">Lowest rated</a></li>
             </ul>
-</span>
+          </span>
         </div>
       </div>
-      <div class="row items" id="search-results">
 
-        @include('products.search-tags', ['filterCategories' => $filterCategories])
-        @foreach($products as $product)
-        @include('products.product', ['product' => $product])
-        @endforeach
+      <div class="row items" id="search-results">
+          @foreach($products as $product)
+              @include('products.product', ['product' => $product])
+          @endforeach
         {!! $pagination !!}
       </div>
     </div>

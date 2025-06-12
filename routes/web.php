@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomepageController;
+use Illuminate\Http\Request;
 
 Route::get('/', [HomepageController::class, 'index']);
 
@@ -44,8 +45,11 @@ Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])
     ->name('wishlist.ajaxItems');
 
 Route::get('/checkout/success/{order}', [CartController::class, 'order']);
+Route::get('/xxx', [CartController::class, 'xxx']);
 
+Route::post('/create-payment-intent', [CartController::class, 'processStripePayment']);
 
+Route::post('/complete-order', [CartController::class, 'completeOrder']);
 
 
 

@@ -79,6 +79,7 @@
             </div>
 
             <!-- Footer CTA -->
+            @if(isset($order->customer->email) && $order->customer->email)
             <div class="card-footer bg-light">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <p class="small text-muted mb-3 mb-md-0">
@@ -86,6 +87,7 @@
                     </p>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

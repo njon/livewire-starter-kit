@@ -9,6 +9,10 @@
     color: #323232;
     border: 1px solid #ececec;
 }
+.filter-prices input::placeholder {
+    font-size: 14px;
+    color: #323232;
+}
 .noUi-target,.noUi-target * {
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;

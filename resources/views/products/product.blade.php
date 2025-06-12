@@ -1,11 +1,16 @@
 @php
-    $col = isset($col) ? $col : '4';
+$col = isset($col) ? $col : '4';
 @endphp
 
 <div class="col-6 mb-5 mt-0 col-lg-{{ $col }} product">
     <div class="product-item-list">
         <!-- Product Image with Hover Effects -->
-        <div class="position-relative overflow-hidden">
+        <div class="position-relative overflow-hidden product-image-container">
+            @if($product->average_rating != 0)
+            <div class="rating fs-15 position-absolute bottom-0 end-0 m-3 px-2">
+                <span class="small">{{ $product->average_rating }}</span> {{ $product->rating_stars }}
+            </div>
+            @endif
             @if($product->thumbnail)
 
             <!-- New Badge -->
@@ -16,7 +21,9 @@
             @endif
 
             <!-- Product Image -->
-            <img src="{{ $product->thumbnail->getUrl() }}" class="card-img-top object-fit-cover rounded-4" alt="{{ $product->translateAttribute('name') }}">
+            <div class="img-holder overflow-hidden rounded-4">
+                <img src="{{ $product->thumbnail->getUrl() }}" class="product-image object-fit-cover" alt="{{ $product->translateAttribute('name') }}">
+            </div>
 
             <!-- View Product Link -->
             <a href="{{ $product->defaultUrl->slug }}" class="stretched-link"></a>
@@ -43,13 +50,8 @@
                 </div>
             </div>
 
-            <!-- Location -->
-            <div class="product-city text-muted fs-13 mt-3">
-                {{ $product->translateAttribute('city') ?? 'Athens, Thessaloniki' }}
-            </div>
-
             <!-- Product Meta -->
-            <div class="d-flex flex-row text-muted fs-13 mb-2 mt-2 gap-2">
+            <div class="d-flex flex-row text-muted fs-13 gap-2 mt-3">
                 <div class="attribute">
                     <span class="material-symbols-outlined product-icon">person</span>
                     2{{ $product->translateAttribute('participants') }} participants
@@ -58,6 +60,11 @@
                     <span class="material-symbols-outlined product-icon">schedule</span>
                     45{{ $product->translateAttribute('length') }} mins
                 </div>
+            </div>
+
+            <!-- Location -->
+            <div class="product-city text-muted fs-13 mb-3">
+                <i class="fa fa-map-marker"></i> {{ $product->translateAttribute('city') ?? 'Athens, Thessaloniki' }}
             </div>
 
             <!-- Price -->
@@ -74,9 +81,11 @@
 
                     <!-- Discount Badge -->
                     @if($product->has_discount)
-                    <span class="badge bg-success fw-normal text-white ms-2 fs-13">-{{ $product->discount_percentage }}%</span>
+                    <span
+                        class="badge bg-success fw-normal text-white ms-2 fs-13">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
+
             </div>
         </div>
     </div>

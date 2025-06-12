@@ -9,7 +9,146 @@
     $sub_total_discounted = $cart->subTotalDiscounted->formatted();
     $tax = $cart->taxTotal->formatted();
 @endphp
+<head>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<script>
+const stripe = Stripe("pk_test_51ESlBjBdhnqCifPCEil0H2uW4cXFA0yHJ0oltIX62ILlfoJlpe7YaoZvghInuHotIYGOWB7pqhyKylJbyJa0EBqg00bQNx2Rme");
 
+initialize();
+
+// Create a Checkout Session
+async function initialize() {
+  const fetchClientSecret = async () => {
+    const response = await fetch("/xxx", {
+      method: "GET",
+    });
+    const { clientSecret } = await response.json();
+    return clientSecret;
+  };
+
+  const checkout = await stripe.initEmbeddedCheckout({
+    fetchClientSecret,
+  });
+
+  // Mount Checkout
+  checkout.mount('#checkout');
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const stripe = Stripe('{{ env("STRIPE_KEY") }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+            }
+        }
+    });
+    
+    cardElement.mount('#card-element');
+    
+    // Handle real-time validation errors
+    cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        displayError.textContent = event.error ? event.error.message : '';
+    });
+    
+    // Handle form submission
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async function(event) {
+
+        const orderId = document.getElementById('order_id').value;
+        event.preventDefault();
+        
+        const submitButton = document.getElementById('submit-button');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Processing...';
+        
+        try {
+            // 1. Create payment intent
+            const response = await fetch('/create-payment-intent', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ 
+                    amount: Math.round({{ $cart->total->value }}), // in cents
+                    currency: 'EUR',
+                    order_id: orderId
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to create payment intent');
+            }
+            
+            const { clientSecret } = await response.json();
+            
+            // 2. Confirm payment
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: { card: cardElement }
+            });
+            
+            if (error) {
+                throw error;
+            }
+            
+            // 3. Complete order
+            const completeResponse = await fetch('/complete-order', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ 
+                    payment_intent_id: paymentIntent.id,
+                    order_id: orderId
+                })
+            });
+            
+            if (!completeResponse.ok) {
+                throw new Error('Order completion failed');
+            }
+            
+            window.location.href = '/checkout/success/' + orderId; // Redirect to success page
+            
+        } catch (error) {
+            console.error('Payment error:', error);
+            document.getElementById('card-errors').textContent = 
+                error.message || 'Payment failed. Please try again.';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Pay Now';
+        }
+    });
+});
+</script>
+
+      <div id="checkout">
+        <!-- Checkout will insert the payment form here -->
+      </div>
+
+
+
+
+
+<div id="stripe-payment">
+    <form id="payment-form">
+        <div id="card-element" class="my-4 p-3 border rounded">
+            <!-- Stripe Elements will be inserted here -->
+        </div>
+        <div id="card-errors" class="text-red-500" role="alert"></div>
+        <input type="text" name="order_id" id="order_id" value="no"/>
+        
+        <button id="submit-button" class="btn btn-primary mt-4">
+            Pay {{ $total }}
+        </button>
+    </form>
+</div>
 <div class="container py-5">
     <div class="row">
         <!-- Order Summary Column -->
@@ -174,8 +313,8 @@
                     <h4 class="mb-0">Customer Information</h4>
                 </div>
                 <div class="card-body">
-                <form action="/checkout" method="POST">
-                    @csrf <!-- Laravel CSRF protection token -->
+                <form action="/checkout" method="POST" id="checkout-form">
+                    @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="firstName" class="form-label">First Name *</label>

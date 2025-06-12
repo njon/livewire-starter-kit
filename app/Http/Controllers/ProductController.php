@@ -34,7 +34,6 @@ class ProductController extends Controller
     {
         $counter = end_in_counter($product->discounts);
 
-
         return view('products.show', [
             'product' => $product,
             'relatedProducts' => $product->getRelatedProducts(),
@@ -49,40 +48,41 @@ class ProductController extends Controller
     public function category($collection)
     {
         $ajax = request()->get('ajax', false);
-        $products = $collection->products()->orderByLowestPrice()->paginate(6);
+        $sort = request()->input('sort');
+        $products = $collection->products()->applySorting($sort)->paginate(6);
         $filterCategories = FilterCategory::with('options')->get();
-        $xx = $collection->products()->orderByLowestPrice();
-
-        // dd($xx->toSql());
+        $links = $products->links();
 
         $collectionId = $collection->id;
 
-        $products = Product::whereHas('collections', function ($query) use ($collectionId) {
-            $query->where('collection_id', $collectionId);
-        })->orderByLowestPrice()->paginate(6);
-
-// dd($products->toSql());
-
-    
-
-
-
-        if($ajax == 'true') {
-            // Return a JSON response with the rendered view and pagination data
-            return view('products.ajax', [
-                'products' => $products,
-                'pagination' => $products->links(),
-                'filterCategories' => $filterCategories,
-            ])->render();
+        if (in_array($sort, ['price_asc', 'price_desc'])) {
+            $sortMethod = ($sort === 'price_desc') ? 'sortByDesc' : 'sortBy';
+            
+            $products = $products->$sortMethod(function($item) {
+                return (float) filter_var($item->price, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+            });
         }
 
-        return view('products.collection', [
+        $viewData = [
             'products' => $products,
-            'collection' => $collection,
-            'title' => $collection->translateAttribute('name') . ' Collection | Your Store',
             'filterCategories' => $filterCategories,
-            'pagination' => $products->links()
-        ]);
+            'pagination' => $links,
+        ];
+
+        if ($ajax === 'true') {
+            $filters = view('products.search-tags', ['filterCategories' => $filterCategories])->render();
+            $productsHtml = view('products.ajax', $viewData)->render();
+
+            return response()->json([
+                'filters' => $filters,
+                'products' => $productsHtml,
+            ]);
+        }
+
+        $viewData['collection'] = $collection;
+        $viewData['title'] = $collection->translateAttribute('name');
+
+        return view('products.collection', $viewData);
     }
 
     public function page($name) 

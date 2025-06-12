@@ -26,7 +26,7 @@ class Product extends LunarProduct
     public static array $detailWith = [
         'variants.basePrices.currency',
         'reviews',
-
+        'variants'
     ];
 
     public function getAttribute($key)
@@ -47,9 +47,13 @@ class Product extends LunarProduct
             'discount_value' => fn() => formatted_price($this->getDefaultPrice() - $this->getDiscountedPrice())->formatted(),
             'discount_percentage' => fn() => number_format(100 - ($this->getDiscountedPrice()/$this->getDefaultPrice() * 100), 0),
             'average_rating' => fn() => (float) $this->reviews()->avg('rating'),
-            'rating_stars' => fn() => str_repeat('★', floor($this->reviews()->avg('rating'))) . 
-                         (fmod($this->reviews()->avg('rating'), 1) >= 0.5 ? '½' : '☆') . 
-                         str_repeat('☆', 5 - ceil($this->reviews()->avg('rating'))),
+            'rating_stars' => fn() => (
+                $rating = $this->reviews()->avg('rating')
+            ) !== null
+                ? str_repeat('★', floor($rating)) .
+                    (fmod($rating, 1) >= 0.5 && $rating < 5 ? '☆' : '') .
+                    str_repeat('☆', 5 - ceil($rating))
+                : '☆☆☆☆☆',
                          
             'product_count' => fn() => (float) $this->reviews()->count(),
         ];
@@ -162,19 +166,38 @@ class Product extends LunarProduct
     protected static function booted()
     {
         static::addGlobalScope(new \App\Models\Scopes\PriceBetweenScope);
-        static::addGlobalScope(new \App\Models\Scopes\PublishedScope);
+        // static::addGlobalScope(new \App\Models\Scopes\PublishedScope);
     }
     
     public function filterOptions()
     {
         return $this->belongsToMany(FilterOption::class, 'product_filters');
     }
-    
 
-    public function scopeOrderByLowestPrice(Builder $query, string $direction = 'asc', $currencyId = null)
+    public function scopeApplySorting($query, $sorting = null)
     {
-        $currencyId = $currencyId ?? \Lunar\Models\Currency::getDefault()?->id;
+        if (!$sorting) {
+            // You might want to set a default sorting here
+            // return $query->orderBy('created_at', 'desc');
+            return $query;
+        }
 
+        switch ($sorting) {
+            case 'rating_asc':
+                return $query->orderByRating('asc');
+            case 'rating_desc':
+                return $query->orderByRating('desc');
+            case 'price_asc':
+                return $query->orderByLowestPrice('asc');
+            case 'price_desc':
+                return $query->orderByLowestPrice('desc');
+            default:
+                return $query;
+        }
+    }
+
+    public function scopeOrderByLowestPrice(Builder $query, string $direction = 'asc')
+    {
         return $query->orderBy(
             \Lunar\Models\Price::select('price')
                 ->join('lunar_product_variants', 'lunar_product_variants.id', '=', 'lunar_prices.priceable_id')
@@ -184,5 +207,16 @@ class Product extends LunarProduct
             $direction
         );
     }
+
+    public function scopeOrderByRating(Builder $query, string $direction = 'desc'): Builder
+    {
+        return $query->orderBy(
+            \DB::table('product_reviews')
+                ->selectRaw('COALESCE(AVG(rating), 0)')
+                ->whereColumn('product_id', 'lunar_products.id'),
+            $direction
+        );
+    }
+    
 
 }

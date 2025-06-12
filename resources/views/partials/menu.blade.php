@@ -19,10 +19,9 @@
       <div class="row align-items-center">
         <!-- Logo/Title Column -->
         <div class="justify-content-between d-flex py-3 align-items-center">
-
           <div>
             <h1 class="h3 mb-0">
-              <a href="/" class="text-dark link-underline-light fs-4">@ Your Company</a>  
+              <a href="/" class="navbar-brand fw-bold text-danger fs-2" href="#">Giftify</a>
             </h1>
           </div>
 
@@ -87,11 +86,43 @@
       </div>
     </div>
   </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom border-top shadow-sm">
+    <div class="container">
+      <!-- Toggle for mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  <div class="bg-light">
+      <!-- Nav items -->
+      <div class="collapse navbar-collapse text-aling-center align-center text-center " id="mainNavbar">
+        <ul class="navbar-nav center align-items-center gap-lg-4">
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> Father's Day</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-birthday-cake text-warning me-1"></i> Birthdays</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="#"><i class="fa fa-tags me-1"></i> Sale <span
+                class="badge bg-danger">NOW ON!</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-magic me-1"></i> Gift Finder</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-gift text-success me-1"></i> Gift Cards</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-briefcase me-1"></i> For Business</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- <div class="bottom-menu-container">
     <div class="container">
       <div class="row">
-        <!-- Navigation -->
         <nav class="navbar navbar-expand-lg">
           <div class="container">
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -131,6 +162,9 @@
             </div>
           </div>
         </nav>
+      </div>
+    </div>
+  </div> -->
 </header>
 
 @include('partials.cart-element')

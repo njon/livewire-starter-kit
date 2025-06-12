@@ -140,14 +140,12 @@
 
                         @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
                         <div class="product-variants mb-4">
-                            <h6 class="text-lg font-medium mb-3">More Options Available:</h6>
+                            <h6 class="text-lg font-medium mb-3">Select package</h6>
 
                             @foreach($product->variants as $variant)
                             <div class="variant-option mb-3">
-                                <h4 class="font-medium mb-2">{{ $variant->translate('name') }}</h4>
-
                                 @if($variant->values->isNotEmpty())
-                                <div class="variant-values d-flex flex-wrap gap-2">
+                                <div class="variant-values variant-value-btn d-flex flex-wrap gap-2">
                                     @foreach($variant->values as $value)
                                     <input type="radio" class="btn-check" name="variant" id="variant-{{ $value->id }}"
                                         autocomplete="off" @if($first) checked @endif>
@@ -169,8 +167,9 @@
 
                         <div class="row mb-5">
                             <div class="col-12">
-                                <form id="add-to-cart" action="/cart/1" method="PUT">
-                                    <button type="submit" class="btn btn-success rounded-2 animate-btn-hover w-100 p-2"
+                                <form id="add-to-cart" action="/cart/{{ $product->variants->first()->id }}"
+                                    method="PUT">
+                                    <button type="submit" class="btn btn-success rounded-2 btn-add-to-cart w-100 p-2 button-animated"
                                         id="btn-add-to-cart">
                                         Add to Cart
                                     </button>
@@ -185,8 +184,7 @@
                                 <form id="add-to-cart" action="/cart/1" data-redirect="true" method="PUT">
                                     <button class="btn btn-dark btn btn-success rounded-2 animate-btn-hover w-100 p-2"
                                         id="btn-add-to-cart">
-                                        <i class="fa fa-cart"></i>
-                                        Buy Now
+                                        <i class="fa fa-cart"></i> Buy Now
                                     </button>
                                     <input type="hidden" name="to_cart" value="1">
                                     <input type="hidden" name="product_id" value="1">
@@ -199,12 +197,6 @@
                             <a href="#" class="text-decoration-none text-muted me-2">Terms And Services</a> |
                             <a href="#" class="text-decoration-none text-muted mx-2">Refund Policy</a>
                         </div>
-
-                        <!-- 
-                                                <div class="d-flex justify-content-between small text-muted" bis_skin_checked="1">
-                            <a href="#" class="text-decoration-none text-muted">Terms And Services</a>
-                            <a href="#" class="text-decoration-none text-muted">Refund Policy</a>
-                        </div> -->
                     </div>
                 </div>
             </div>
