@@ -1,8 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
-
-<div class="container-fluid mt-4">
     <div class="row">
         <!-- Left Side Menu -->
         <div class="col-md-3 mb-4">
