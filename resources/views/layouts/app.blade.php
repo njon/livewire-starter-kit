@@ -12,9 +12,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Plus Jakarta Sans:wght@200..800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Plus Jakarta Sans:wght@200..800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@350" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -43,6 +47,20 @@
 
     @include('partials.footer')
     @yield('bottom-content')
+
+    @if(session('success'))
+    <div role="alert" aria-live="assertive" aria-atomic="true"
+        class="toast position-fixed top-0 end-0 bg-white show border-0 m-3 alert-li" style="z-index:99;"
+        data-bs-autohide="false">
+        <div class="toast-header">
+            <strong class="me-auto">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('success') }}
+        </div>
+    </div>
+    @endif
 </body>
 
 </html>

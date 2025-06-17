@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Lunar\Base\Traits\LunarUser;
 use App\Models\Wishlist;
+use Lunar\Models\Customer;
+use Lunar\Models\Cart;
+use Lunar\Models\CartLine;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, LunarUser, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +26,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'provider',
+        'provider_id',
+        'email_verified_at'
     ];
 
     /**
@@ -43,15 +50,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function wishlist()
+    public function wishlistItems()
     {
         return $this->hasMany(Wishlist::class);
     }
 
-    protected static function booted()
-    {
-        static::created(function ($user) {
-            // This will be handled by our event listener now
-        });
-    }
+
 }

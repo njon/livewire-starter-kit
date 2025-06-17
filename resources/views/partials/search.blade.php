@@ -5,7 +5,7 @@
   curMax = {{ request()->get('max_price', 300) }}
 </script>
 
-<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form">
+<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form pt-5">
   <div class="accordion mb-4" id="filterAccordion">
     <div class="">
       <h5 class="mb-3 fs-6 fw-600">Price Selector</h5>
@@ -127,7 +127,7 @@
       <i class="fas fa-filter me-1"></i> Apply Filters
     </button>
 
-    <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
+    <a href="{{ request()->url() }}" class="btn btn-outline-secondary px-4">
       <i class="fa fa-undo" aria-hidden="true"></i> Reset Search
     </a>
   </div>

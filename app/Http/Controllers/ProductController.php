@@ -33,10 +33,12 @@ class ProductController extends Controller
     public function show($product): View
     {
         $counter = end_in_counter($product->discounts);
+        $related_products = Product::limit(5)->get();
 
         return view('products.show', [
             'product' => $product,
-            'relatedProducts' => $product->getRelatedProducts(),
+            // 'relatedProducts' => $product->getRelatedProducts(),
+            'relatedProducts' => $related_products,
             'title' => $product->translateAttribute('name') . ' | Your Store',
             'end' => $counter
         ]);

@@ -87,191 +87,32 @@
     </div>
 
     <div class="row g-4">
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <a href="chuck-70-raw-edge" class="category-link">
+       @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $collection)
+        <div class="col-2 mb-4">
+            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column h-100">
+                <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
-                        <div class="img-holder">
-                            <img src="https://picsum.photos/id/59/500/500" class="card-img-top object-fit-cover"
-                                alt="Placeholder">
+                        <div class="img-holder ratio ratio-1x1">
+                            <img src="{{ $collection->image_url ?? 'https://picsum.photos/id/59/500/500' }}" 
+                                class="card-img-top object-fit-cover"
+                                alt="{{ $collection->name }}"
+                                loading="lazy">
                         </div>
-                        <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                            <span
-                                class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                                style="min-width: 120px;">
-                                Shoes
+                        <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-3">
+                            <span class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto" style="min-width: 120px;">
+                                {{ $collection->translateAttribute('name') }}
                             </span>
                         </div>
                     </div>
                 </a>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/1/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Trousers
-                        </span>
-                    </div>
+                @if($collection->products_count)
+                <div class="card-footer bg-transparent border-0 pt-0 pb-3 text-center">
+                    <small class="text-muted">{{ $collection->products_count }} items</small>
                 </div>
+                @endif
             </div>
         </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/225/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Hoodies
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/83/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Sale
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/161/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            New one
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/134/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Crazy Frog
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/214/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Shoes
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/96/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Trousers
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/250/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Hoodies
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/187/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Sale
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/168/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            New one
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    <img src="https://picsum.photos/id/239/500/500" class="card-img-top object-fit-cover"
-                        alt="Placeholder">
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            Crazy Frog
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 
@@ -292,33 +133,5 @@
     </div>
 </div>
 
-<!-- 
-    <div class="row g-4">
-        @foreach($categories as $category)
-        <div class="col-2">
-            <div class="card border-0 rounded-3 overflow-hidden d-flex flex-column">
-                <div class="position-relative flex-grow-1">
-                    @if($category->thumbnail)
-                    <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/storage/1/black_jeans.jpg"
-                        data="{{ $category->thumbnail->getUrl() }}" class="card-img-top object-fit-cover"
-                        alt="{{ $category->name }}">
-                    @else
-                    <img src="https://picsum.photos/id/{{ rand(1, 250) }}/500/500" 
-                        class="card-img-top object-fit-cover"  alt="Placeholder">
-                    @endif
-                    <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center mb-4">
-                        <span
-                            class="text-black fs-6 px-3 py-1 d-inline-flex align-items-center justify-content-center rounded-1 bg-light bg-opacity-75 w-auto"
-                            style="min-width: 120px;">
-                            {{ $category->translateAttribute('name') }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endforeach
-
-
-    </div> -->
 
 @endsection

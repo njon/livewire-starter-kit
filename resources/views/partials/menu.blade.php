@@ -1,19 +1,18 @@
-<div id="top-bar" class="classic-color-bg">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-center">
-      <div class="mb-1 mb-md-0">
-        MORE THAN 400 EXPERIENCES TO CHOOSE FROM
-      </div>
-      <div class="d-flex gap-3">
-        <a href="#" class="text-white text-decoration-none hover-opacity">F.A.Q</a>
-        <a href="#" class="text-white text-decoration-none hover-opacity">NEWSLETTER</a>
-        <a href="#" class="text-white text-decoration-none hover-opacity">CONTACTS</a>
+<header id="header" class="position-relative">
+  <div id="top-bar" class="classic-color-bg">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <div class="mb-1 mb-md-0">
+          MORE THAN 400 EXPERIENCES TO CHOOSE FROM
+        </div>
+        <div class="d-flex gap-3">
+          <a href="#" class="text-white text-decoration-none hover-opacity">F.A.Q</a>
+          <a href="#" class="text-white text-decoration-none hover-opacity">NEWSLETTER</a>
+          <a href="#" class="text-white text-decoration-none hover-opacity">CONTACTS</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<header>
   <div id="header-container">
     <div class="container">
       <div class="row align-items-center">
@@ -61,21 +60,22 @@
                   </div>
                 </div>
               </div>
-
             </div>
-
           </div>
 
           <!-- Search/Auth Column -->
           <div>
             <div class="d-flex flex-column flex-md-row justify-content-end align-items-center gap-3">
               <div class="text-nowrap">
-                <a href="#" class="text-decoration-none text-dark me-2">Register</a>
+                @if(auth()->check())
+                <a href="/profile" class="text-decoration-none text-dark me-2">Profile</a>
+                @else
+                <a href="{{ route('register') }}" class="text-decoration-none text-dark me-2">Register</a>
                 <span class="text-muted">/</span>
-                <a href="#" class="text-decoration-none text-dark ms-2">Login</a>
+                <a href="{{ route('login') }}" class="text-decoration-none text-dark ms-2">Login</a>
+                @endif
               </div>
-
-              <span class="material-symbols-outlined hoverable-icon">favorite</span>
+              <a href="{{ route('wishlist.index') }}" class="material-symbols-outlined hoverable-icon">favorite</a>
               <span class="material-symbols-outlined hoverable-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#shoppingCart" aria-controls="shoppingCart"
                 aria-label="Toggle navigation">shopping_cart</span>
@@ -95,8 +95,48 @@
       </button>
 
       <!-- Nav items -->
-      <div class="collapse navbar-collapse text-aling-center align-center text-center " id="mainNavbar">
+      <div class="collapse navbar-collapse text-align-center align-center text-center" id="mainNavbar">
         <ul class="navbar-nav center align-items-center gap-lg-4">
+          <li class="nav-item dropdown mega-menu">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdownExperiences" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Experiences
+            </a>
+            <div class="dropdown-menu shadow border menu-mega" aria-labelledby="dropdownExperiences">
+              <div class="row gx-4">
+                <div class="col-lg-6 pe-0 category-list">
+                  <ul class="list-unstyled">
+                    @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                      @if($mainCategory->parent_id == null)
+                        <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}">
+                          <a href="{{ $mainCategory->defaultUrl->slug }}">{{ $mainCategory->translateAttribute('name') }}</a>
+                        </li>
+                      @endif
+                    @endforeach
+                  </ul>
+                </div>
+
+                <div class="col-lg-6 ps-0 subcategory-container">
+                  @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                    @if($mainCategory->parent_id == null)
+                    <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
+                      <ul class="list-unstyled">
+                        @foreach($mainCategory->children as $subCategory)
+                          <li>
+                            <a href="{{ url($mainCategory->defaultUrl->slug) }}"
+                              class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
+                              {{ $subCategory->translateAttribute('name') }}
+                            </a>
+                          </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                    @endif
+                  @endforeach
+                </div>
+              </div>
+            </div>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> Father's Day</a>
           </li>
@@ -108,7 +148,7 @@
                 class="badge bg-danger">NOW ON!</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-magic me-1"></i> Gift Finder</a>
+            <a class="nav-link" href="#"><i class="fa fa-search me-1"></i> Gift Finder</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-gift text-success me-1"></i> Gift Cards</a>
@@ -120,51 +160,8 @@
       </div>
     </div>
   </nav>
-  <!-- <div class="bottom-menu-container">
-    <div class="container">
-      <div class="row">
-        <nav class="navbar navbar-expand-lg">
-          <div class="container">
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav mx-auto">
-                @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $item)
-                @if($item->parent_id == null)
-                <li class="dropdown nav-item">
-                  <a href="{{ $item->defaultUrl->slug }}" class="nav-link 
-                  @if(!$item->children->isEmpty())
-                    dropdown-toggle
-                  @endif
-                  @if(request()->url() == url($item->defaultUrl->slug))
-                    active
-                  @endif
-                " data-toggle="dropdown">
-                    {{ $item->translateAttribute('name') }}
-                    @if(!$item->children->isEmpty())
-                    <span class="caret"></span>
-                    @endif
-                  </a>
-                  @if(!$item->children->isEmpty())
-                  <ul class="dropdown-menu">
-                    @foreach($item->children as $child)
-                    <li>
-                      <a href="{{ route('products.show', $child->defaultUrl->slug) }}"
-                        class="@if(request()->url() == route('products.show', $child->defaultUrl->slug)) active @endif">
-                        {{ $child->translateAttribute('name') }}
-                      </a>
-                    </li>
-                    @endforeach
-                  </ul>
-                  @endif
-                </li>
-                @endif
-                @endforeach
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </div>
-  </div> -->
 </header>
 
 @include('partials.cart-element')
+
+<div class="absolute blur"> </div>

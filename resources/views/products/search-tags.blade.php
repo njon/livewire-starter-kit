@@ -19,18 +19,19 @@
         }
     }
     
-    // Rating filter
-    if (request('rating', 0) > 0) {
-        $key = 'rating_' . request('rating');
-        if (!in_array($key, $uniqueFilterKeys)) {
-            $activeFilters[] = [
-                'label' => "Rating: ".request('rating')."+ stars",
-                'keys' => ['rating'],
-                'unique_key' => $key
-            ];
-            $uniqueFilterKeys[] = $key;
-        }
+// Rating filter (fixed)
+$rating = (int) request()->input('rating', 0);
+if ($rating > 0) {
+    $key = 'rating_' . $rating; // Now safe to concatenate
+    if (!in_array($key, $uniqueFilterKeys)) {
+        $activeFilters[] = [
+            'label' => "Rating: " . $rating . "+ stars",
+            'keys' => ['rating'],
+            'unique_key' => $key
+        ];
+        $uniqueFilterKeys[] = $key;
     }
+}
     
     // Category filters
     if(isset($filterCategories)) {

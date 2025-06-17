@@ -8,6 +8,7 @@ use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,5 +41,10 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Paginator::useBootstrapFive(); // or Paginator::useBootstrapFive();
+
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
+        }
     }
 }

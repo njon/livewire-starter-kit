@@ -1,8 +1,8 @@
 @php
-$col = isset($col) ? $col : '4';
+$colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
 @endphp
 
-<div class="col-6 mb-5 mt-0 col-lg-{{ $col }} product">
+<div class="mb-5 mt-0 {{ $colClass }} product">
     <div class="product-item-list">
         <!-- Product Image with Hover Effects -->
         <div class="position-relative overflow-hidden product-image-container">

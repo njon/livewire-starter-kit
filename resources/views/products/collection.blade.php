@@ -2,11 +2,6 @@
 
 @section('content')
 @csrf
-<!-- Add your form fields here -->
-<h1 class="pt-5 fs-2">Collection: {{ $collection->translateAttribute('name') }}</h1>
-<div class="text-muted mb-5 mt-3">
-  {!! $collection->translateAttribute('description') !!}
-</div>
 
 <section class="pb-4">
   <div class="row">
@@ -15,12 +10,17 @@
     </div>
 
     <div class="col-md-9 col-lg-9" id="content">
+
+      <h1 class="pt-5 fs-2">{{ $collection->translateAttribute('name') }}</h1>
+      <div class="text-muted mb-5 mt-3">
+        {!! $collection->translateAttribute('description') !!}
+      </div>
+
       <div class="d-flex justify-content-between align-items-center mb-4">
-        
         <div id="search-filters flex-grow-1">
-            <div class="filter-tags-container">
-              @include('products.search-tags', ['filterCategories' => $filterCategories])
-            </div>
+          <div class="filter-tags-container">
+            @include('products.search-tags', ['filterCategories' => $filterCategories])
+          </div>
         </div>
 
         <div class="sorting flex-shrink-0">
@@ -53,9 +53,9 @@
       </div>
 
       <div class="row items" id="search-results">
-          @foreach($products as $product)
-              @include('products.product', ['product' => $product])
-          @endforeach
+        @foreach($products as $product)
+        @include('products.product', ['product' => $product, 'col' => '4'])
+        @endforeach
         {!! $pagination !!}
       </div>
     </div>

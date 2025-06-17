@@ -19,19 +19,27 @@ class WishlistController extends Controller
 
     public function store(Request $request)
     {
-        $productId = $request['product_id'];
-        $remove = $request['destroy'];
-        
+        $productId = $request->product_id;
+        $remove = $request->destroy;
+
         if (Auth::check()) {
-            $remove == 'true'
-                ? Auth::user()->wishlist()->syncWithoutDetaching([$productId])
-                : Auth::user()->wishlist()->detach($productId);
+            if ($remove == 'true') {
+                // DELETE wishlist item (one-to-many)
+                Auth::user()->wishlistItems()
+                    ->where('product_id', $productId)
+                    ->delete();
+            } else {
+                // CREATE wishlist item (one-to-many)
+                Auth::user()->wishlistItems()
+                    ->firstOrCreate(['product_id' => $productId]);
+            }
         } else {
+            // Guest wishlist (session)
             $wishlist = session()->get('wishlist', []);
             if ($remove == 'true') {
                 unset($wishlist[$productId]);
             } else {
-                 $wishlist[$productId] = true;
+                $wishlist[$productId] = true;
             }
             session()->put('wishlist', $wishlist);
         }
@@ -44,16 +52,16 @@ class WishlistController extends Controller
         return response()->json($this->getWishlistItems());
     }
 
-    private function getWishlistItems()
-    {
-        if (Auth::check()) {
-            $items = Auth::user()->wishlist()->pluck('products.id')->toArray();
-        } else {
-            $items = array_keys(session()->get('wishlist', []));
-        }
-
-        return array_fill_keys($items, true);
+public function getWishlistItems()
+{
+    if (Auth::check()) {
+        $items = Auth::user()->wishlistItems->pluck('product_id')->toArray();
+    } else {
+        $items = array_keys(session()->get('wishlist', []));
     }
+    
+    return array_fill_keys($items, true);
+}
 
     public function transferGuestWishlist($user)
     {

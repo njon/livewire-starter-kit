@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Lunar\Facades\CartSession;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Lunar\Facades\CartSession;
 use Lunar\Models\CartLine;
 use Lunar\Base\StandardMedia;
 use Lunar\Models\Cart;
@@ -13,9 +14,18 @@ class CartService
 {
     public function getCart(): Cart
     {
-        $cart = CartSession::current() ?: CartSession::create(['currency_id' => 1, 'channel_id' => 1]);
+return CartSession::current() ?: CartSession::create([
+        'user_id' => auth()->id(),
+    ]);
+    }
 
-        return $cart;
+    public function userHasCart()
+    {
+        if (!Auth::check()) {
+            return false; // User is not logged in
+        }
+
+        return Cart::where('user_id', Auth::id())->exists();
     }
 
     public function calculateDiscountedPrices(Cart $cart): void
@@ -103,7 +113,6 @@ class CartService
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'cart' => $cart->toArray()
             ];
         }
     }

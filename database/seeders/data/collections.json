@@ -1,74 +1,50 @@
 [
     {
-        "name": "Tours",
-        "description": "Guided tours and sightseeing"
+        "name": "Adventure & Action",
+        "description": "Explore thrilling and high-energy experiences. This category includes activities like bungee jumping, skydiving, whitewater rafting, rock climbing, off-road driving, and challenging outdoor pursuits designed to get your adrenaline pumping."
     },
     {
-        "name": "Wellness",
-        "description": "Spas, massages, and relaxation"
+        "name": "Airborne Experiences",
+        "description": "Discover activities that take you to the skies. Find options such as scenic helicopter tours, hot air balloon rides, paragliding, gliding, and introductory flying lessons."
     },
     {
-        "name": "Adventure",
-        "description": "Extreme sports and outdoor activities"
+        "name": "Automotive & Motor Sports",
+        "description": "Immerse yourself in the world of vehicles and speed. This category offers supercar driving experiences, track days, go-karting, rally driving, and off-road vehicle adventures."
     },
     {
-        "name": "Dining",
-        "description": "Restaurants and culinary experiences"
+        "name": "Beauty & Wellness",
+        "description": "Indulge in relaxation and rejuvenation. This category features a range of spa treatments, massages, beauty salon services, aesthetic procedures, and wellness retreats focused on physical and mental well-being."
     },
     {
-        "name": "Events",
-        "description": "Concerts, shows, and tickets"
+        "name": "Creative & Learning",
+        "description": "Unleash your inner artist or learn a new skill. Explore workshops for painting, pottery, photography, crafting, music, dance, writing, and other hands-on, educational, or expressive activities."
     },
     {
-        "name": "Leisure",
-        "description": "Fun activities and entertainment"
+        "name": "Cultural & Entertainment",
+        "description": "Engage with arts, history, and live performances. This category includes tickets to theatre shows, concerts, musicals, comedy acts, museum entries, historical tours, and cultural events."
     },
     {
-        "name": "Beauty",
-        "description": "Salons and grooming services"
+        "name": "Culinary & Dining",
+        "description": "Savor unique gastronomic delights. Find cooking classes, wine tasting tours, gourmet dining experiences, food tours, distillery visits, and special themed meals."
     },
     {
-        "name": "Nightlife",
-        "description": "Clubs, bars, and parties"
+        "name": "Nature & Wildlife Encounters",
+        "description": "Connect with the natural world and its inhabitants. This category offers experiences like animal encounters (e.g., farm visits, wildlife sanctuaries), guided nature walks, birdwatching, and eco-tours."
     },
     {
-        "name": "Workshops",
-        "description": "Classes and learning experiences"
+        "name": "Photography Experiences",
+        "description": "Capture lasting memories with professional guidance. Discover professional photoshoots for portraits, families, special occasions, or guided photography tours to iconic locations."
     },
     {
-        "name": "Outdoors",
-        "description": "Nature and hiking adventures"
+        "name": "Short Breaks & Getaways",
+        "description": "Plan your next escape with curated accommodation and leisure packages. This category includes romantic retreats, city breaks, countryside stays, wellness getaways, and themed short vacations."
     },
     {
-        "name": "Water",
-        "description": "Boat tours and water sports"
+        "name": "Tours & Sightseeing",
+        "description": "Explore destinations with expert guidance. Find guided city tours, historical tours, bus tours, walking tours, cycling tours, and excursions to famous landmarks or hidden gems."
     },
     {
-        "name": "Culture",
-        "description": "Museums and local traditions"
-    },
-    {
-        "name": "Family",
-        "description": "Kids-friendly activities"
-    },
-    {
-        "name": "Virtual",
-        "description": "Online experiences and VR"
-    },
-    {
-        "name": "Photography",
-        "description": "Photo shoots and videography"
-    },
-    {
-        "name": "Rentals",
-        "description": "Vehicle and equipment rentals"
-    },
-    {
-        "name": "Gaming",
-        "description": "VR and esports entertainment"
-    },
-    {
-        "name": "Unique Experiences",
-        "description": "Exclusive and special experiences"
+        "name": "Water Sports & Aquatic Adventures",
+        "description": "Dive into fun and adventure on or in the water. This category features activities like scuba diving, snorkeling, paddleboarding, kayaking, jet skiing, sailing, and boat trips."
     }
 ]

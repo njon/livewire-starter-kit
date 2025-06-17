@@ -11,8 +11,10 @@ class HomepageController extends Controller
     function index()
     {
         $products = Product::paginate(8);
-        $categories = Collection::all();
-
+        $categories = Collection::with([
+            'defaultUrl',
+            'parent.defaultUrl'
+        ])->get();
 
         return view('homepage.index', compact('products', 'categories'));
     }

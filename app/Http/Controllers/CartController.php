@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
 use App\Services\CartService;
 use Lunar\Facades\CartSession;
 use Lunar\Models\ProductVariant;
@@ -55,22 +56,22 @@ class CartController extends Controller
         $YOUR_DOMAIN = 'https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev';
 
         $checkout_session = $stripe->checkout->sessions->create([
-        'ui_mode' => 'embedded',
-        'customer_email' => 'customer@example.com',
-        'billing_address_collection' => 'required',
-        // 'shipping_address_collection' => ['allowed_countries' => ['US', 'CA']],
-        'line_items' => [[
-                'price_data' => [  // No fixed Price ID needed
-                    'currency' => 'eur',
-                    'product_data' => [
-                        'name' => 'Order #123', // Custom product name
+            'ui_mode' => 'embedded',
+            'customer_email' => 'customer@example.com',
+            'billing_address_collection' => 'required',
+            // 'shipping_address_collection' => ['allowed_countries' => ['US', 'CA']],
+            'line_items' => [[
+                    'price_data' => [  // No fixed Price ID needed
+                        'currency' => 'eur',
+                        'product_data' => [
+                            'name' => 'Order #123', // Custom product name
+                        ],
+                        'unit_amount' =>31233, // Convert to cents
                     ],
-                    'unit_amount' =>31233, // Convert to cents
-                ],
-                'quantity' => 1,
-            ]],
-        'mode' => 'payment',
-        'return_url' => $YOUR_DOMAIN . '/return.html?session_id={CHECKOUT_SESSION_ID}',
+                    'quantity' => 1,
+                ]],
+            'mode' => 'payment',
+            'return_url' => $YOUR_DOMAIN . '/return.html?session_id={CHECKOUT_SESSION_ID}',
         ]);
 
         return response()->json(['clientSecret' => $checkout_session->client_secret]);
@@ -78,6 +79,14 @@ class CartController extends Controller
 
     public function checkoutpage()
     {
+        $hasCart = $this->cart->userHasCart();
+        // $order = Order::find(240);
+        // dd($order);
+
+        // if(!$hasCart) {
+        //     return view('partials.checkout.empty');
+        // }
+        
         $cart = $this->cart->getCart();
 
         return view('partials.checkout', compact('cart'));
@@ -186,6 +195,17 @@ class CartController extends Controller
                         'charges' => $paymentIntent->charges->data[0] ?? null
                     ]
                 ]
+            ]);
+
+            $transaction = $order->transactions()->create([
+                'success' => true, // Marks payment as successful
+                'type' => 'capture', // 'capture', 'refund', 'intent', etc.
+                'driver' => 'stripe', // Payment gateway used (e.g., 'stripe', 'manual', etc.)
+                'amount' => $paymentIntent->amount, // Amount in cents/pence (e.g., $50.00 = 5000)
+                'reference' => $order->reference, // Transaction reference (e.g., Stripe charge ID)
+                'status' => 'Payment sucessful', // 'succeeded', 'failed', 'pending'
+                'notes' => 'Payment received via Stripe', // Optional notes
+                'card_type' => 'card', // Card type (e.g., Visa, MasterCard)
             ]);
 
             // Clear the cart
@@ -297,6 +317,7 @@ class CartController extends Controller
             'tax_total' => $cart->taxTotal->value,
             'shipping_total' => 0,
             'tax_breakdown' => $cart->taxBreakdown,
+            'customer_reference' => Auth::check() ? ('Customer ID: ' . Auth::user()->id) : 'Guest Checkout',
         ]);
 
         // Create billing/shipping addresses
@@ -355,5 +376,17 @@ class CartController extends Controller
             'message' => 'Checkout done successfully',
             'order_id' => $order->id,
         ]);
+    }
+
+    // @todo remove later
+    public function deleteCollections()
+    {
+        $collections = \Lunar\Models\Collection::all();
+        foreach ($collections as $collection) {
+            $collection->products()->detach();
+            $collection->delete();
+        }
+        
+        dd($collections);
     }
 }

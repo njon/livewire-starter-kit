@@ -19,6 +19,12 @@ class Collection extends LunarCollection
         'parent.defaultUrl'
     ];
 
+    public static array $listingWith = [
+        'defaultUrl',
+        'children.defaultUrl',
+        'parent.defaultUrl'
+    ];
+
     /**
      * Scope for root collections (no parent)
      */

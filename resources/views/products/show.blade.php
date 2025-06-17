@@ -138,7 +138,7 @@
 
                         </div>
 
-                        @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
+                        @if($product->variants->isNotEmpty() && $product->variants->count() == 2)
                         <div class="product-variants mb-4">
                             <h6 class="text-lg font-medium mb-3">Select package</h6>
 
@@ -169,7 +169,8 @@
                             <div class="col-12">
                                 <form id="add-to-cart" action="/cart/{{ $product->variants->first()->id }}"
                                     method="PUT">
-                                    <button type="submit" class="btn btn-success rounded-2 btn-add-to-cart w-100 p-2 button-animated"
+                                    <button type="submit"
+                                        class="btn btn-success rounded-2 btn-add-to-cart w-100 p-2 button-animated"
                                         id="btn-add-to-cart">
                                         Add to Cart
                                     </button>
@@ -198,6 +199,16 @@
                             <a href="#" class="text-decoration-none text-muted mx-2">Refund Policy</a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="similar-products">
+            <h4 class="py-4">Related Products</h2>
+                <div class="row">
+                    @foreach ($relatedProducts as $product)
+                        @include('products.product', ['col' => 'col'])
+                    @endforeach
                 </div>
             </div>
         </div>
