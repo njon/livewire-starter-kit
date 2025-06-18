@@ -1,0 +1,21 @@
+User Profile
+Profile details
+Password reset
+My orders
+Wishlist
+Newsletter
+My bookings
+Invite Friends
+Logout
+Profile Details
+Name
+Email
+Update Profile
+Password Reset
+Current Password
+New Password
+Confirm New Password
+Update Password
+My Orders
+You haven't placed any orders yet.
+Order #:ref

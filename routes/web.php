@@ -56,8 +56,6 @@ Route::post('/complete-order', [CartController::class, 'completeOrder']);
 
 
 
-
-
 // User Profile Routes
 Route::middleware(['auth'])->group(function () {
     // Profile
