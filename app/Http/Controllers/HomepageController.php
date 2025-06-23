@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Collection;
+use \Lunar\Models\Order;
 
 class HomepageController extends Controller
 {
     function index()
     {
-        $products = Product::paginate(8);
-        $categories = Collection::with([
+        $products = Product::paginate(10);
+        $categories = \Lunar\Models\Collection::with([
             'defaultUrl',
             'parent.defaultUrl'
         ])->get();

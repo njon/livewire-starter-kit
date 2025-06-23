@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', '404 - Page Not Found')
+
 @section('content')
 <div class="custom-bg text-dark">
     <div class="d-flex align-items-center justify-content-center min-vh-100 px-2">

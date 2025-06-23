@@ -1,4 +1,10 @@
 @extends('layouts.app')
+
+@section('title', $product->translateAttribute('name'))
+<!-- @todo set meta description form product -->
+@section('meta_description', 'This is the home page of our awesome Laravel site.')
+@include('products.structure')
+
 @section('content')
 
 @php $first = true; @endphp
@@ -8,7 +14,7 @@
     <!-- Tide + Wishlist Row -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2 class="fs-3 fs">{{ $product->translateAttribute('name') }}</h2>
+            <h1 class="fs-3 fs">{{ $product->translateAttribute('name') }}</h2>
         </div>
         <div class="col-md-6 text-end">
             <div class="btn-wishlist">
@@ -18,44 +24,21 @@
             </div>
         </div>
     </div>
-    <div class="row gallery-row mb-5">
-        <div class="col-md-2 gallery-thumbnails">
-            <div class="thumbnail-column gap-3">
-                <!-- @foreach($product->images->take(6) as $image)
-                    <div class="thumbnail-item {{ $loop->first ? 'active' : '' }}"
-                        data-target="{{ $image->getUrl() }}">
-                    </div>
-                @endforeach -->
-                <div class="thumbnail-item first"
-                    data-target="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80">
-                    <img src="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80"
-                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
-                </div>
-                <div class="thumbnail-item" data-target="{{ $product->images->first()->getUrl() }}">
-                    <img src="{{ $product->images->first()->getUrl() }}"
-                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
-                </div>
-                <div class="thumbnail-item"
-                    data-target="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80">
-                    <img src="https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80"
-                        alt="{{ $product->translateAttribute('name') }}" class="img-fluid thumb-image">
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-10 main-image">
-            <img src="{{ $product->images->first()->getUrl() }}" id="mainProductImage"
-                alt="{{ $product->translateAttribute('name') }}" class="img-fluid">
-        </div>
-    </div>
+    @include('products.gallery')
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
         <div class="col-md-8 product-description">
             <h2 class="mb-4 fs-4 sf">Service description</h2>
-            <p>{!! $product->translateAttribute('description') !!}</p>
+            <article>
+                <p>{!! $product->translateAttribute('description') !!}</p>
+            </article>
+
+            @include('products.rules')
 
             <div class="accordion mb-4 mt-4">
+                @include('products.additional')
                 @include('products.questions.index', ['product' => $product, 'questions' =>
                 $product->questions()->paginate(10)])
                 @include('products.reviews.index', ['product' => $product, 'reviews' => $product->reviews])
@@ -165,7 +148,7 @@
                         </div>
                         @endif
 
-                        <div class="row mb-5">
+                        <div class="row">
                             <div class="col-12">
                                 <form id="add-to-cart" action="/cart/{{ $product->variants->first()->id }}"
                                     method="PUT">
@@ -194,9 +177,19 @@
                             </div>
                         </div>
 
-                        <div class="small text-muted right">
-                            <a href="#" class="text-decoration-none text-muted me-2">Terms And Services</a> |
-                            <a href="#" class="text-decoration-none text-muted mx-2">Refund Policy</a>
+                        <div class="text-center mt-3" id="klarna">
+                                Make 3 payments of £26.33.
+                                <br>
+                            <span class="fw-bold">Klarna</span> <a class="classic-color" href="#" aria-label="Learn more - Klarna">
+                                Learn more
+                            </a>
+                        </div>
+
+                        <div class="small text-muted right mt-5">
+                            <a href="/terms-of-service" target="_blank"
+                                class="text-decoration-none text-muted me-2">Terms And Services</a> |
+                            <a href="/refund-policy" target="_blank" class="text-decoration-none text-muted mx-2">Refund
+                                Policy</a>
                         </div>
                     </div>
                 </div>
@@ -204,15 +197,15 @@
         </div>
 
         <div id="similar-products">
-            <h4 class="py-4">Related Products</h2>
-                <div class="row">
-                    @foreach ($relatedProducts as $product)
-                        @include('products.product', ['col' => 'col'])
-                    @endforeach
-                </div>
+            <h3 class="py-4 fs-4 mb-3">Similar Experiences you may like</h3>
+            <div class="row">
+                @foreach ($relatedProducts as $product)
+                @include('products.product', ['col' => 'col'])
+                @endforeach
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Add this modal structure at the bottom of your body -->

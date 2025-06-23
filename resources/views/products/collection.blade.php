@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', $collection->translateAttribute('name'))
+
 @section('content')
 @csrf
 

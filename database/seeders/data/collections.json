@@ -1,50 +1,167 @@
 [
     {
         "name": "Adventure & Action",
-        "description": "Explore thrilling and high-energy experiences. This category includes activities like bungee jumping, skydiving, whitewater rafting, rock climbing, off-road driving, and challenging outdoor pursuits designed to get your adrenaline pumping."
+        "description": "Explore thrilling and high-energy experiences. This category includes activities like bungee jumping, skydiving, whitewater rafting, rock climbing, off-road driving, and challenging outdoor pursuits designed to get your adrenaline pumping.",
+        "subcategories": [
+            "Indoor Skydiving",
+            "Ziplining & Zipwire",
+            "Axe Throwing",
+            "Segway Experiences",
+            "Go Ape",
+            "Escape Rooms",
+            "Paintballing",
+            "Bungee Jumping",
+            "Murder Mystery",
+            "Adrenaline Experiences",
+            "Virtual Reality",
+            "Zombie Experiences",
+            "Abseiling & Climbing"
+        ]
     },
     {
         "name": "Airborne Experiences",
-        "description": "Discover activities that take you to the skies. Find options such as scenic helicopter tours, hot air balloon rides, paragliding, gliding, and introductory flying lessons."
+        "description": "Discover activities that take you to the skies. Find options such as scenic helicopter tours, hot air balloon rides, paragliding, gliding, and introductory flying lessons.",
+        "subcategories": [
+            "Flying Lessons",
+            "Hot Air Balloons",
+            "Helicopter Rides",
+            "Skydiving & Parachute",
+            "Fly in a Spitfire",
+            "Flight Simulator"
+        ]
     },
     {
         "name": "Automotive & Motor Sports",
-        "description": "Immerse yourself in the world of vehicles and speed. This category offers supercar driving experiences, track days, go-karting, rally driving, and off-road vehicle adventures."
+        "description": "Immerse yourself in the world of vehicles and speed. This category offers supercar driving experiences, track days, go-karting, rally driving, and off-road vehicle adventures.",
+        "subcategories": [
+            "Supercar Driving",
+            "Junior Driving",
+            "Classic Cars",
+            "Motorbikes",
+            "Silverstone Experiences",
+            "Aston Martin Driving",
+            "Drifting",
+            "Tank Driving",
+            "Muscle Cars",
+            "Off-Road Driving",
+            "Go-Karting",
+            "Motor Factory Tours"
+        ]
     },
     {
         "name": "Beauty & Wellness",
-        "description": "Indulge in relaxation and rejuvenation. This category features a range of spa treatments, massages, beauty salon services, aesthetic procedures, and wellness retreats focused on physical and mental well-being."
+        "description": "Indulge in relaxation and rejuvenation. This category features a range of spa treatments, massages, beauty salon services, aesthetic procedures, and wellness retreats focused on physical and mental well-being.",
+        "subcategories": [
+            "Spa Days",
+            "Spa Breaks",
+            "Spa Days for Two",
+            "Spa Treatments",
+            "Bannatyne Spa Days",
+            "Lush Spa Experiences",
+            "Beauty Treatments",
+            "Wellbeing & Yoga",
+            "Photoshoots"
+        ]
     },
     {
         "name": "Creative & Learning",
-        "description": "Unleash your inner artist or learn a new skill. Explore workshops for painting, pottery, photography, crafting, music, dance, writing, and other hands-on, educational, or expressive activities."
+        "description": "Unleash your inner artist or learn a new skill. Explore workshops for painting, pottery, photography, crafting, music, dance, writing, and other hands-on, educational, or expressive activities.",
+        "subcategories": [
+            "Perfume Making",
+            "Candle Making",
+            "Pottery",
+            "Jewellery Making",
+            "Forging Experiences",
+            "Photography Classes",
+            "Learn New Skills"
+        ]
     },
     {
         "name": "Cultural & Entertainment",
-        "description": "Engage with arts, history, and live performances. This category includes tickets to theatre shows, concerts, musicals, comedy acts, museum entries, historical tours, and cultural events."
+        "description": "Engage with arts, history, and live performances. This category includes tickets to theatre shows, concerts, musicals, comedy acts, museum entries, historical tours, and cultural events.",
+        "subcategories": [
+            "Theatre Tickets",
+            "Music Events",
+            "Comedy Nights",
+            "Museum & Gallery Tours",
+            "Immersive Experiences",
+            "Garden Experiences"
+        ]
     },
     {
         "name": "Culinary & Dining",
-        "description": "Savor unique gastronomic delights. Find cooking classes, wine tasting tours, gourmet dining experiences, food tours, distillery visits, and special themed meals."
+        "description": "Savor unique gastronomic delights. Find cooking classes, wine tasting tours, gourmet dining experiences, food tours, distillery visits, and special themed meals.",
+        "subcategories": [
+            "Dining Experiences",
+            "Food Tours",
+            "Savoy Grill Experiences",
+            "Fortnum & Mason",
+            "Cocktail Making",
+            "Wine Tasting",
+            "Beer Experiences",
+            "Cooking Classes",
+            "Chocolate Making",
+            "Celebrity Chef Experiences",
+            "Afternoon Tea"
+        ]
     },
     {
         "name": "Nature & Wildlife Encounters",
-        "description": "Connect with the natural world and its inhabitants. This category offers experiences like animal encounters (e.g., farm visits, wildlife sanctuaries), guided nature walks, birdwatching, and eco-tours."
+        "description": "Connect with the natural world and its inhabitants. This category offers experiences like animal encounters (e.g., farm visits, wildlife sanctuaries), guided nature walks, birdwatching, and eco-tours.",
+        "subcategories": [
+            "Zoo & Safari Parks",
+            "Aquarium Experiences",
+            "Horse Riding",
+            "Falconry",
+            "Animal Walking Experiences"
+        ]
     },
     {
         "name": "Photography Experiences",
-        "description": "Capture lasting memories with professional guidance. Discover professional photoshoots for portraits, families, special occasions, or guided photography tours to iconic locations."
+        "description": "Capture lasting memories with professional guidance. Discover professional photoshoots for portraits, families, special occasions, or guided photography tours to iconic locations.",
+        "subcategories": [
+            "Family Photoshoots",
+            "Couples Photoshoots",
+            "Pet Photoshoots",
+            "Photography Classes"
+        ]
     },
     {
         "name": "Short Breaks & Getaways",
-        "description": "Plan your next escape with curated accommodation and leisure packages. This category includes romantic retreats, city breaks, countryside stays, wellness getaways, and themed short vacations."
+        "description": "Plan your next escape with curated accommodation and leisure packages. This category includes romantic retreats, city breaks, countryside stays, wellness getaways, and themed short vacations.",
+        "subcategories": [
+            "One-Night Breaks",
+            "Two-Night Breaks",
+            "Romantic Getaways",
+            "Glamping",
+            "City Hotel Breaks",
+            "London Hotel Breaks",
+            "Coastal Breaks",
+            "Countryside Hotels"
+        ]
     },
     {
         "name": "Tours & Sightseeing",
-        "description": "Explore destinations with expert guidance. Find guided city tours, historical tours, bus tours, walking tours, cycling tours, and excursions to famous landmarks or hidden gems."
+        "description": "Explore destinations with expert guidance. Find guided city tours, historical tours, bus tours, walking tours, cycling tours, and excursions to famous landmarks or hidden gems.",
+        "subcategories": [
+            "Days Out in London",
+            "Shard Experiences",
+            "Theme Parks",
+            "Steam Trains",
+            "Boat Cruises",
+            "Museum & Gallery Tours",
+            "Sports & Stadium Tours"
+        ]
     },
     {
         "name": "Water Sports & Aquatic Adventures",
-        "description": "Dive into fun and adventure on or in the water. This category features activities like scuba diving, snorkeling, paddleboarding, kayaking, jet skiing, sailing, and boat trips."
+        "description": "Dive into fun and adventure on or in the water. This category features activities like scuba diving, snorkeling, paddleboarding, kayaking, jet skiing, sailing, and boat trips.",
+        "subcategories": [
+            "White Water Rafting",
+            "Sailing",
+            "Kayaking & Paddleboarding",
+            "Surfing",
+            "Powerboats"
+        ]
     }
 ]

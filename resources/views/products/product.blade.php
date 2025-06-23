@@ -14,14 +14,12 @@ $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
             @if($product->thumbnail)
 
             <!-- New Badge -->
-            @if($product->isNew)
-            <span class="position-absolute start-0 bottom-0 m-2 badge bg-primary">
+            <!-- <span class="position-absolute start-0 bottom-0 m-2 badge bg-primary">
                 New
-            </span>
-            @endif
+            </span> -->
 
             <!-- Product Image -->
-            <div class="img-holder overflow-hidden rounded-4">
+            <div class="img-holder overflow-hidden rounded-2">
                 <img src="{{ $product->thumbnail->getUrl() }}" class="product-image object-fit-cover" alt="{{ $product->translateAttribute('name') }}">
             </div>
 
@@ -51,7 +49,7 @@ $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
             </div>
 
             <!-- Product Meta -->
-            <div class="d-flex flex-row text-muted fs-13 gap-2 mt-3">
+            <!-- <div class="d-flex flex-row text-muted fs-13 gap-2 mt-3">
                 <div class="attribute">
                     <span class="material-symbols-outlined product-icon">person</span>
                     2{{ $product->translateAttribute('participants') }} participants
@@ -60,12 +58,12 @@ $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
                     <span class="material-symbols-outlined product-icon">schedule</span>
                     45{{ $product->translateAttribute('length') }} mins
                 </div>
-            </div>
+            </div> -->
 
             <!-- Location -->
-            <div class="product-city text-muted fs-13 mb-3">
+            <!-- <div class="product-city text-muted fs-13 mb-3">
                 <i class="fa fa-map-marker"></i> {{ $product->translateAttribute('city') ?? 'Athens, Thessaloniki' }}
-            </div>
+            </div> -->
 
             <!-- Price -->
             <div class="mt-auto">

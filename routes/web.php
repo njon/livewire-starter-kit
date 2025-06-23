@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\ProductReviewController;
@@ -13,13 +14,25 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, 'index']);
 
+// Cart Routes
 Route::resource('cart', CartController::class)
     ->only(['index', 'update', 'destroy'])
     ->parameters(['cart' => 'ProductVariant']);
     
-Route::get('/checkout', [CartController::class, 'checkoutpage']);
-Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.store');
 Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.canvas-items');
+
+// Checkout Routes
+Route::prefix('checkout')->group(function() {
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/', [CheckoutController::class, 'checkout'])->name('checkout.store');
+    Route::get('/success/{reference_id}', [CheckoutController::class, 'order'])->name('checkout.success');
+    
+    // Payment Routes
+    Route::post('/create-payment-intent', [CheckoutController::class, 'processStripePayment'])
+        ->name('checkout.payment-intent');
+    Route::post('/complete-order', [CheckoutController::class, 'completeOrder'])
+        ->name('checkout.complete');
+});
 
 // Product Routes
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -45,16 +58,6 @@ Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpf
 Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 'destroy']);
 Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])
     ->name('wishlist.ajaxItems');
-
-Route::get('/checkout/success/{order}', [CartController::class, 'order']);
-Route::get('/xxx', [CartController::class, 'xxx']);
-
-Route::post('/create-payment-intent', [CartController::class, 'processStripePayment']);
-
-Route::post('/complete-order', [CartController::class, 'completeOrder']);
-
-
-
 
 // User Profile Routes
 Route::middleware(['auth'])->group(function () {
@@ -85,12 +88,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile/delete', [UserController::class, 'deleteAccount'])->name('profile.destroy');
 });
 
-
-
-
-
-
-
 // Authentication Routes
 Route::controller(AuthController::class)->group(function() {
     Route::get('/login', 'showLogin')->name('login');
@@ -104,23 +101,20 @@ Route::controller(AuthController::class)->group(function() {
     Route::get('/auth/{provider}/callback', 'socialCallback')->where('provider', 'facebook|google');
 });
 
-
-
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     if ($product = \App\Models\Product::findBySlug($slug)) {
         return app(ProductController::class)->show($product);
     }
 
-    if ($collection = App\Models\Collection::findBySlug($slug)) {
+    if ($collection = Lunar\Models\Collection::whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))->first()) {
         return app(ProductController::class)->category($collection);
     }
 
-    if (in_array($slug, ['privacy-policy', 'refund-policy', 'terms-of-service'])) {
+    if (in_array($slug, ['privacy-policy', 'refund-policy', 'terms-of-service', 'frequently-asked-questions'])) {
         return app(ProductController::class)->page($slug);
     }
 
     return view('errors.404', ['message' => 'Page not found']);
 
 })->where('slug', '.*');
-

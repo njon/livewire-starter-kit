@@ -100,7 +100,7 @@
           <li class="nav-item dropdown mega-menu">
             <a class="nav-link dropdown-toggle" href="#" id="dropdownExperiences" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
-              Experiences
+              <i class="fa fa-magic text-danger me-1"></i> Browse Experiences
             </a>
             <div class="dropdown-menu shadow border menu-mega" aria-labelledby="dropdownExperiences">
               <div class="row gx-4">

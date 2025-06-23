@@ -4,14 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Demo Storefront</title>
-    <meta name="description" content="Example of an ecommerce storefront built with Lunar.">
+    <!-- @todo change ellada experiences to your app name -->
+    <title>@yield('title', 'Ellada Experiences') | Ellada Experiences</title>
+    <!-- @todo change meta description for homepage and other pages -->
+    <meta name="description" content="@yield('meta_description', 'Discover unique experiences in Greece with Ellada Experiences. From cultural tours to adventure activities, find the perfect gift or personal adventure.')">
     <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/custom.css"
         crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Figtree:ital,wght@0,300..900;1,300..900&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Manrope:wght@200..800&family=Rakkas&display=swap" rel="stylesheet">
+    <link rel="canonical" href="{{ url()->current() }}" />
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
@@ -29,6 +33,12 @@
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous">
     </script>
     <script src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/js/custom.js"></script>
+    <style>
+.text-primary {
+    --bs-text-opacity: 1;
+    color: rgb(96 139 75) !important;
+}
+    </style>
 </head>
 
 <body class="antialiased text-gray-900">
@@ -62,5 +72,5 @@
     </div>
     @endif
 </body>
-
+    @yield('structured_data')
 </html>

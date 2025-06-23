@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection as BaseCollection;
 use Lunar\Models\Product as LunarProduct;
-use App\Models\Collection;
+use Lunar\Models\Collection;
 use Lunar\Models\Discount;
 use Lunar\Models\TaxRateAmount;
 use App\Models\ProductVariant;

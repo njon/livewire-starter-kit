@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
-use Lunar\Models\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Services\CartService;
 use App\Models\FilterCategory;
@@ -33,14 +32,22 @@ class ProductController extends Controller
     public function show($product): View
     {
         $counter = end_in_counter($product->discounts);
-        $related_products = Product::limit(5)->get();
+        $relatedProducts = Product::limit(5)->get();
+        $category = $product->collections->first()->id ?? null;
+
+        $breadcrums = \Lunar\Models\Collection::with([
+            'defaultUrl',
+            'children',
+            'children.children',
+            'children.children.children'
+        ])->find($category);
 
         return view('products.show', [
             'product' => $product,
-            // 'relatedProducts' => $product->getRelatedProducts(),
-            'relatedProducts' => $related_products,
+            'relatedProducts' => $relatedProducts,
             'title' => $product->translateAttribute('name') . ' | Your Store',
-            'end' => $counter
+            'end' => $counter,
+            'breadcrums' => $breadcrums,
         ]);
     }
 
