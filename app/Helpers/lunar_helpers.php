@@ -23,6 +23,34 @@ if (!function_exists('format_price')) {
     }
 }
 
+
+if (!function_exists('get_category_image')) {
+
+    function get_category_image($categoryName) {
+        $categories = [
+            "Adventure & Action" => "action1.png",
+            "Airborne Experiences" => "airborne.png",
+            "Automotive Sports" => "auto1.png",
+            "Beauty & Wellness" => "spa1.png",
+            "Creative & Learning" => "educational.png",
+            "Cultural & Entertainment" => "restaurant1.png",
+            "Culinary & Dining" => "restaurant2.png",
+            "Nature & Wildlife" => "nature1.png",
+            "Water Sports & Aquatic" => "water.png",
+            "Short Breaks & Getaways" => "explore.png",
+            "Tours & Sightseeing" => "tours.png",
+            "Photography Experiences" => "xx.png",
+        ];
+
+        if (isset($categories[$categoryName])) {
+            echo $categories[$categoryName];
+        } else {
+            echo "default.png"; // fallback image if category not found
+        }
+    }
+}
+
+
 if (!function_exists('discounted_single_product_price')) {
     /**
      * Format discounted price

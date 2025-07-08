@@ -56,7 +56,7 @@
 
       <div class="row items" id="search-results">
         @foreach($products as $product)
-        @include('products.product', ['product' => $product, 'col' => '4'])
+          @include('products.product', ['product' => $product, 'col' => '4'])
         @endforeach
         {!! $pagination !!}
       </div>

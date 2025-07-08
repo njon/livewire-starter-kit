@@ -8,6 +8,34 @@
     <title>@yield('title', 'Ellada Experiences') | Ellada Experiences</title>
     <!-- @todo change meta description for homepage and other pages -->
     <meta name="description" content="@yield('meta_description', 'Discover unique experiences in Greece with Ellada Experiences. From cultural tours to adventure activities, find the perfect gift or personal adventure.')">
+    <script>
+        // Immediately start async request
+fetch('wishlist/ajax-items')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.querySelectorAll('.wishlist-add').forEach(btn => {
+            const productId = btn.dataset.productId;
+            const isActive = data.hasOwnProperty(productId);
+            
+            // Toggle class on the button
+            btn.classList.toggle('is-active', isActive);
+            
+            // Toggle class on the closest parent with .btn-wishlist
+            let parent = btn.closest('.btn-wishlist');
+            if (parent) {
+                parent.classList.toggle('is-active', isActive);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching wishlist items:', error);
+    });
+    </script>
     <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/custom.css"
         crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">

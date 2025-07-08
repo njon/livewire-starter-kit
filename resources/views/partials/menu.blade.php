@@ -1,3 +1,4 @@
+
 <header id="header" class="position-relative">
   <div id="top-bar" class="classic-color-bg">
     <div class="container">
@@ -30,7 +31,7 @@
               <div class="d-flex flex-column flex-md-row justify-content-center gap-5 info-lines" bis_skin_checked="1">
                 <!-- Company Info Card -->
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
-                  <span class="material-symbols-outlined mt-1 fs-2">phone</span>
+                  <i class="d-block small text-dark mb-1 fa fa-mobile mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
                     <span class="d-block fw-semibold small text-dark mb-1">Phone Number</span>
                     <a href="tel:+396973391189"
@@ -42,7 +43,7 @@
 
                 <!-- Support Info Card -->
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
-                  <span class="material-symbols-outlined mt-1 fs-2">support_agent</span>
+                  <i class="d-block small text-dark mb-1 fa fa-comments-o mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
                     <span class="d-block fw-semibold small text-dark mb-1">Live Chat</span>
                     <a href="#"
@@ -55,9 +56,14 @@
                   <div class="input-group">
                     <span class="input-group-text">
                       <span class="material-symbols-outlined hoverable-icon">search</span> </span>
-                    <input type="search" class="form-control border-start-0" placeholder="Search for experiences"
-                      aria-label="Search">
+                    <input type="search" class="form-control border-start-0 min-width-400"
+                      placeholder="Search for experiences" aria-label="Search">
                   </div>
+                </div>
+                <div class="text-nowrap d-flex align-items-center gap-3 rounded-3 hover-lift" bis_skin_checked="1">
+                  <button class="btn btn-outline-dark fs-14">
+                    Claim Voucher
+                  </button>
                 </div>
               </div>
             </div>
@@ -75,10 +81,15 @@
                 <a href="{{ route('login') }}" class="text-decoration-none text-dark ms-2">Login</a>
                 @endif
               </div>
-              <a href="{{ route('wishlist.index') }}" class="material-symbols-outlined hoverable-icon">favorite</a>
-              <span class="material-symbols-outlined hoverable-icon" data-bs-toggle="offcanvas"
-                data-bs-target="#shoppingCart" aria-controls="shoppingCart"
-                aria-label="Toggle navigation">shopping_cart</span>
+
+              <a href="{{ route('wishlist.index') }}"
+                class="material-symbols-outlined hoverable-icon text-dark text-decoration-none">
+                <i class="fa fa-heart-o" aria-hidden="true"></i>
+              </a>
+              <i class="fa fa-shopping-basket material-symbols-outlined hoverable-icon" data-bs-toggle="offcanvas"
+                data-bs-target="#shoppingCart" aria-controls="shoppingCart" aria-label="Toggle navigation"
+                aria-hidden="true"></i>
+
             </div>
           </div>
 
@@ -102,40 +113,49 @@
               data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-magic text-danger me-1"></i> Browse Experiences
             </a>
-            <div class="dropdown-menu shadow border menu-mega" aria-labelledby="dropdownExperiences">
-              <div class="row gx-4">
-                <div class="col-lg-6 pe-0 category-list">
+            <div class="dropdown-menu shadow border menu-mega p-0" aria-labelledby="dropdownExperiences">
+              <div class="row gx-0">
+                <div class="col-lg-4 pe-0 py-2 category-list">
                   <ul class="list-unstyled">
                     @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
                       @if($mainCategory->parent_id == null)
-                        <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}">
-                          <a href="{{ $mainCategory->defaultUrl->slug }}">{{ $mainCategory->translateAttribute('name') }}</a>
-                        </li>
+                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
+                        <a href="{{ url($mainCategory->defaultUrl->slug) }}">{{ $mainCategory->translateAttribute('name') }}</a>
+                      </li>
                       @endif
                     @endforeach
                   </ul>
                 </div>
 
-                <div class="col-lg-6 ps-0 subcategory-container">
+                <div class="col-lg-4 ps-0 py-2 subcategory-container">
                   @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
-                    @if($mainCategory->parent_id == null)
-                    <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
-                      <ul class="list-unstyled">
-                        @foreach($mainCategory->children as $subCategory)
-                          <li>
-                            <a href="{{ url($mainCategory->defaultUrl->slug) }}"
-                              class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
-                              {{ $subCategory->translateAttribute('name') }}
-                            </a>
-                          </li>
-                        @endforeach
-                      </ul>
-                    </div>
-                    @endif
+                  @if($mainCategory->parent_id == null)
+                  <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
+                    <ul class="list-unstyled">
+                      @foreach($mainCategory->children as $subCategory)
+                      <li>
+                        <a href="{{ url($subCategory->defaultUrl->slug) }}"
+                          class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
+                          {{ $subCategory->translateAttribute('name') }}
+                        </a>
+                      </li>
+                      @endforeach
+                    </ul>
+                  </div>
+                  @endif
                   @endforeach
                 </div>
+                <div class="col-lg-4 p-3 description-container">
+                  <div class="menu-image">
+                    <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/action1.png" alt="Menu Image" id="menu-description-image" class="img-fluid">
+                  </div>
+                  <div class="menu-description">
+                    <h5 class="fw-bold mt-3 mb-3">Explore Our Experiences</h5>
+                    <p class="text-muted">Discover a wide range of unique experiences tailored to your interests. From
+                      thrilling adventures to relaxing getaways, we have something for everyone.</p>
+                  </div>
+                </div>
               </div>
-            </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> Father's Day</a>

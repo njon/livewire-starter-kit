@@ -8,8 +8,7 @@
 <!-- Hero Section: Gift-Focused -->
 <section class="hero-section py-5 bg-light position-relative overflow-hidden">
     <!-- Decorative elements (optional) -->
-    <div class="position-absolute top-0 end-0 bg-primary opacity-10 rounded-circle"
-        style="width: 300px; height: 300px; transform: translate(50%, -50%);"></div>
+
 
     <div class="container py-lg-5 position-relative">
         <div class="row align-items-center">
@@ -84,43 +83,19 @@
     <div class="d-flex align-items-center mb-5 gap-3">
         <i class="fa fa-tags fs-1 classic-color"></i>
         <div>
-            <h2 class="fs-30 fw-600 ls-1">Browse categories</h2>
+            <h2 class="fs-30 fw-600 ls-1">{{ __('Browse categories') }}</h2>
             <p class="text-muted mb-0 fs-18 ls-1">Lots of new products and product collections</p>
         </div>
     </div>
-@php
 
-function getCategoryImage($categoryName) {
-    $categories = [
-        "Adventure & Action" => "action1.png",
-        "Airborne Experiences" => "airborne.png",
-        "Automotive Sports" => "auto1.png",
-        "Beauty & Wellness" => "spa1.png",
-        "Creative & Learning" => "educational.png",
-        "Cultural & Entertainment" => "restaurant1.png",
-        "Culinary & Dining" => "restaurant2.png",
-        "Nature & Wildlife" => "nature1.png",
-        "Water Sports & Aquatic" => "water.png",
-        "Short Breaks & Getaways" => "explore.png",
-        "Tours & Sightseeing" => "tours.png",
-        "Photography Experiences" => "xx.png",
-    ];
-
-    if (isset($categories[$categoryName])) {
-        echo $categories[$categoryName];
-    } else {
-        echo "default.png"; // fallback image if category not found
-    }
-}
-@endphp
     <div class="row g-3">
-       @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $collection)
+       @foreach($categories as $collection)
         <div class="col-2 mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
                         <div class="img-holder ratio ratio-1x1">
-                            <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ getCategoryImage($collection->translateAttribute('name')) }}" 
+                            <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
                                 class="card-img-top object-fit-cover"
                                 alt="{{ $collection->name }}"
                                 loading="lazy">
@@ -143,6 +118,7 @@ function getCategoryImage($categoryName) {
         @endforeach
     </div>
 </div>
+
 
 <div id="home-producs">
     <div class="d-flex align-items-center mb-5 mt-5 gap-3">

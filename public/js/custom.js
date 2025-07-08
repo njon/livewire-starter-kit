@@ -82,6 +82,8 @@ $(document).ready(function () {
         $('.subcategory-group').addClass('d-none');
         const targetId = $(this).data('target');
         $('#' + targetId).removeClass('d-none');
+        var image = $(this).data('image');
+        $('#menu-description-image').attr('src', image);
     });
 
     // Show/hide blur on mega-menu hover
@@ -173,6 +175,7 @@ $(document).ready(function () {
                     alert(response.message);
                 }
                 $('#order_id').val(response.order_id);
+                $('#order_reference').val(response.order_reference);
             },
             error: function (xhr) {
                 var errorMsg = 'An error occurred during checkout.';
@@ -481,9 +484,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    // Initial update
-    updateWishlist();
 
     $('.btn-helpful').click(function () {
         const button = $(this);

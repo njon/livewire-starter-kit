@@ -73,7 +73,7 @@ class CheckoutController extends Controller
             ]);
 
             $order->update([
-                'status' => 'payment-waiting'
+                'status' => 'awaiting-payment'
             ]);
 
             return response()->json([
@@ -158,10 +158,10 @@ class CheckoutController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:255',
-            'country' => 'required|string|size:2',
+            'address' => '',
+            'city' => '',
+            'zip_code' => '',
+            'country' => '',
             'order_notes' => 'nullable|string'
         ]);
 
@@ -171,6 +171,8 @@ class CheckoutController extends Controller
             'user_id' => auth()->id(),
             'status' => 'awaiting-payment',
             'reference' => uniqid(),
+            'customer_reference' => uniqid(),
+            'placed_at' => now(),
             'sub_total' => $cart->subTotal->value,
             'total' => $cart->total->value,
             'notes' => $validated['order_notes'] ?? null,
@@ -229,6 +231,7 @@ class CheckoutController extends Controller
             'success' => true,
             'message' => 'Checkout done successfully',
             'order_id' => $order->id,
+            'order_reference' => $order->reference,
         ]);
     }
 }

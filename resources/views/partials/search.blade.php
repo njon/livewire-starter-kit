@@ -127,7 +127,7 @@
       <i class="fas fa-filter me-1"></i> Apply Filters
     </button>
 
-    <a href="{{ request()->url() }}" class="btn btn-outline-secondary px-4">
+    <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
       <i class="fa fa-undo" aria-hidden="true"></i> Reset Search
     </a>
   </div>

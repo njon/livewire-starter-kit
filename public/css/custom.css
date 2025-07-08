@@ -573,7 +573,7 @@ header#header {
     z-index: 6;
 }
 .nav-item.dropdown.mega-menu LI a {
-    padding: 0 0 0 20px;
+    padding: 0 0 0 20px !important;
     border-radius: 0;
     height: 44px !important;
     line-height: 44px;
@@ -593,7 +593,7 @@ header#header {
 }
 .mega-menu .dropdown-menu {
   width: 100%;
-  min-width: 520px;
+  min-width: 820px;
   display: block;
   visibility: hidden;
   opacity: 0;
@@ -729,3 +729,11 @@ h5.category-explore {
             stroke-dashoffset: 0;
         }
     }
+
+.min-width-400 {
+    width: 380px !important;
+}
+.form-control:focus {
+    box-shadow: none !important;
+}
+i.fa.fa-map-marker { font-size: 15px; margin-right: 5px; margin-left: 5px; color: #6f6f6f; }
