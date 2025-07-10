@@ -1,7 +1,7 @@
 <div class="accordion-item">
     <h2 class="accordion-header accordion-button collapsed sf" id="reviews-container" type="button"
         data-bs-toggle="collapse" data-bs-target="#collapseReviews" aria-controls="collapseReviews">
-        Customer Reviews
+        {{ __('Customer Reviews') }}
     </h2>
 
     <section id="reviews">
@@ -14,10 +14,10 @@
                             <div class="star-rating-display me-3">
                                 @for($i = 1; $i <= 5; $i++) @if($i <=floor($product->average_rating)) ★ @elseif($i - 0.5
                                     <=$product->average_rating) ½ @else ☆ @endif @endfor <span class="ms-2">
-                                            {{ number_format($product->average_rating, 1) }} out of 5</span>
+                                            {{ number_format($product->average_rating, 1) }} {{ __('out of 5') }}</span>
                             </div>
                             <span class="text-muted">{{ $product->product_count }}
-                                {{ Str::plural('review', $product->product_count) }}</span>
+                                {{ Str::plural(__('review'), $product->product_count) }}</span>
                         </div>
                     </div>
 
@@ -42,7 +42,7 @@
 
                         @if($review->verified_purchase)
                         <div class="verified-badge text-success small mb-2">
-                            ✓ Verified Purchase
+                            ✓ {{ __('Verified Purchase') }}
                         </div>
                         @endif
 
@@ -60,7 +60,7 @@
                     <div class="mt-4">
                         <button class="btn btn-primary" data-bs-toggle="collapse" role="button"
                             data-bs-target="#write-review" aria-expanded="false" aria-controls="write-review">
-                            Write a Review
+                            {{ __('Write a Review') }}
                         </button>
                     </div>
                     @endif
@@ -69,7 +69,7 @@
                         <!-- Button to trigger modal -->
                         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
                             data-bs-target="#reviewRestrictionModal">
-                            Leave a Review
+                            {{ __('Leave a Review') }}
                         </button>
                     </div>
                     @endauth

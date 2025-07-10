@@ -4,8 +4,8 @@
   </li>
   
   <!-- Recursively handle nested children -->
-  @if(!empty($crumb->children))
-    @foreach($crumb->children as $child)
+  @if(!empty($crumb->parent))
+    @foreach($crumb->parent as $child)
       @include('partials.breadcrumb-item', ['crumb' => $child])
     @endforeach
   @endif

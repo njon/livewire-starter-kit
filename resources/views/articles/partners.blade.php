@@ -380,7 +380,7 @@
     </section>
 
     <!-- Trust Builders -->
-    <section class="py-5 bg-white">
+    <!-- <section class="py-5 bg-white">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="fw-bold">Trusted by Experience Creators</h2>
@@ -428,10 +428,10 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- How It Works -->
-    <section id="how-it-works" class="py-5">
+    <section id="how-it-works" class="py-5 bg-white">
         <div class="container" bis_skin_checked="1">
             <div class="row justify-content-center mb-5" bis_skin_checked="1">
                 <div class="col-lg-8 text-center" bis_skin_checked="1">

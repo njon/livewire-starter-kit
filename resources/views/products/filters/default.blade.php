@@ -4,7 +4,7 @@
         id="filter-{{ $category->slug }}-{{ $option->id }}"
         {{ in_array($option->value, (array)request($category->slug, [])) ? 'checked' : '' }}>
     <label class="form-check-label fs-14" for="filter-{{ $category->slug }}-{{ $option->id }}">
-        {{ $option->name }}
+        {{ __($option->name) }}
     </label>
 </div>
 @endforeach

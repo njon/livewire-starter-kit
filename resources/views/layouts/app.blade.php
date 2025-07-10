@@ -9,39 +9,27 @@
     <!-- @todo change meta description for homepage and other pages -->
     <meta name="description" content="@yield('meta_description', 'Discover unique experiences in Greece with Ellada Experiences. From cultural tours to adventure activities, find the perfect gift or personal adventure.')">
     <script>
-        // Immediately start async request
-fetch('wishlist/ajax-items')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.querySelectorAll('.wishlist-add').forEach(btn => {
-            const productId = btn.dataset.productId;
-            const isActive = data.hasOwnProperty(productId);
-            
-            // Toggle class on the button
-            btn.classList.toggle('is-active', isActive);
-            
-            // Toggle class on the closest parent with .btn-wishlist
-            let parent = btn.closest('.btn-wishlist');
-            if (parent) {
-                parent.classList.toggle('is-active', isActive);
-            }
-        });
-    })
-    .catch(error => {
-        console.error('Error fetching wishlist items:', error);
-    });
-    </script>
-    <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/custom.css"
-        crossorigin="anonymous">
+        fetch('wishlist/ajax-items') .then(response => { if (!response.ok) { throw new Error('Network response was not ok'); } return response.json(); }) .then(data => { document.querySelectorAll('.wishlist-add').forEach(btn => { const productId = btn.dataset.productId; const isActive = data.hasOwnProperty(productId); btn.classList.toggle('is-active', isActive); let parent = btn.closest('.btn-wishlist'); if (parent) { parent.classList.toggle('is-active', isActive); } }); }) .catch(error => { console.error('Error fetching wishlist items:', error); });
+const processing = '{{ __("Processing...") }}';
+const submitting = '{{ __("Submitting...") }}';
+const adding = '{{ __("Adding") }}';
+const submitQuestion = '{{ __("Submit Question") }}';
+const questionSubmittedSuccess = '{{ __("Question submitted successfully!") }}';
+const checkoutError = '{{ __("An error occurred during checkout.") }}';
+const genericError = '{{ __("An error occurred. Please try again.") }}';
+const helpfulError = '{{ __("Error marking as helpful") }}';
+const addToCartError = '{{ __("An error occurred while adding to cart") }}';
+const removeItemError = '{{ __("An error occurred while removing item") }}';
+const updateQuantityError = '{{ __("An error occurred while updating quantity") }}';
+const helpful = '{{ __("Helpful") }}';
+        </script>
+    <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/custom.css" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- @todo add favicon -->
+    <link rel="icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Figtree:ital,wght@0,300..900;1,300..900&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Manrope:wght@200..800&family=Rakkas&display=swap" rel="stylesheet">
     <link rel="canonical" href="{{ url()->current() }}" />
     <link
@@ -62,11 +50,13 @@ fetch('wishlist/ajax-items')
     </script>
     <script src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/js/custom.js"></script>
     <style>
+        /* @todo Remove */
 .text-primary {
     --bs-text-opacity: 1;
     color: rgb(96 139 75) !important;
 }
     </style>
+    @cookieconsentscripts
 </head>
 
 <body class="antialiased text-gray-900">
@@ -99,6 +89,23 @@ fetch('wishlist/ajax-items')
         </div>
     </div>
     @endif
+
+    @if(session('error'))
+    <div role="alert" aria-live="assertive" aria-atomic="true"
+        class="toast position-fixed top-0 end-0 bg-white show border-0 m-3 alert-li" style="z-index:99;"
+        data-bs-autohide="false">
+        <div class="toast-header">
+            <strong class="me-auto">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('error') }}
+        </div>
+    </div>
+    @endif
+
+
+    @cookieconsentview
 </body>
     @yield('structured_data')
 </html>

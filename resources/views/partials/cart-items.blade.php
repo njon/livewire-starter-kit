@@ -1,7 +1,7 @@
 @if($cart->lines->count() === 0)
     <div class="text-center py-4">
         <span class="material-symbols-outlined" style="font-size: 2rem;">shopping_cart</span>
-        <p class="mt-2 mb-0">Your cart is empty</p>
+        <p class="mt-2 mb-0">{{ __('Your cart is empty') }}</p>
     </div>
 @else
 <div>
@@ -37,7 +37,7 @@
                             @endif
                         </h6>
                         <div class="text-muted small">
-                            {{ $unitPrice }} each
+                            {{ $unitPrice }} {{ __('each') }}
                         </div>
                         <div class="mt-1">
                             <span class="fw-bold item-total">{{ $totalPrice }}</span>

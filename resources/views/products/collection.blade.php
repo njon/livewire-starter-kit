@@ -26,29 +26,29 @@
         </div>
 
         <div class="sorting flex-shrink-0">
-          <span class="me-2 small">Sort by:</span>
+          <span class="me-2 small">{{ __('Sort by:') }}</span>
           <span class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
               data-bs-toggle="dropdown" aria-expanded="false">
               @switch(request('sort'))
-              @case('price_asc') Price: Low to High @break
-              @case('price_desc') Price: High to Low @break
-              @case('rating_desc') Best rated @break
-              @case('rating_asc') Lowest rated @break
-              @default Default
+              @case('price_asc') {{ __('Price: Low to High') }} @break
+              @case('price_desc') {{ __('Price: High to Low') }} @break
+              @case('rating_desc') {{ __('Best rated') }} @break
+              @case('rating_asc') {{ __('Lowest rated') }} @break
+              @default {{ __('Default') }}
               @endswitch
             </button>
             <ul class="dropdown-menu" aria-labelledby="sortDropdown">
               <li>
-                <h6 class="dropdown-header">Sort options</h6>
+                <h6 class="dropdown-header">{{ __('Sort options') }}</h6>
               </li>
-              <li><a class="dropdown-item small" href="#" data-sort="price_asc">Price: Low to High</a></li>
-              <li><a class="dropdown-item small" href="#" data-sort="price_desc">Price: High to Low</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="price_asc">{{ __('Price: Low to High') }}</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="price_desc">{{ __('Price: High to Low') }}</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item small" href="#" data-sort="rating_desc">Best rated</a></li>
-              <li><a class="dropdown-item small" href="#" data-sort="rating_asc">Lowest rated</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="rating_desc">{{ __('Best rated') }}</a></li>
+              <li><a class="dropdown-item small" href="#" data-sort="rating_asc">{{ __('Lowest rated') }}</a></li>
             </ul>
           </span>
         </div>

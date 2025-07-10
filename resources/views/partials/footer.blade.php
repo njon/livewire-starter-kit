@@ -4,8 +4,7 @@
       <!-- Company Info -->
       <div class="col-lg-4">
         <h5 class="fw-bold mb-3">FlowSpace</h5>
-        <p class="opacity-75">Creating beautiful digital experiences with modern design solutions for forward-thinking
-          companies.</p>
+        <p class="opacity-75">{{ __('Creating beautiful digital experiences with modern design solutions for forward-thinking companies.') }}</p>
         <div class="d-flex gap-2 mt-4">
           <a href="#" class="social-icon">
             <svg width="18" height="18" fill="black" viewBox="0 0 24 24">
@@ -30,33 +29,33 @@
 
       <!-- Quick Links -->
       <div class="col-lg-2 col-md-4">
-        <h6 class="fw-bold mb-3">Quick Links</h6>
+        <h6 class="fw-bold mb-3">{{ __('Quick Links') }}</h6>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="footer-link">About Us</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Services</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Portfolio</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Contact</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('About Us') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Services') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Portfolio') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Contact') }}</a></li>
         </ul>
       </div>
 
       <!-- Resources -->
       <div class="col-lg-2 col-md-4">
-        <h6 class="fw-bold mb-3">Resources</h6>
+        <h6 class="fw-bold mb-3">{{ __('Resources') }}</h6>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Documentation</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Support</a></li>
-          <li class="mb-2"><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Blog') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Documentation') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Support') }}</a></li>
+          <li class="mb-2"><a href="#" class="footer-link">{{ __('Privacy Policy') }}</a></li>
         </ul>
       </div>
 
       <!-- Newsletter -->
       <div class="col-lg-4">
-        <h6 class="fw-bold mb-3">Newsletter</h6>
-        <p class="opacity-75">Stay updated with our latest news and updates.</p>
+        <h6 class="fw-bold mb-3">{{ __('Newsletter') }}</h6>
+        <p class="opacity-75">{{ __('Stay updated with our latest news and updates.') }}</p>
         <div class="input-group mt-3">
-          <input type="email" class="form-control newsletter-input" placeholder="Enter your email">
-          <button class="btn btn-light px-4" type="button">Subscribe</button>
+          <input type="email" class="form-control newsletter-input" placeholder="{{ __('Enter your email') }}">
+          <button class="btn btn-light px-4" type="button">{{ __('Subscribe') }}</button>
         </div>
       </div>
     </div>
@@ -66,12 +65,12 @@
     <!-- Copyright -->
     <div class="row align-items-center">
       <div class="col-md-6 text-center text-md-start">
-        <small class="opacity-75">© 2024 FlowSpace. All rights reserved.</small>
+        <small class="opacity-75">{{ __('© 2024 FlowSpace. All rights reserved.') }}</small>
       </div>
       <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-        <a href="#" class="footer-link me-3"><small>Terms</small></a>
-        <a href="#" class="footer-link me-3"><small>Privacy</small></a>
-        <a href="#" class="footer-link"><small>Cookies</small></a>
+        <a href="#" class="footer-link me-3"><small>{{ __('Terms') }}</small></a>
+        <a href="#" class="footer-link me-3"><small>{{ __('Privacy') }}</small></a>
+        <a href="#" class="footer-link"><small>{{ __('Cookies') }}</small></a>
       </div>
     </div>
   </div>

@@ -30,7 +30,7 @@
     <!-- Description + Sticky Box Row -->
     <div class="row">
         <div class="col-md-8 product-description">
-            <h2 class="mb-4 fs-4 sf">Service description</h2>
+            <h2 class="mb-4 fs-4 sf">{{ __('Service description') }}</h2>
             <article>
                 <p>{!! $product->translateAttribute('description') !!}</p>
             </article>
@@ -52,18 +52,24 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="text-muted small">
-                                <i class="bi bi-geo-alt-fill me-1"></i> {{ $product->city }} Athens, Thessaloniki
+                                {{ $product->city }} 
+                                <div class="d-inline-flex flex-wrap gap-2">
+                                  <span class="badge bg-light text-dark">{{ __('Acropolis') }}</span>
+                                  <span class="badge bg-light text-dark">{{ __('Kolonaki') }}</span>
+                                  <span class="badge bg-light text-dark">{{ __('Monastiraki') }}</span>
+                                  <span class="badge bg-light text-dark">{{ __('Plaka') }}</span>
+                                </div>
                             </div>
                             <div class="d-flex align-items-center">
                                 @if($product->average_rating == 0)
-                                <span class="text-muted small">Not rated yet</span>
+                                <span class="text-muted small">{{ __('Not rated yet') }}</span>
                                 @else
                                 <div class="text-warning h5 mb-0 me-2" role="img"
-                                    aria-label="{{ number_format($product->average_rating, 1) }} out of 5 stars">
+                                    aria-label="{{ number_format($product->average_rating, 1) }} {{ __('out of 5 stars') }}">
                                     {{ $product->rating_stars }}
                                 </div>
                                 <span class="text-muted small">{{ number_format($product->average_rating, 1) }}
-                                    rating</span>
+                                    {{ __('rating') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -101,21 +107,56 @@
                         </div>
                         @endif
 
+                        <!-- <div class="row text-center my-3">
+                            <div class="col-4">
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <div class="mb-3 text-primary">
+                                        <i class="fa fa-users fa-2x text-grey" aria-hidden="true"></i>
+                                    </div>
+                                    <p class="fw-semibold mb-0 fs-14 info-box-text">For 2<br>participants</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <div class="mb-3 text-primary">
+                                        <i class="fa fa-calendar fa-2x text-grey" aria-hidden="true"></i>
+                                    </div>
+                                    <p class="fw-semibold mb-0 fs-14 info-box-text">12 Months<br>Validity</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <div class="mb-3 text-primary">
+                                        <i class="fa fa-map-marker fa-2x text-grey" aria-hidden="true"></i>
+                                    </div>
+                                    <p class="fw-semibold mb-0 fs-14 info-box-text">{{ __('30 days') }}<br>{{ __('Refund') }}</p>
+                                </div>
+                            </div>
+                        </div> -->
+
                         <div class="row text-center my-3">
-                            <div class="col-6">
+                            <div class="col-4">
                                 <div class="attribute bg-light py-3 rounded-3">
                                     <i class="material-symbols-outlined product-icon text-muted d-block mb-1">person</i>
                                     <small class="fw-semibold text-dark">2
                                         {{ $product->translateAttribute('participants') }}
-                                        participants</small>
+                                        {{ __('participants') }}</small>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <div class="attribute bg-light py-3 rounded-3">
                                     <i
                                         class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
                                     <small class="fw-semibold text-dark">45 {{ $product->translateAttribute('length') }}
-                                        minutes</small>
+                                        {{ __('minutes') }}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="attribute bg-light py-3 rounded-3">
+                                    <i
+                                        class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
+                                    <small class="fw-semibold text-dark">45 {{ $product->translateAttribute('length') }}
+                                        {{ __('minutes') }}</small>
                                 </div>
                             </div>
 
@@ -123,7 +164,7 @@
 
                         @if($product->variants->isNotEmpty() && $product->variants->count() == 2)
                         <div class="product-variants mb-4">
-                            <h6 class="text-lg font-medium mb-3">Select package</h6>
+                            <h6 class="text-lg font-medium mb-3">{{ __('Select package') }}</h6>
 
                             @foreach($product->variants as $variant)
                             <div class="variant-option mb-3">
@@ -155,7 +196,7 @@
                                     <button type="submit"
                                         class="btn btn-success rounded-2 btn-add-to-cart w-100 p-2 button-animated"
                                         id="btn-add-to-cart">
-                                        Add to Cart
+                                        {{ __('Add to Cart') }}
                                     </button>
                                     @csrf
                                     <input type="hidden" name="to_cart" value="1">
@@ -168,7 +209,7 @@
                                 <form id="add-to-cart" action="/cart/1" data-redirect="true" method="PUT">
                                     <button class="btn btn-dark btn btn-success rounded-2 animate-btn-hover w-100 p-2"
                                         id="btn-add-to-cart">
-                                        <i class="fa fa-cart"></i> Buy Now
+                                        <i class="fa fa-cart"></i> {{ __('Buy Now') }}
                                     </button>
                                     <input type="hidden" name="to_cart" value="1">
                                     <input type="hidden" name="product_id" value="1">
@@ -178,18 +219,17 @@
                         </div>
 
                         <div class="text-center mt-3" id="klarna">
-                                Make 3 payments of £26.33.
+                                {{ __('Make 3 payments of £26.33.') }}
                                 <br>
-                            <span class="fw-bold">Klarna</span> <a class="classic-color" href="#" aria-label="Learn more - Klarna">
-                                Learn more
+                            <span class="fw-bold">Klarna</span> <a class="classic-color" href="#" aria-label="{{ __('Learn more - Klarna') }}">
+                                {{ __('Learn more') }}
                             </a>
                         </div>
 
                         <div class="small text-muted right mt-5">
                             <a href="/terms-of-service" target="_blank"
-                                class="text-decoration-none text-muted me-2">Terms And Services</a> |
-                            <a href="/refund-policy" target="_blank" class="text-decoration-none text-muted mx-2">Refund
-                                Policy</a>
+                                class="text-decoration-none text-muted me-2">{{ __('Terms And Services') }}</a> |
+                            <a href="/refund-policy" target="_blank" class="text-decoration-none text-muted mx-2">{{ __('Refund Policy') }}</a>
                         </div>
                     </div>
                 </div>
@@ -197,7 +237,7 @@
         </div>
 
         <div id="similar-products">
-            <h3 class="py-4 fs-4 mb-3">Similar Experiences you may like</h3>
+            <h3 class="py-4 fs-4 mb-3">{{ __('Similar Experiences you may like') }}</h3>
             <div class="row">
                 @foreach ($relatedProducts as $product)
                 @include('products.product', ['col' => 'col'])

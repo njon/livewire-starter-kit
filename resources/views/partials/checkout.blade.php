@@ -93,7 +93,12 @@ $tax = $cart->taxTotal->formatted();
         }
     </style>
 </head>
-
+<form action="{{ route('paypal.create') }}" method="POST">
+    @csrf
+    <button type="submit" class="btn btn-paypal btn btn-outline-primary">
+        <i class="fab fa-paypal"></i> Pay with PayPal
+    </button>
+</form>
 <div class="container py-5">
     <div class="row g-4">
         <!-- Customer Information -->
@@ -249,6 +254,8 @@ $tax = $cart->taxTotal->formatted();
                 </div>
             </div>
         </div>
+
+
 
         <!-- Order Summary -->
         <div class="col-lg-4">

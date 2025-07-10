@@ -9,6 +9,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PayPalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
@@ -21,12 +22,12 @@ Route::resource('cart', CartController::class)->only(['index', 'update', 'destro
 Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.canvas-items');
 
 // Checkout Routes
-Route::prefix('checkout')->group(function() {
-    Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
-    Route::get('/success/{reference_id}', [CheckoutController::class, 'order'])->name('checkout.success');
-    Route::post('/', [CheckoutController::class, 'checkout'])->name('checkout.store');
-    Route::post('/create-payment-intent', [CheckoutController::class, 'processStripePayment'])->name('checkout.payment-intent');
-    Route::post('/complete-order', [CheckoutController::class, 'completeOrder'])->name('checkout.complete');
+Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/success/{reference_id}', 'order')->name('success');
+    Route::post('/', 'checkout')->name('store');
+    Route::post('/create-payment-intent', 'processStripePayment')->name('payment-intent');
+    Route::post('/complete-order', 'completeOrder')->name('complete');
 });
 
 // Product Routes
@@ -75,6 +76,26 @@ Route::controller(AuthController::class)->group(function() {
     Route::get('/auth/{provider}', 'socialRedirect')->where('provider', 'facebook|google');
     Route::get('/auth/{provider}/callback', 'socialCallback')->where('provider', 'facebook|google');
 });
+
+
+Route::post('/paypal/webhook', [PayPalController::class, 'webhook'])->name('paypal.webhook');
+
+
+Route::group(['middleware' => ['web']], function () {
+    Route::post('/paypal/create', [PayPalController::class, 'create'])->name('paypal.create');
+    Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
+    Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
+});
+
+
+
+
+
+
+
+
+
+
 
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {

@@ -159,7 +159,7 @@ $(document).ready(function () {
         var originalBtnText = $submitBtn.text();
 
         // Show loading state
-        $submitBtn.prop('disabled', true).text('Processing...');
+        $submitBtn.prop('disabled', true).text(processing);
 
         $.ajax({
             url: $form.attr('action'),
@@ -394,7 +394,7 @@ $(document).ready(function () {
         var originalBtnText = $submitBtn.text();
 
         // Show loading state
-        $submitBtn.prop('disabled', true).text('Submitting...');
+        $submitBtn.prop('disabled', true).text(submitting);
 
         $.ajax({
             url: $form.attr('action'),
@@ -521,7 +521,7 @@ $(document).ready(function () {
         }
 
 
-        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...');
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + adding);
 
         $.ajax({
             url: $form.attr('action'),

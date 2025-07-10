@@ -1,15 +1,14 @@
-
 <header id="header" class="position-relative">
   <div id="top-bar" class="classic-color-bg">
     <div class="container">
       <div class="d-flex flex-wrap justify-content-between align-items-center">
         <div class="mb-1 mb-md-0">
-          MORE THAN 400 EXPERIENCES TO CHOOSE FROM
+          {{ __('MORE THAN 400 EXPERIENCES TO CHOOSE FROM') }}
         </div>
         <div class="d-flex gap-3">
-          <a href="#" class="text-white text-decoration-none hover-opacity">F.A.Q</a>
-          <a href="#" class="text-white text-decoration-none hover-opacity">NEWSLETTER</a>
-          <a href="#" class="text-white text-decoration-none hover-opacity">CONTACTS</a>
+          <a href="#" class="text-white text-decoration-none hover-opacity">{{ __('F.A.Q') }}</a>
+          <a href="#" class="text-white text-decoration-none hover-opacity">{{ __('Newsletter') }}</a>
+          <a href="#" class="text-white text-decoration-none hover-opacity">{{ __('Contacts') }}</a>
         </div>
       </div>
     </div>
@@ -33,7 +32,7 @@
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <i class="d-block small text-dark mb-1 fa fa-mobile mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
-                    <span class="d-block fw-semibold small text-dark mb-1">Phone Number</span>
+                    <span class="d-block fw-semibold small text-dark mb-1">{{ __('Phone Number') }}</span>
                     <a href="tel:+396973391189"
                       class="text-decoration-none fw-medium text-muted d-flex align-items-center gap-1 info-text">
                       +39 697 339 1189
@@ -45,10 +44,10 @@
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <i class="d-block small text-dark mb-1 fa fa-comments-o mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
-                    <span class="d-block fw-semibold small text-dark mb-1">Live Chat</span>
+                    <span class="d-block fw-semibold small text-dark mb-1">{{ __('Live Chat') }}</span>
                     <a href="#"
                       class="text-decoration-none fw-medium text-muted d-flex align-items-center gap-1 info-text">
-                      Click to start chat
+                      {{ __('Click to start chat') }}
                     </a>
                   </div>
                 </div>
@@ -57,12 +56,12 @@
                     <span class="input-group-text">
                       <span class="material-symbols-outlined hoverable-icon">search</span> </span>
                     <input type="search" class="form-control border-start-0 min-width-400"
-                      placeholder="Search for experiences" aria-label="Search">
+                      placeholder="{{ __('Search for experiences') }}" aria-label="{{ __('Search') }}">
                   </div>
                 </div>
                 <div class="text-nowrap d-flex align-items-center gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <button class="btn btn-outline-dark fs-14">
-                    Claim Voucher
+                    {{ __('Claim Voucher') }}
                   </button>
                 </div>
               </div>
@@ -74,11 +73,11 @@
             <div class="d-flex flex-column flex-md-row justify-content-end align-items-center gap-3">
               <div class="text-nowrap">
                 @if(auth()->check())
-                <a href="/profile" class="text-decoration-none text-dark me-2">Profile</a>
+                <a href="/profile" class="text-decoration-none text-dark me-2">{{ __('Profile') }}</a>
                 @else
-                <a href="{{ route('register') }}" class="text-decoration-none text-dark me-2">Register</a>
+                <a href="{{ route('register') }}" class="text-decoration-none text-dark me-2">{{ __('Register') }}</a>
                 <span class="text-muted">/</span>
-                <a href="{{ route('login') }}" class="text-decoration-none text-dark ms-2">Login</a>
+                <a href="{{ route('login') }}" class="text-decoration-none text-dark ms-2">{{ __('Login') }}</a>
                 @endif
               </div>
 
@@ -111,7 +110,7 @@
           <li class="nav-item dropdown mega-menu">
             <a class="nav-link dropdown-toggle" href="#" id="dropdownExperiences" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fa fa-magic text-danger me-1"></i> Browse Experiences
+              <i class="fa fa-magic text-danger me-1"></i> {{ __('Browse Experiences') }}
             </a>
             <div class="dropdown-menu shadow border menu-mega p-0" aria-labelledby="dropdownExperiences">
               <div class="row gx-0">
@@ -150,31 +149,30 @@
                     <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/action1.png" alt="Menu Image" id="menu-description-image" class="img-fluid">
                   </div>
                   <div class="menu-description">
-                    <h5 class="fw-bold mt-3 mb-3">Explore Our Experiences</h5>
-                    <p class="text-muted">Discover a wide range of unique experiences tailored to your interests. From
-                      thrilling adventures to relaxing getaways, we have something for everyone.</p>
+                    <h5 class="fw-bold mt-3 mb-3">{{ __('Explore Our Experiences') }}</h5>
+                    <p class="text-muted">{{ __('Discover a wide range of unique experiences tailored to your interests. From thrilling adventures to relaxing getaways, we have something for everyone.') }}</p>
                   </div>
                 </div>
               </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> Father's Day</a>
+            <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> {{ __('Father\'s Day') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-birthday-cake text-warning me-1"></i> Birthdays</a>
+            <a class="nav-link" href="#"><i class="fa fa-birthday-cake text-warning me-1"></i> {{ __('Birthdays') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" href="#"><i class="fa fa-tags me-1"></i> Sale <span
-                class="badge bg-danger">NOW ON!</span></a>
+            <a class="nav-link fw-semibold" href="#"><i class="fa fa-tags me-1"></i> {{ __('Sale') }} <span
+                class="badge bg-danger">{{ __('NOW ON!') }}</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-search me-1"></i> Gift Finder</a>
+            <a class="nav-link" href="#"><i class="fa fa-search me-1"></i> {{ __('Gift Finder') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-gift text-success me-1"></i> Gift Cards</a>
+            <a class="nav-link" href="#"><i class="fa fa-gift text-success me-1"></i> {{ __('Gift Cards') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-briefcase me-1"></i> For Business</a>
+            <a class="nav-link" href="#"><i class="fa fa-briefcase me-1"></i> {{ __('For Business') }}</a>
           </li>
         </ul>
       </div>

@@ -8,8 +8,8 @@
 <form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form pt-5">
   <div class="accordion mb-4" id="filterAccordion">
     <div class="">
-      <h5 class="mb-3 fs-6 fw-600">Price Selector</h5>
-      <h6 class="mb-5 fw-normal info-text text-muted">Select Your Preferred Price Range</h6>
+      <h5 class="mb-3 fs-6 fw-600">{{ __('Price Selector') }}</h5>
+      <h6 class="mb-5 fw-normal info-text text-muted">{{ __('Select Your Preferred Price Range') }}</h6>
 
       <!-- Price Display -->
       <div class="d-flex justify-content-between mb-4">
@@ -67,7 +67,7 @@
       <h2 class="accordion-header" id="headingRating">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
           data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
-          Filter by Rating
+          {{ __('Filter by Rating') }}
         </button>
       </h2>
       <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating">
@@ -86,7 +86,7 @@
         <button class="accordion-button @if(request()->has($category->slug)) x @else collapsed @endif" type="button"
           data-bs-toggle="collapse" data-bs-target="#collapse{{ $category->slug }}"
           aria-expanded="{{ request()->has($category->slug) }}" aria-controls="collapse{{ $category->slug }}">
-          {{ $category->name }}
+          {{ __($category->name) }}
         </button>
       </h2>
       <div id="collapse{{ $category->slug }}"
@@ -110,7 +110,7 @@
             @endif
 
           @else
-          <p class="text-muted">No options available.</p>
+          <p class="text-muted"> {{ __('No options available.') }}</p>
           @endif
         </div>
       </div>
@@ -124,11 +124,11 @@
   
   <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
     <button type="submit" id="search-button" class="d-none">
-      <i class="fas fa-filter me-1"></i> Apply Filters
+      <i class="fas fa-filter me-1"></i>  {{ __('Apply Filters') }}
     </button>
 
     <a href="{{ url()->current() }}" class="btn btn-outline-secondary px-4">
-      <i class="fa fa-undo" aria-hidden="true"></i> Reset Search
+      <i class="fa fa-undo" aria-hidden="true"></i>  {{ __('Reset Search') }}
     </a>
   </div>
 </form>

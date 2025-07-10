@@ -35,12 +35,7 @@ class ProductController extends Controller
         $relatedProducts = Product::limit(5)->get();
         $category = $product->collections->first()->id ?? null;
 
-        $breadcrums = \Lunar\Models\Collection::with([
-            'defaultUrl',
-            'children',
-            'children.children',
-            'children.children.children'
-        ])->find($category);
+        $breadcrums = $product->collections->first();
 
         return view('products.show', [
             'product' => $product,

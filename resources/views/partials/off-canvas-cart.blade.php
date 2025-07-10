@@ -1,7 +1,7 @@
 @if($cart->lines->count() === 0)
     <div class="text-center py-4">
         <span class="material-symbols-outlined" style="font-size: 2rem;">shopping_cart</span>
-        <p class="mt-2 mb-0">Your cart is empty</p>
+        <p class="mt-2 mb-0">{{ __('Your cart is empty') }}</p>
     </div>
 @else
 <div class="p-0">
@@ -43,7 +43,7 @@
                             {{ $line->quantity }} × {{ $unitPrice }}
                         </div>
                         <div class="mt-1">
-                            <span class="fw-bold">Total: {{ $totalPrice }}</span>
+                            <span class="fw-bold">{{ __('Total:') }} {{ $totalPrice }}</span>
                         </div>
                     </div>
               
@@ -65,16 +65,16 @@
 <!-- Cart Summary -->
 <div class="card-footer border-top bg-white p-3 sticky-bottom">
     <div class="d-flex justify-content-between mb-3">
-        <span class="fw-bold">Subtotal:</span>
+        <span class="fw-bold">{{ __('Subtotal:') }}</span>
         <span class="fw-bold" id="price-total">{{ $cart->subTotal->formatted() }}</span>
     </div>
     <div class="d-grid gap-2">
         <a href="/checkout" class="btn btn-dark btn-lg rounded-pill fw-bold">
-            Checkout
+            {{ __('Checkout') }}
         </a>
         <button class="btn btn-outline-dark btn-lg rounded-pill fw-bold" 
                 data-bs-dismiss="offcanvas">
-            Continue Shopping
+            {{ __('Continue Shopping') }}
         </button>
     </div>
 </div>

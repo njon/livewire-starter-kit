@@ -22,7 +22,7 @@
                                 </span>
                                 <input id="name" type="text" class="form-control form-control-lg @error('name') is-invalid @enderror" 
                                        name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
-                                       placeholder="Enter your full name">
+                                       placeholder="{{ __('Enter your full name') }}">
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -40,7 +40,7 @@
                                 </span>
                                 <input id="email" type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" 
                                        name="email" value="{{ old('email') }}" required autocomplete="email"
-                                       placeholder="your@email.com">
+                                       placeholder="{{ __('Enter your email address') }}">
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -58,7 +58,7 @@
                                 </span>
                                 <input id="password" type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" 
                                        name="password" required autocomplete="new-password"
-                                       placeholder="At least 8 characters">
+                                       placeholder="{{ __('At least 8 characters') }}">
                                 <button class="btn btn-light" type="button" id="togglePassword">
                                     <i class="fa fa-eye"></i>
                                 </button>
@@ -68,7 +68,7 @@
                                     </span>
                                 @enderror
                             </div>
-                            <div class="form-text">Use 8 or more characters with a mix of letters, numbers & symbols</div>
+                            <div class="form-text">{{ __('Use 8 or more characters with a mix of letters, numbers & symbols') }}</div>
                         </div>
 
                         <!-- Confirm Password Field -->
@@ -80,7 +80,7 @@
                                 </span>
                                 <input id="password-confirm" type="password" class="form-control form-control-lg" 
                                        name="password_confirmation" required autocomplete="new-password"
-                                       placeholder="Confirm your password">
+                                       placeholder="{{ __('Confirm your password') }}">
                             </div>
                         </div>
 
@@ -95,7 +95,7 @@
                         <div class="position-relative my-4">
                             <hr class="border-1">
                             <div class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">
-                                OR CONTINUE WITH
+                                {{ __('OR CONTINUE WITH') }}
                             </div>
                         </div>
 
@@ -103,20 +103,20 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <a href="{{ url('/auth/facebook') }}" class="btn btn-outline-primary w-100 py-2">
-                                    <i class="fab fa-facebook-f me-2"></i> Facebook
+                                    <i class="fab fa-facebook-f me-2"></i> {{ __('Facebook') }}
                                 </a>
                             </div>
                             <div class="col-md-6">
                                 <a href="{{ url('/auth/google') }}" class="btn btn-outline-danger w-100 py-2">
-                                    <i class="fab fa-google me-2"></i> Google
+                                    <i class="fab fa-google me-2"></i> {{ __('Google') }}
                                 </a>
                             </div>
                         </div>
 
                         <!-- Login Link -->
                         <div class="text-center mt-4">
-                            <p class="text-muted">Already have an account? 
-                                <a href="{{ route('login') }}" class="text-primary fw-medium">Sign in</a>
+                            <p class="text-muted">{{ __('Already have an account?') }} 
+                                <a href="{{ route('login') }}" class="text-primary fw-medium">{{ __('Sign in') }}</a>
                             </p>
                         </div>
                     </form>
