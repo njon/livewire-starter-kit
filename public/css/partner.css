@@ -1,0 +1,268 @@
+.value-card {
+    transition: transform 0.3s;
+    height: 100%;
+}
+
+.value-card:hover {
+    transform: translateY(-10px);
+}
+
+.step-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    height: 100%;
+}
+
+.step-card:hover {
+    transform: scale(1.03);
+}
+
+.step-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(13, 110, 253, 0.15);
+    line-height: 1;
+}
+
+.pricing-box {
+    background-color: rgba(13, 110, 253, 0.05);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 8px 8px 0;
+}
+
+.registration-form {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.form-progress {
+    height: 8px;
+}
+
+.testimonial-card {
+    background-color: var(--light);
+    border-radius: 10px;
+}
+
+.partner-badge {
+    height: 60px;
+    width: auto;
+    margin: 10px 15px;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+.partner-badge:hover {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+.stats-counter {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.faq-item {
+    border-bottom: 1px solid #dee2e6;
+    padding: 20px 0;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 15px 0;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sticky-cta {
+        display: block;
+    }
+}
+
+:root {
+    --primary: #2ecc71;
+    /* Adventure green */
+    --secondary: #3498db;
+    /* Trust blue */
+    --dark: #2c3e50;
+    /* Professional navy */
+    --light: #f8f9fa;
+}
+
+ .default-h {min-height: auto;}
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 120px 0;
+}.text-primary {
+    --bs-text-opacity: 1;
+    color: #198754 !important;
+}
+section#split-form input, section#split-form textarea {
+    padding-left: 15px !important;
+}
+.benefit-card {
+    transition: all 0.3s;
+        border-color: #ffffff;
+}
+#join-now {
+        background: #dc3545;
+    border: 0;
+    color: white;
+    font-weight: 700;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.brand-story-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: none;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 3rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary);
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -3rem;
+    top: 0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--light);
+}
+
+.faq-item {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.5rem 0;
+}
+
+.partner-badge {
+    height: 60px;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+.partner-badge:hover {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+
+.background-gradient {
+    background: url(https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/1part.png);
+    width: 30%;
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+    left: -177px;
+}
+
+section.land-section {
+    position: relative;
+    background: white;
+    z-index: 0;
+url(
+    https: //crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/1part.png);
+url(
+    https: //crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/1part.png);
+    background: url(https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/part2.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: auto 100%;
+}
+
+.image-guy {
+    position: absolute;
+    bottom: -28px;
+    right: 200px;
+    width: 645px;
+}
+
+.image-guy img {
+    width: 100%;
+    height: 100%;
+}
+p.lead.mb-4 {
+    font-weight: 400;
+    font-size: 20px !important;
+    line-height: 37px;
+}
+
+a.btn.btn-primary.btn-lg.px-4.rounded-pill {
+    background: #dc3545;
+    border: 0;
+    font-size: 17px;
+    padding: 13px !important;
+    width: 229px !important;
+}
+
+
+section {
+    min-height: 75vh;
+    background: white;
+}
+
+.mt-20v {
+    margin-top: 10vh;
+}
+
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top {
+    position: absolute;
+    top: 18px;
+    width: 100%;
+    background: transparent !important;
+}
+
+a.nav-link {color: black;font-weight: 500;margin: 0 15px;}
+
+a.navbar-brand.fw-bold {
+    color: black;
+}
+
+a.btn.btn-outline-light {
+    color: black;
+    border-color: black;
+}
+.container.pos-1 {
+    position: relative;
+}

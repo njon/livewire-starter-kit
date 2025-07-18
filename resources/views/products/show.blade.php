@@ -13,10 +13,10 @@
 
     <!-- Tide + Wishlist Row -->
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <h1 class="fs-3 fs">{{ $product->translateAttribute('name') }}</h2>
         </div>
-        <div class="col-md-6 text-end">
+        <div class="col-md-3 text-end">
             <div class="btn-wishlist">
                 <button class="button-animated like wishlist-add" data-product-id="{{ $product->id }}">
                     <i class="fa fa-heart"></i>
@@ -162,7 +162,7 @@
 
                         </div>
 
-                        @if($product->variants->isNotEmpty() && $product->variants->count() == 2)
+                        @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
                         <div class="product-variants mb-4">
                             <h6 class="text-lg font-medium mb-3">{{ __('Select package') }}</h6>
 

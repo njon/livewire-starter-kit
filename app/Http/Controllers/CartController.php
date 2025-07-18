@@ -23,7 +23,7 @@ class CartController extends Controller
     public function index()
     {
         $cart = $this->cart->getCart();
-        $this->cart->calculateDiscountedPrices($cart);
+        // $this->cart->calculateDiscountedPrices($cart);
 
         return view('partials.cart', ['cart' => $cart]);
     }
@@ -73,7 +73,7 @@ class CartController extends Controller
     public function canvasItems()
     {
         $cart = $this->cart->getCart();
-        $this->cart->calculateDiscountedPrices($cart);
+        // $this->cart->calculateDiscountedPrices($cart);
 
         $html = view('partials.off-canvas-cart', ['cart' => $cart])->render();
 

@@ -107,8 +107,7 @@ Route::get('{slug}', function($slug) {
         return app(ProductController::class)->category($collection);
     }
 
-    return app(ProductController::class)->page($slug);
- if (in_array($slug, ['privacy-policy', 'refund-policy', 'terms-of-service', 'frequently-asked-questions', 'partners'])) {
+     if (in_array($slug, ['privacy-policy', 'refund-policy', 'terms-of-service', 'frequently-asked-questions', 'partners'])) {
         return app(ProductController::class)->page($slug);
     }
 

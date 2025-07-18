@@ -148,8 +148,8 @@ class Product extends LunarProduct
     {
         return $this->morphToMany(
             Discount::class,
-            'purchasable',
-            'lunar_discount_purchasables' // Explicit table name
+            'discountable',
+            'lunar_discountables' // Explicit table name
         )
         ->withPivot(['type'])
         ->where(function($query) {

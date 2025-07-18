@@ -485,28 +485,6 @@ $(document).ready(function () {
         });
     });
 
-    $('.btn-helpful').click(function () {
-        const button = $(this);
-        const reviewId = button.data('review-id');
-
-        $.ajax({
-            url: `/reviews/${reviewId}/helpful`,
-            method: 'POST',
-            data: {
-                _token: csrf_token
-            },
-            success: function (response) {
-                button.find('.emoji').text('❤️');
-                button.html(`<span class="emoji">❤️</span> Helpful (${response.count})`);
-            },
-            error: function () {
-                alert('Error marking as helpful');
-            }
-        });
-    });
-
-    var $pageInput = $('[name="page"]');
-
     $('#add-to-cart').on('submit', function (e) {
         e.preventDefault();
 
@@ -545,7 +523,7 @@ $(document).ready(function () {
                 var errorMessage = xhr.responseJSON && xhr.responseJSON.message
                     ? xhr.responseJSON.message
                     : 'An error occurred while adding to cart';
-                toastr.error(errorMessage);
+                alert(errorMessage);
             },
             complete: function () {
                 $button.prop('disabled', false).html(originalText);
@@ -553,60 +531,52 @@ $(document).ready(function () {
         });
     });
 
-    // $('form').on('#ask-question-form', function(e) {
+    $('#ask-question-form').on('submit', function(e) {
+        $form = $(this);
+        e.preventDefault(); // Prevent default form submission
 
-    //     var notAjax = $(this).data('not-ajax');
+        // Get form data
+        var formData = $(this).serialize();
+        var formAction = $(this).attr('action');
+        var submitButton = $(this).find('button[type="submit"]');
 
-    //     if (notAjax == true) {
-    //         return false;
-    //     }
+        // Disable submit button to prevent multiple submissions
+        submitButton.prop('disabled', true).html(
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + submitting
+        );
 
-    //     $form = $(this);
+        // AJAX request
+        $.ajax({
+            url: formAction,
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Question submitted successfully! Page will reload now.');
+                    $('#askQuestionModal').modal('hide');
+                    $('#question').val('');
+                }
+            },
+            error: function(xhr) {
+                // Handle errors
+                var errorMessage = 'An error occurred. Please try again.';
 
-    //     e.preventDefault(); // Prevent default form submission
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if (xhr.statusText) {
+                    errorMessage = xhr.statusText;
+                }
 
-    //     // Get form data
-    //     var formData = $(this).serialize();
-    //     var formAction = $(this).attr('action');
-    //     var submitButton = $(this).find('button[type="submit"]');
-
-    //     // Disable submit button to prevent multiple submissions
-    //     submitButton.prop('disabled', true).html(
-    //         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
-    //     );
-
-    //     // AJAX request
-    //     $.ajax({
-    //         url: formAction,
-    //         type: 'POST',
-    //         data: formData,
-    //         headers: {
-    //             'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
-    //         },
-    //         success: function(response) {
-    //             if (response.success) {
-    //                 toastr.success(response.message || 'Question submitted successfully!');
-    //                 $('#askQuestionModal').modal('hide');
-    //                 $('#question').val('');
-    //             }
-    //         },
-    //         error: function(xhr) {
-    //             // Handle errors
-    //             var errorMessage = 'An error occurred. Please try again.';
-
-    //             if (xhr.responseJSON && xhr.responseJSON.message) {
-    //                 errorMessage = xhr.responseJSON.message;
-    //             } else if (xhr.statusText) {
-    //                 errorMessage = xhr.statusText;
-    //             }
-
-    //             toastr.error(errorMessage);
-    //         },
-    //         complete: function() {
-    //             submitButton.prop('disabled', false).html('Submit Question');
-    //         }
-    //     });
-    // });
+                alert(errorMessage);
+            },
+            complete: function() {
+                submitButton.prop('disabled', false).html('Submit Question');
+            }
+        });
+    });
 
     $('#ajax-search-form').on('submit', function (e) {
         e.preventDefault();

@@ -2,14 +2,19 @@
 $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
 @endphp
 
-<div class="mb-5 mt-0 {{ $colClass }} product">
+<div class="mb-5 mt-0 {{ $colClass }} product  px-2">
     <div class="product-item-list">
         <!-- Product Image with Hover Effects -->
         <div class="position-relative overflow-hidden product-image-container">
-            @if($product->average_rating != 0)
-            <div class="rating fs-15 position-absolute bottom-0 end-0 m-3 px-2">
-                <span class="small">{{ $product->average_rating }}</span> {{ $product->rating_stars }}
+            <div class="btn-wishlist position-absolute top-0 end-0 m-2">
+                <button class="button-animated like wishlist-add p-2 py-1" data-product-id="{{ $product->id }}">
+                    <i class="fa fa-heart"></i>
+                </button>
             </div>
+            @if($product->average_rating != 0)
+            <!-- <div class="rating fs-15 m-3 px-2">
+                <span class="small">{{ $product->average_rating }}</span> {{ $product->rating_stars }}
+            </div> -->
             @endif
             @if($product->thumbnail)
 
@@ -31,25 +36,23 @@ $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
         <!-- Card Body -->
         <div class="d-flex flex-column mt-4">
             <!-- Product Title -->
-            <div class="d-flex flex-row justify-content-between align-items-start">
+            <div class="d-flex flex-row justify-content-between align-items-baseline">
                 <div>
-                    <h3 class="card-title fs-17">
+                    <h3 class="card-title">
                         <a href="{{ $product->defaultUrl->slug }}" class="text-decoration-none text-dark">
                             {{ $product->translateAttribute('name') }}
                         </a>
                     </h3>
                 </div>
-                <div>
-                    <div class="btn-wishlist">
-                        <button class="button-animated like wishlist-add" data-product-id="{{ $product->id }}">
-                            <i class="fa fa-heart"></i>
-                        </button>
-                    </div>
+                <div class="w-25 text-end">
+                    4.7 <i class="fa fa-star" aria-hidden="true"></i>
+
+  
                 </div>
             </div>
 
             <!-- Product Meta -->
-            <div class="d-flex flex-row text-muted fs-13 gap-2 mt-3">
+            <!-- <div class="d-flex flex-row text-muted fs-13 gap-2 mt-3">
                 <div class="attribute">
                     <span class="material-symbols-outlined product-icon">person</span>
                     2{{ $product->translateAttribute('participants') }} participants
@@ -60,30 +63,41 @@ $colClass = (isset($col) && is_numeric($col)) ? 'col-lg-' . $col : 'col';
                 </div>
             </div> 
 
-            <!-- Location -->
            <div class="product-city text-muted fs-13 mb-3">
                 <i class="fa fa-map-marker"></i> {{ $product->translateAttribute('city') ?? 'Athens, Thessaloniki' }}
-            </div>
+            </div> -->
 
             <!-- Price -->
-            <div class="mt-auto">
-                <div class="product-price fw-500 fs-5 text-dark">
+            <div class="d-flex flex-row justify-content-between align-items-baseline mt-3">
+                <div class="product-price">
+                    @if($product->variants->count() > 1)
+                        <span class="from-text">
+                            {{ __('From') }}
+                        </span>
+                    @else
+                        <span class="from-text">
+                            {{ __('Price') }}
+                        </span>
+                    @endif
+
                     <span class="sale-price">
                         {{ $product->price }}
                     </span>
 
                     @if($product->has_discount)
-                    <span
-                        class="small text-decoration-line-through text-shallow">{{ $product->price_without_discount }}</span>
+                        <span  class="small text-decoration-line-through text-shallow">{{ $product->price_without_discount }}</span>
                     @endif
 
                     <!-- Discount Badge -->
                     @if($product->has_discount)
-                    <span
-                        class="badge bg-success fw-normal text-white ms-2 fs-13">-{{ $product->discount_percentage }}%</span>
+                        <span class="badge bg-success fw-normal text-white ms-2 fs-13">-{{ $product->discount_percentage }}%</span>
                     @endif
                 </div>
-
+                <div class="text-end">
+                    <a href="{{ $product->defaultUrl->slug }}" class="text-decoration-none text-dark fs-14">
+                        <span class="material-symbols-outlined"> shopping_cart </span> <span class="add-tc">{{ __('Add to cart') }}</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -77,7 +77,7 @@
                             </div>
                             @elseif(1 == 1)
                             <div class="mt-3">
-                                <form action="product/{{ $product->id }}/answer/{{ $question->id }}" method="POST">
+                                <form action="product/{{ $product->id }}/answer/{{ $question->id }}" method="POST" id="answer-form">
                                     @csrf
                                     <div class="mb-3">
                                         <textarea name="answer" class="form-control" rows="3"
@@ -105,7 +105,7 @@
                 <h5 class="modal-title" id="askQuestionModalLabel">{{ __('Ask a Question') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="products/1/questions" method="POST" id="ask-question-form">
+            <form action="products/{{ $product->id }}/questions" method="POST" id="ask-question-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
