@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunarPHP Admin Dashboard</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/css/admin.css"
+        crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/js/admin/custom.js"></script>
+
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="sidebar-brand">
+            <h2><i class="bi bi-moon-stars"></i> LunarPHP</h2>
+        </div>
+        <ul class="topbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-bell"></i>
+                    <span class="badge bg-danger">3</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-envelope"></i>
+                    <span class="badge bg-danger">7</span>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <span class="d-none d-lg-inline">Admin User</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" alt="User"
+                        class="user-avatar">
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Sidebar -->
+    @include('admin.partials.sidebar')
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="row">
+            <div class="col-8 offset-lg-1 mt-4">
+
+                @yield('toolbar')
+
+                @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+
+                @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+
+                @yield('content')
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // Toggle sidebar on mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.querySelector('.bi-moon-stars');
+        const sidebar = document.querySelector('.sidebar');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('smalled');
+        });
+    });
+    </script>
+</body>
+
+</html>

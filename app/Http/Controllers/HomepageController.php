@@ -16,26 +16,10 @@ class HomepageController extends Controller
 {
     function index()
     {
+        $product = Product::find(12);
+        $mainImage = $product->getFirstMedia('main_image');
 
-//    $activitiesWithIds = [
-//     44 => [ // Adventure & Action
-//         "Bungee Jumping",
-//         "Climbing & Caving",
-//         "Extreme Sports",
-//         "Hiking & Trekking",
-//         "Horseback Riding",
-//         "Martial Arts",
-//         "Obstacle Course Racing",
-//         "Paintball & Airsoft",
-//         "Shooting & Archery",
-//         "Survival & Bushcraft",
-//         "Zip-lining & Aerial Adventures",
-//         "Other"
-//     ],
-// ];
-// foreach ($activitiesWithIds as $parentCollectionId => $subcategories) { //     $parentCollection = Collection::find($parentCollectionId); //     if ($parentCollection) { //         foreach ($subcategories as $subcategoryName) { //             $childCollection = Collection::create([ //                 'collection_group_id' => 1, //                 'attribute_data' => [ //                         'name' => new TranslatedText([ //                             'en' => new Text($subcategoryName), //                         ]) //                     ], //             ]); //             $childCollection->parent_id = $parentCollection->id; // Set to 0 for top-level collection //             $childCollection->save(); //         } //     } // }
-
-
+        dd($product->getFirstMediaUrl('images'));
 
         $products = Product::paginate(12);
         $categories = \Lunar\Models\Collection::with([
@@ -67,6 +51,12 @@ class HomepageController extends Controller
             // Restore event listeners
             \Lunar\Models\Order::boot();
         }
+    }
+
+    public function load($page) {
+
+                return view('admin.' . $page);
+
     }
 
 }

@@ -168,22 +168,17 @@
 
                             @foreach($product->variants as $variant)
                             <div class="variant-option mb-3">
-                                @if($variant->values->isNotEmpty())
                                 <div class="variant-values variant-value-btn d-flex flex-wrap gap-2">
-                                    @foreach($variant->values as $value)
-                                    <input type="radio" class="btn-check" name="variant" id="variant-{{ $value->id }}"
+                                    <input type="radio" class="btn-check" name="variant" id="variant-{{ $variant->id }}"
                                         autocomplete="off" @if($first) checked @endif>
-                                    <label for="variant-{{ $value->id }}"
+                                    <label for="variant-{{ $variant->id }}"
                                         class="btn btn-outline-secondary px-3 py-2 rounded-pill text-black"
-                                        data-form-link="/cart/{{ $value->id }}" data-variant-id="{{ $variant->id }}"
-                                        data-value-id="{{ $value->id }}">
-                                        {{ $value->translate('name') }}
+                                        data-form-link="/cart/{{ $variant->id }}" data-variant-id="{{ $variant->id }}">
+                                        {{ $variant->translateAttribute('name') }}
                                         {{ $variant->price }}
                                     </label>
                                     @php $first = false; @endphp
-                                    @endforeach
                                 </div>
-                                @endif
                             </div>
                             @endforeach
                         </div>

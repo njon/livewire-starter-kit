@@ -118,7 +118,7 @@
                   <ul class="list-unstyled">
                     @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
                       @if($mainCategory->parent_id == null)
-                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
+                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
                         <a href="{{ url($mainCategory->defaultUrl->slug) }}">{{ $mainCategory->translateAttribute('name') }}</a>
                       </li>
                       @endif
@@ -146,7 +146,7 @@
                 </div>
                 <div class="col-lg-4 p-3 description-container">
                   <div class="menu-image">
-                    <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/action1.png" alt="Menu Image" id="menu-description-image" class="img-fluid">
+                    <img src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/action1.png" alt="Menu Image" id="menu-description-image" class="img-fluid">
                   </div>
                   <div class="menu-description">
                     <h5 class="fw-bold mt-3 mb-3">{{ __('Explore Our Experiences') }}</h5>

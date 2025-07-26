@@ -1,0 +1,87 @@
+<div class="sidebar">
+    <div class="sidebar-menu">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Catalog Accordion -->
+            <li class="nav-item accordion-item">
+                <h2 class="accordion-header">
+                    <button class="nav-link accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#catalogCollapse">
+                        <span>Catalog</span>
+                        <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true" data-slot="icon">
+                            <path fill-rule="evenodd"
+                                d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </h2>
+                <div id="catalogCollapse" class="accordion-collapse collapse show">
+                    <div class="accordion-body p-0">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/products">
+                                    <i class="bi bi-stack"></i>
+                                    <span>Services</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/stores">
+                                    <i class="bi bi-shop"></i>
+                                    <span>Stores</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Sales Accordion -->
+            <li class="nav-item accordion-item">
+                <h2 class="accordion-header">
+                    <button class="nav-link accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#salesCollapse">
+                        <span>Sales</span>
+                        <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true" data-slot="icon">
+                            <path fill-rule="evenodd"
+                                d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </h2>
+                <div id="salesCollapse" class="accordion-collapse collapse show">
+                    <div class="accordion-body p-0">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="bi bi-cart3"></i>
+                                    <span>Orders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="bi bi-people"></i>
+                                    <span>Staff</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -10,11 +10,32 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\MediaUploadController;
+use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 
 Route::get('/', [HomepageController::class, 'index']);
+
+Route::post('/upload-media', [MediaUploadController::class, 'upload'])->name('media.upload');
+Route::delete('/delete-media/{media}', [MediaUploadController::class, 'delete'])->name('media.delete');
+
+// Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->group(function () {
+    Route::get('/check-slug', [AdminProductController::class, 'slugExists']);
+    Route::resource('products', AdminProductController::class)
+        ->names([
+            'index' => 'admin.products.index',
+            'create' => 'admin.products.create',
+            'store' => 'admin.products.store',
+            'show' => 'admin.products.show',
+            'edit' => 'admin.products.edit',
+            'update' => 'admin.products.update',
+            'destroy' => 'admin.products.destroy',
+        ]);
+});
+
 
 // Cart Routes
 Route::resource('cart', CartController::class)->only(['index', 'update', 'destroy'])->parameters(['cart' => 'ProductVariant']);
@@ -87,6 +108,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
 });
 
+// routes/admin.php
 
 
 

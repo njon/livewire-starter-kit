@@ -7,7 +7,6 @@
 /public/js/app/components
 /public/storage
 /storage/*.key
-!/vendor/lunar
 /vendor/*
 .env
 .env.backup

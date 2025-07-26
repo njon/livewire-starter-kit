@@ -5,7 +5,7 @@
   curMax = {{ request()->get('max_price', 300) }}
 </script>
 
-<form action="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form pt-5">
+<form action="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/sale" method="GET" id="ajax-search-form" class="search-form pt-5">
   <div class="accordion mb-4" id="filterAccordion">
     <div class="">
       <h5 class="mb-3 fs-6 fw-600">{{ __('Price Selector') }}</h5>
@@ -60,7 +60,7 @@
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
-    <link rel="stylesheet" href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/css/slider.css">
+    <link rel="stylesheet" href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/css/slider.css">
 
     <!-- Rating Accordion Item -->
     <div class="accordion-item">

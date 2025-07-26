@@ -76,7 +76,7 @@
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
                         <div class="img-holder ratio ratio-1x1">
-                            <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
+                            <img src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
                                 class="card-img-top object-fit-cover"
                                 alt="{{ $collection->name }}"
                                 loading="lazy">
@@ -106,7 +106,7 @@
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
                         <div class="img-holder ratio ratio-1x1">
-                            <img src="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
+                            <img src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
                                 class="card-img-top object-fit-cover"
                                 alt="{{ $collection->name }}"
                                 loading="lazy">
@@ -182,8 +182,8 @@
                 </div>
                             <p class="card-text fw-600 mb-4">Surprise your loved ones with unforgettable experiences. From adventure
                                 getaways to relaxing spa days, we have the perfect gift for every occasion.</p>
-                            <a href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/products" class="btn btn-dark rounded-5 fs-14 me-2"><i class="fa fa-magic me-1"></i>Explore More</a>
-                            <a href="https://crispy-rotary-phone-6rx99vvv952567j-80.app.github.dev/products" class="btn btn-primary rounded-5  fs-14"><i class="fa fa-heart me-1"></i> Show Me </a>
+                            <a href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/products" class="btn btn-dark rounded-5 fs-14 me-2"><i class="fa fa-magic me-1"></i>Explore More</a>
+                            <a href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/products" class="btn btn-primary rounded-5  fs-14"><i class="fa fa-heart me-1"></i> Show Me </a>
                         </div>
                         <div class="col-lg-6">
                             <img src="https://cdn.midjourney.com/87c34077-4811-4787-83a7-44cbf263e192/0_1.png" class="img-fluid border-20" alt="Gift Experiences">

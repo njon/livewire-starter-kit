@@ -37,7 +37,7 @@
         "name": "Home",
         "item": "{{ url('/') }}"
       },
-      @if($breadcrums->parent) {
+      @if($breadcrums?->parent) {
         "@type": "ListItem",
         "position": 2,
         "name": "{{ $breadcrums->parent->translateAttribute('name') }}",
