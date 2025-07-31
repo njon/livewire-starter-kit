@@ -1,6 +1,16 @@
 $(document).ready(function () {
+    
+    let debounceTimer;
 
-let debounceTimer;
+     const days = [
+        { id: 'monday', name: 'Monday' },
+        { id: 'tuesday', name: 'Tuesday' },
+        { id: 'wednesday', name: 'Wednesday' },
+        { id: 'thursday', name: 'Thursday' },
+        { id: 'friday', name: 'Friday' },
+        { id: 'saturday', name: 'Saturday' },
+        { id: 'sunday', name: 'Sunday' }
+    ];
 
     function checkSlugAvailability(slug, lang = 'en') {
         $.ajax({
@@ -52,25 +62,135 @@ let debounceTimer;
     }
 
 
+    // Initialize the business hours selector
+    function initBusinessHours() {
+        const container = $('#business-hours-container');
+        container.empty();
 
+        days.forEach(day => {
+            // Create day element
+            const dayElement = $(`
+                <div class="day-container" id="${day.id}-container">
+                    <div class="day-checkbox">
+                        <input type="checkbox" id="${day.id}-checkbox" checked>
+                    </div>
+                    <div class="day-name">${day.name}</div>
+                    <div class="slider-container">
+                        <div id="${day.id}-slider"></div>
+                    </div>
+                    <div class="time-display">
+                        <span id="${day.id}-start">09:00</span> - 
+                        <span id="${day.id}-end">17:00</span>
+                    </div>
+                </div>
+            `);
 
+            container.append(dayElement);
 
+            // Initialize slider
+            const slider = document.getElementById(`${day.id}-slider`);
+            noUiSlider.create(slider, {
+                start: [540, 1020], // 9:00 (540 minutes) to 17:00 (1020 minutes)
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': 1440 // 24 hours in minutes
+                },
+                step: 15, // 15 minute intervals
+                behaviour: 'drag-tap',
+                tooltips: [true, true],
+                format: {
+                    to: function(value) {
+                        const hours = Math.floor(value / 60);
+                        const minutes = Math.floor(value % 60);
+                        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    },
+                    from: function(value) {
+                        const parts = value.split(':');
+                        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                    }
+                }
+            });
 
+            // Update time display when slider changes
+            slider.noUiSlider.on('update', function(values) {
+                $(`#${day.id}-start`).text(values[0]);
+                $(`#${day.id}-end`).text(values[1]);
+            });
 
+            // Toggle day active state
+            $(`#${day.id}-checkbox`).on('change', function() {
+                const isActive = $(this).is(':checked');
+                $(`#${day.id}-container`).toggleClass('disabled-day', !isActive);
+                // @todo check if needs to be changed
+                // slider.setAttribute('disabled', !isActive);
+            });
+        });
+    }
 
+    // Get current business hours as JSON
+    function getBusinessHours() {
+        const businessHours = {};
+        
+        days.forEach(day => {
+            const slider = document.getElementById(`${day.id}-slider`);
+            const values = slider.noUiSlider.get();
+            
+            businessHours[day.id] = {
+                active: $(`#${day.id}-checkbox`).is(':checked'),
+                open: values[0],
+                close: values[1]
+            };
+        });
+        
+        return businessHours;
+    }
 
+    function updateHours() {
+        const businessHours = getBusinessHours();
+        const jsonString = JSON.stringify(businessHours, null, 2);
+        $('#json-output').val(jsonString);
+        
+        // In a real application, you would send this to your backend
+        console.log('Business hours to save:', businessHours);
+    }
 
-
+    // Load business hours from JSON
+    function loadBusinessHours(data) {
+        days.forEach(day => {
+            const dayData = data[day.id] || { 
+                active: true, 
+                open: '09:00', 
+                close: '17:00' 
+            };
+            
+            // Set checkbox state
+            $(`#${day.id}-checkbox`).prop('checked', dayData.active);
+            $(`#${day.id}-container`).toggleClass('disabled-day', !dayData.active);
+            
+            // Set slider values
+            const slider = document.getElementById(`${day.id}-slider`);
+            slider.noUiSlider.set([dayData.open, dayData.close]);
+        });
+    }
 
 
     $('.main-category').on('mouseenter', function () {
-        $('.main-category').removeClass('active');
-        $(this).addClass('active');
-        $('.subcategory-group').addClass('d-none');
-        const targetId = $(this).data('target');
-        $('#' + targetId).removeClass('d-none');
         var image = $(this).data('image');
+        const targetId = $(this).data('target');
+
+        $('.main-category').removeClass('active');
+        $('.subcategory-group').addClass('d-none');
+        
+        $(this).addClass('active');
+        $('#' + targetId).removeClass('d-none');
         $('#menu-description-image').attr('src', image);
+    });
+
+    $('.main-category, .subcategory-group').on('click', function () {
+        console.log($(this));
+        $(this).addClass('actived');
+
     });
 
     $('#product_url_en').on('input', function() {
@@ -109,9 +229,17 @@ let debounceTimer;
         $('#product_url_gr').val(slug);
     });
 
+    
+    if($('#json-output').length != 0) {
+        $('#save-asset').hover(function() {
+            updateHours();
+        });
+    }
 
+    $('#save-btn').on('click', function() {
+        updateHours();
+    });
 
-
-
-
+    initBusinessHours();
+    loadBusinessHours(exampleData);
 });

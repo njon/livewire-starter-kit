@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Services', 'buttons' => [
+    @include('admin.partials.buttons', ['title' => 'Services', 'asset' => 'Services', 'buttons' => [
         ['new' => true]
     ]])
 @endsection

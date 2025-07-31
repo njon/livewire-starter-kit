@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev'),
+    'url' => env('APP_URL', 'https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev'),
 
     'asset_url' => env('ASSET_URL', null),
 

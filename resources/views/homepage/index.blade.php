@@ -70,13 +70,13 @@
     </div>
 
     <div class="row g-3">
-       @foreach($categories->slice(5,5) as $collection)
+       @foreach($categories->slice(6,6) as $collection)
         <div class="col mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
                         <div class="img-holder ratio ratio-1x1">
-                            <img src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
+                            <img src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
                                 class="card-img-top object-fit-cover"
                                 alt="{{ $collection->name }}"
                                 loading="lazy">
@@ -100,13 +100,13 @@
     </div>
 
     <div class="row g-3 mt-1">
-       @foreach($categories->slice(0,5) as $collection)
+       @foreach($categories->slice(0,6) as $collection)
         <div class="col mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
                         <div class="img-holder ratio ratio-1x1">
-                            <img src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
+                            <img src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/{{ get_category_image($collection->translateAttribute('name')) }}" 
                                 class="card-img-top object-fit-cover"
                                 alt="{{ $collection->name }}"
                                 loading="lazy">
@@ -182,8 +182,8 @@
                 </div>
                             <p class="card-text fw-600 mb-4">Surprise your loved ones with unforgettable experiences. From adventure
                                 getaways to relaxing spa days, we have the perfect gift for every occasion.</p>
-                            <a href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/products" class="btn btn-dark rounded-5 fs-14 me-2"><i class="fa fa-magic me-1"></i>Explore More</a>
-                            <a href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/products" class="btn btn-primary rounded-5  fs-14"><i class="fa fa-heart me-1"></i> Show Me </a>
+                            <a href="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/products" class="btn btn-dark rounded-5 fs-14 me-2"><i class="fa fa-magic me-1"></i>Explore More</a>
+                            <a href="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/products" class="btn btn-primary rounded-5  fs-14"><i class="fa fa-heart me-1"></i> Show Me </a>
                         </div>
                         <div class="col-lg-6">
                             <img src="https://cdn.midjourney.com/87c34077-4811-4787-83a7-44cbf263e192/0_1.png" class="img-fluid border-20" alt="Gift Experiences">

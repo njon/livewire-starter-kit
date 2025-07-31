@@ -12,6 +12,7 @@
     @csrf
     <input type="hidden" name="product_type_id" value="1">
     <input type="hidden" name="status" value="draft">
+    
 <div class="dashboard-content">
     <div class="container-fluid px-4 py-3">
         <!-- Page Header -->

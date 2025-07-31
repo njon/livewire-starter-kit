@@ -51,6 +51,17 @@ if (!function_exists('get_category_image')) {
 }
 
 
+if (!function_exists('lang_icon')) {
+    /**
+     * Format discounted price
+     */
+    function lang_icon($code)
+    {
+        $lang = $code == 'gr' ? 'gr' : 'gb';
+        return '<span class="fi fi-' . $lang . ' fis"></span>';
+    }
+}
+
 if (!function_exists('discounted_single_product_price')) {
     /**
      * Format discounted price

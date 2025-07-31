@@ -35,6 +35,7 @@ class ProductController extends Controller
         $relatedProducts = Product::limit(5)->get();
         $category = $product->collections->first()->id ?? null;
 
+
         $breadcrums = $product->collections->first();
 
         return view('products.show', [

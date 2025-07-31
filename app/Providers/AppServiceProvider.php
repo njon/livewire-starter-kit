@@ -43,8 +43,8 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive(); // or Paginator::useBootstrapFive();
 
         if ($this->app->environment('production')) {
-            // URL::forceScheme('https');
-            // URL::forceRootUrl(config('app.url'));
+            URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
         }
     }
 }

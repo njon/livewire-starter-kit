@@ -1,29 +1,172 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Edit Service', 'buttons' => [
-        ['preview' => true, 'save' => true]
-    ]])
+@include('admin.partials.buttons', [
+    'title' => 'Save service',
+    'asset' => 'Service',
+    'buttons' => [
+        ['save' => true]
+    ]
+])
 @endsection
 
 
 @php
-if(!$product->variants->isEmpty())
-    $price = $product->variants->first()->prices->first()->price->value ?? '';
-else
-    $price = 0;
+$selectedFilterOptionIds = $product->filterOptions->pluck('id')->toArray();
+$productHasFilterOption = function($id) use ($selectedFilterOptionIds) {
+return in_array($id, $selectedFilterOptionIds);
+};
+$price = $product->variants->first()->prices->first()->price->value ?? 0;
 @endphp
 
 @section('content')
 
-@include('admin.partials.file-upload')
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statusModal">
+  Update Status
+</button>
+<div class="modal fade" tabindex="-1" id="statusModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Update Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="form-label fw-bold mb-3">Status</label>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="status" id="status-published" value="published" wire:model.live="mountedActionsData.0.status">
+                        <label class="form-check-label" for="status-published">
+                            <span class="d-block fw-medium">Published</span>
+                            <small class="text-muted d-block">This product will be available across all enabled customer groups and channels</small>
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="status-draft" value="draft" wire:model.live="mountedActionsData.0.status">
+                        <label class="form-check-label" for="status-draft">
+                            <span class="d-block fw-medium">Draft</span>
+                            <small class="text-muted d-block">This product will be hidden across all channels and customer groups</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
+                    <span wire:loading.delay.default wire:target="callMountedAction" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    <span wire:loading.remove wire:target="callMountedAction">Save changes</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data" id="mainProductForm" class="submit-form">
+
+<form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data"
+    id="mainProductForm" class="submit-form">
     @csrf
     @method('PUT')
     <input type="hidden" name="product_type_id" value="{{ $product->product_type_id ?? 1 }}">
     <input type="hidden" name="status" value="{{ $product->status ?? 'draft' }}">
-    
+
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h3 class="h5 mb-0 d-flex align-items-center">
+                        <i class="bi bi-funnel me-2 text-primary"></i> Filter Categories
+                    </h3>
+                </div>
+                <div class="filter-card accordion" id="filterAccordion">
+                    @foreach($filterCategories as $index => $filterCategory)
+                    <div class="accordion-item border-0">
+                        <h2 class="accordion-header" id="heading{{ $index }}">
+                            <button class="accordion-button {{ $index > 0 ? 'collapsed' : '' }}" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $index }}"
+                                aria-expanded="{{ $index === 0 ? 'true' : 'false' }}"
+                                aria-controls="collapse{{ $index }}">
+                                {{ $filterCategory->name }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ $index }}"
+                            class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}"
+                            aria-labelledby="heading{{ $index }}" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body p-3">
+                                <div class="filter-grid">
+                                    @foreach($filterCategory->options as $option)
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="filters[{{ $filterCategory->id }}][]"
+                                            value="{{ $option->id }}" @if($productHasFilterOption($option->id)) checked
+                                        @endif
+                                        id="filter_{{ $filterCategory->id }}_{{ $option->id }}"
+                                        >
+                                        <span class="checkmark"></span>
+                                        <span class="option-label">{{ $option->name }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h3 class="h5 mb-0 d-flex align-items-center">
+                        <i class="bi bi-diagram-3 me-2 text-primary"></i> Categories
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Service Categories</label>
+                <div class="row gx-0 category-list-container">
+                <div class="col-lg-12 pe-0 py-2 category-list">
+                  <ul class="list-unstyled">
+                    @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                      @if($mainCategory->parent_id == null)
+                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
+                        <a href="#">{{ $mainCategory->translateAttribute('name') }}</a>
+                      </li>
+                      @endif
+                    @endforeach
+                  </ul>
+                </div>
+
+                <div class="col-lg-12 ps-0 py-2 subcategory-container">
+                  @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                  @if($mainCategory->parent_id == null)
+                  <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
+                    <ul class="list-unstyled">
+                      @foreach($mainCategory->children as $subCategory)
+                      <li>
+                        <a href="#"
+                          class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
+                          {{ $subCategory->translateAttribute('name') }}
+                        </a>
+                      </li>
+                      @endforeach
+                    </ul>
+                  </div>
+                  @endif
+                  @endforeach
+                </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>
+
+
     <!-- Details Section -->
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-transparent border-bottom py-3">
@@ -37,8 +180,7 @@ else
                 Click to change language translations
                 @foreach($languages as $language)
                 <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
-                        data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
-                        role="tab">
+                        data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button" role="tab">
                         {{ $language->name }}
                         <span class="fi fi-{{ $language->code == 'gr' ? 'gr' : 'gb' }} fis"></span>
                     </button></li>
@@ -51,11 +193,11 @@ else
                 @php
                 $url = $product->urls->firstWhere('language.code', $language->code);
                 @endphp
-                <div class="tab-pane fade @if($loop->first) show active @endif"
-                    id="{{ $language->code }}-content" role="tabpanel">
+                <div class="tab-pane fade @if($loop->first) show active @endif" id="{{ $language->code }}-content"
+                    role="tabpanel">
                     <div class="row g-4">
                         <div class="col-lg-12">
-                
+
                             <label for="product_title_{{ $language->code }}" class="form-label">Service title</label>
                             <input type="text" data-slug="true"
                                 class="form-control @error('name.'.$language->code) is-invalid @enderror"
@@ -71,15 +213,15 @@ else
                                 URL
                             </label>
                             <div class="input-group">
-                            
-                                    <input type="text" id="product_url_{{ $language->code }}" data-auto="true"
+
+                                <input type="text" id="product_url_{{ $language->code }}" data-auto="true"
                                     class="form-control url-field @error('urls.'.$language->code) is-invalid @enderror"
                                     name="urls[{{ $language->code }}]" data-lang="{{ $language->code }}"
                                     placeholder="product-name"
                                     value="{{ old('urls.'.$language->code, $url->slug ?? '') }}">
-                                    <span class="input-group-text no-bg">
-                                        <span id="slugCheckIcon"> </span> 
-                                    </span>
+                                <span class="input-group-text no-bg">
+                                    <span id="slugCheckIcon"> </span>
+                                </span>
 
                                 @error('urls.'.$language->code)
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -124,8 +266,7 @@ else
                             <div class="input-group">
                                 <span class="input-group-text">Eur</span>
                                 <input type="number" class="form-control @error('price') is-invalid @enderror"
-                                    name="price" placeholder="0.00" step="0.01"
-                                    value="{{ old('price',  $price) }}">
+                                    name="price" placeholder="0.00" step="0.01" value="{{ old('price',  $price) }}">
                                 @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -133,8 +274,8 @@ else
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="taxClass">Tax Class</label>
-                            <select class="form-select @error('tax_class_id') is-invalid @enderror"
-                                id="taxClass" name="tax_class_id">
+                            <select class="form-select @error('tax_class_id') is-invalid @enderror" id="taxClass"
+                                name="tax_class_id">
                                 @foreach($taxClasses as $taxClass)
                                 <option value="{{ $taxClass->id }}"
                                     {{ (old('tax_class_id', $product->variants->first()->tax_class_id ?? '') == $taxClass->id) ? 'selected' : '' }}>
@@ -149,8 +290,8 @@ else
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="productSku">SKU</label>
-                            <input type="text" class="form-control @error('sku') is-invalid @enderror"
-                                id="productSku" name="sku" placeholder="SKU"
+                            <input type="text" class="form-control @error('sku') is-invalid @enderror" id="productSku"
+                                name="sku" placeholder="SKU"
                                 value="{{ old('sku', $product->variants->first()->sku ?? '') }}">
                             @error('sku')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -167,9 +308,9 @@ else
         </div>
     </div>
 
-    
+
     <div class="row">
-    <!-- Stores Section -->
+        <!-- Stores Section -->
         <div class="col-lg-6">
             <div class="card mb-4 border-0 shadow-sm">
                 <div
@@ -254,7 +395,7 @@ else
                     </div>
                 </div>
             </div>
-</div>
+        </div>
 
         <!-- Variants Section -->
         <div class="col-lg-6">
@@ -298,7 +439,8 @@ else
                                         <input type="text" class="form-control form-control"
                                             name="variants[{{ $index }}][sku]" placeholder="SKU"
                                             value="{{ old("variants.$index.sku", $variant->sku) }}">
-                                    </td>                                    <td>
+                                    </td>
+                                    <td>
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text">€</span>
                                             <input type="number" class="form-control"
@@ -327,54 +469,6 @@ else
         </div>
     </div>
 
-    <!-- SEO & Categories Section -->
-    <div class="row g-4 mb-4">
-    
-        <div class="col-lg-12">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-diagram-3 me-2 text-primary"></i> Categories
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <label class="form-label">Service Categories</label>
-                <div class="row gx-0 category-list-container">
-                <div class="col-lg-4 pe-0 py-2 category-list">
-                  <ul class="list-unstyled">
-                    @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
-                      @if($mainCategory->parent_id == null)
-                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
-                        <a href="#">{{ $mainCategory->translateAttribute('name') }}</a>
-                      </li>
-                      @endif
-                    @endforeach
-                  </ul>
-                </div>
-
-                <div class="col-lg-4 ps-0 py-2 subcategory-container">
-                  @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
-                  @if($mainCategory->parent_id == null)
-                  <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
-                    <ul class="list-unstyled">
-                      @foreach($mainCategory->children as $subCategory)
-                      <li>
-                        <a href="#"
-                          class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
-                          {{ $subCategory->translateAttribute('name') }}
-                        </a>
-                      </li>
-                      @endforeach
-                    </ul>
-                  </div>
-                  @endif
-                  @endforeach
-                </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <input type="hidden" name="product_type_id" value="{{ $product->product_type_id ?? 1 }}">
     <input type="hidden" name="status" value="{{ $product->status ?? 'draft' }}">
 </form>
@@ -618,16 +712,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-            // Add remove functionality
-        document.addEventListener('click', function(e) {
-            const btn = e.target.closest('.remove-variant');
-            if (btn) {
-                const table = document.getElementById('variantsTable').getElementsByTagName('tbody')[0];
-                const row = btn.closest('tr');
-                row.parentNode.removeChild(row);
-                hideEmpty(table.rows.length, 'no-variants');
-            }
-        });
+    // Add remove functionality
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.remove-variant');
+        if (btn) {
+            const table = document.getElementById('variantsTable').getElementsByTagName('tbody')[0];
+            const row = btn.closest('tr');
+            row.parentNode.removeChild(row);
+            hideEmpty(table.rows.length, 'no-variants');
+        }
+    });
 
     // Variant management
     document.getElementById('addVariantBtn').addEventListener('click', function() {

@@ -23,7 +23,7 @@ const removeItemError = '{{ __("An error occurred while removing item") }}';
 const updateQuantityError = '{{ __("An error occurred while updating quantity") }}';
 const helpful = '{{ __("Helpful") }}';
         </script>
-    <link rel="stylesheet" href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/css/custom.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/css/custom.css" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +48,7 @@ const helpful = '{{ __("Helpful") }}';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous">
     </script>
-    <script src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/js/custom.js"></script>
+    <script src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/js/custom.js"></script>
     <style>
         /* @todo Remove */
 .text-primary {

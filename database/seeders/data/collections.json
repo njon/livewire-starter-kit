@@ -31,7 +31,7 @@
         ]
     },
     {
-        "name": "Automotive & Motor Sports",
+        "name": "Automotive Sports",
         "description": "Immerse yourself in the world of vehicles and speed. This category offers supercar driving experiences, track days, go-karting, rally driving, and off-road vehicle adventures.",
         "subcategories": [
             "Supercar Driving",
@@ -106,7 +106,7 @@
         ]
     },
     {
-        "name": "Nature & Wildlife Encounters",
+        "name": "Nature & Wildlife",
         "description": "Connect with the natural world and its inhabitants. This category offers experiences like animal encounters (e.g., farm visits, wildlife sanctuaries), guided nature walks, birdwatching, and eco-tours.",
         "subcategories": [
             "Zoo & Safari Parks",
@@ -154,7 +154,7 @@
         ]
     },
     {
-        "name": "Water Sports & Aquatic Adventures",
+        "name": "Water Sports & Aquatic",
         "description": "Dive into fun and adventure on or in the water. This category features activities like scuba diving, snorkeling, paddleboarding, kayaking, jet skiing, sailing, and boat trips.",
         "subcategories": [
             "White Water Rafting",

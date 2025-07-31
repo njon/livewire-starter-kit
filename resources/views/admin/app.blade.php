@@ -14,13 +14,13 @@
         rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/css/admin.css"
+    <link rel="stylesheet" href="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/css/admin.css"
         crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-    <script src="https://literate-spoon-j4pjjrrr74hq76-80.app.github.dev/js/admin/custom.js"></script>
+    <script src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/js/admin/custom.js"></script>
 
 </head>
 
@@ -58,7 +58,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="row">
-            <div class="col-8 offset-lg-1 mt-4">
+            <div class="col-9 offset-lg-1 mt-4">
 
                 @yield('toolbar')
 

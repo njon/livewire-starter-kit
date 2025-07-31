@@ -60,7 +60,7 @@
                     <div class="accordion-body p-0">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="/admin/orders">
                                     <i class="bi bi-cart3"></i>
                                     <span>Orders</span>
                                 </a>

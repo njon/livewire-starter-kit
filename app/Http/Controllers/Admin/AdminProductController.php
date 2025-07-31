@@ -15,6 +15,7 @@ use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\Price;
 use Lunar\Models\ProductType;
+use App\Models\FilterCategory;
 
 class AdminProductController extends Controller
 {
@@ -128,6 +129,7 @@ class AdminProductController extends Controller
         $languages = Language::all();
         $channels = Channel::all();
         $variant = $product->variants->first();
+        $filterCategories = FilterCategory::with('options')->where('id', '!=', 4)->get();
 
 
         return view('admin.products.edit', compact(
@@ -137,13 +139,25 @@ class AdminProductController extends Controller
             'collections',
             'languages',
             'channels',
-            'variant'
+            'variant',
+            'filterCategories'
         ));
     }
 
     public function update(Request $request, Product $product)
     {
         $validated = $this->validateRequest($request);
+
+        $ids = [];
+
+        if (!empty($validated['filters'])) {
+            foreach($validated['filters'] as $index => $key) {
+                foreach($key as $x) {
+                    $ids[] = $x;
+                }
+            }
+        }
+        // $product->filterOptions()->attach($ids);
 
         // Update product basic info
         $product->update([
@@ -261,6 +275,7 @@ class AdminProductController extends Controller
             'brand_id' => 'nullable|exists:lunar_brands,id',
             'name.*' => 'required|string|max:255',
             'description.*' => 'nullable|string',
+            'filters.*' => 'nullable|array',
             // 'urls.*' => 'required|string|max:255|unique:lunar_urls,slug',
             'urls.*' => 'required|string|max:255',
             'tax_class_id' => 'required|exists:lunar_tax_classes,id',

@@ -664,6 +664,7 @@ p.info-box-text {
 .position-absolute.bottom-0.start-0.end-0.p-3 {
     position: relative;
     z-index: 111;
+    pointer-events: none;
 }
 
 .category-name {
@@ -695,7 +696,7 @@ h5.category-explore {
 }
 
 .card.border-0.rounded-1.overflow-hidden.d-flex.flex-column.h-100.shadow-up, .position-relative.flex-grow-1 {
-    height: 300px !important;
+    height: 250px !important;
 }
 
 .img-holder.ratio.ratio-1x1 {
@@ -767,8 +768,8 @@ div#xxz {
 
 h3.card-title {
     line-height: 29px;
-    font-size: 17px;
-    font-weight: 400;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 span.sale-price {
@@ -808,6 +809,7 @@ span.material-symbols-outlined {
     font-size: 18px;
     display: block;
     float: left;
+    display: none;
 }
 
 span.add-tc {
@@ -815,6 +817,7 @@ span.add-tc {
     display: block;
     width: 100px;
     font-size: 14.5px;
+    display: none;
 }
 
 a.btn.btn-sm:hover {background: #fafafa;border-color: #505050 !important;}

@@ -12,18 +12,21 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\MediaUploadController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminStoreController;
+use App\Http\Controllers\Admin\AdminOrdersController;
+use App\Http\Controllers\Admin\AdminImageController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 
 Route::get('/', [HomepageController::class, 'index']);
 
-Route::post('/upload-media', [MediaUploadController::class, 'upload'])->name('media.upload');
-Route::delete('/delete-media/{media}', [MediaUploadController::class, 'delete'])->name('media.delete');
-
 // Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 Route::prefix('admin')->group(function () {
-    Route::get('/check-slug', [AdminProductController::class, 'slugExists']);
+
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::resource('products', AdminProductController::class)
         ->names([
             'index' => 'admin.products.index',
@@ -34,7 +37,17 @@ Route::prefix('admin')->group(function () {
             'update' => 'admin.products.update',
             'destroy' => 'admin.products.destroy',
         ]);
+    Route::resource('stores', AdminStoreController::class)->except(['show']);
+
+    Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
+    Route::get('/order/{id}', [AdminOrdersController::class, 'show'])->name('admin.orders.show');
+    Route::post('/order/{id}/status', [AdminOrdersController::class, 'updateStatus'])->name('admin.orders.update-status');
+    Route::post('/order/{id}/refund', [AdminOrdersController::class, 'refund'])->name('admin.orders.refund');
+    Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');
+
+    Route::get('/check-slug', [AdminProductController::class, 'slugExists']);
 });
+
 
 
 // Cart Routes

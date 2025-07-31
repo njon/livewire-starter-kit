@@ -22,9 +22,9 @@
             <div class="stats-grid">
                 <div class="stat-card primary">
                     <div class="stat-title">Total Revenue</div>
-                    <div class="stat-value">$24,780</div>
+                    <div class="stat-value">{{ $totalRevenue }}</div>
                     <div class="stat-change positive">
-                        <i class="bi bi-arrow-up me-1"></i> 12.5% from last month
+                        <i class="bi bi-arrow-up me-1"></i> <!-- You can calculate % change if needed -->
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-currency-dollar"></i>
@@ -33,9 +33,9 @@
                 
                 <div class="stat-card success">
                     <div class="stat-title">Total Orders</div>
-                    <div class="stat-value">1,245</div>
+                    <div class="stat-value">{{ $orders }}</div>
                     <div class="stat-change positive">
-                        <i class="bi bi-arrow-up me-1"></i> 8.2% from last month
+                        <i class="bi bi-arrow-up me-1"></i>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-cart-check"></i>
@@ -44,9 +44,9 @@
                 
                 <div class="stat-card warning">
                     <div class="stat-title">Active Customers</div>
-                    <div class="stat-value">856</div>
+                    <div class="stat-value">{{ $customers }}</div>
                     <div class="stat-change negative">
-                        <i class="bi bi-arrow-down me-1"></i> 2.3% from last month
+                        <i class="bi bi-arrow-down me-1"></i>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-people"></i>
@@ -55,9 +55,9 @@
                 
                 <div class="stat-card danger">
                     <div class="stat-title">Pending Orders</div>
-                    <div class="stat-value">32</div>
+                    <div class="stat-value">{{ $pendingOrders }}</div>
                     <div class="stat-change positive">
-                        <i class="bi bi-arrow-up me-1"></i> 5.1% from last month
+                        <i class="bi bi-arrow-up me-1"></i>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-clock-history"></i>
@@ -163,66 +163,22 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($latestOrders as $order)
                             <tr>
-                                <td>#12345</td>
-                                <td>John Smith</td>
-                                <td>Jun 15, 2023</td>
-                                <td>$120.00</td>
-                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>#{{ $order->id }}</td>
+                                <td>{{ $order->customer->name ?? 'N/A' }}</td>
+                                <td>{{ $order->created_at->format('M d, Y') }}</td>
+                                <td>{{ $order->total->formatted() }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <span class="status-badge {{ strtolower($order->status) }}">{{ ucfirst($order->status) }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i>
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>#12344</td>
-                                <td>Sarah Johnson</td>
-                                <td>Jun 14, 2023</td>
-                                <td>$85.50</td>
-                                <td><span class="status-badge processing">Processing</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#12343</td>
-                                <td>Michael Brown</td>
-                                <td>Jun 14, 2023</td>
-                                <td>$210.00</td>
-                                <td><span class="status-badge shipped">Shipped</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#12342</td>
-                                <td>Emily Davis</td>
-                                <td>Jun 13, 2023</td>
-                                <td>$65.75</td>
-                                <td><span class="status-badge cancelled">Cancelled</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#12341</td>
-                                <td>Robert Wilson</td>
-                                <td>Jun 12, 2023</td>
-                                <td>$149.99</td>
-                                <td><span class="status-badge completed">Completed</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
