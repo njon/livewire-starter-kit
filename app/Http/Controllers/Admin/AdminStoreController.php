@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use \Lunar\Models\Channel;
+use App\Models\Channel;
 use Illuminate\Http\Request;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
@@ -20,9 +20,15 @@ class AdminStoreController extends Controller
     public function index()
     {
         $stores = Channel::paginate(10);
-        return view('admin.stores.index', compact('stores'));
-    }
+        $languages = Language::all();
 
+        $stores->getCollection()->transform(function ($store) {
+            $store->attribute_data = json_decode($store->attribute_data, true);
+            return $store;
+        });
+
+        return view('admin.stores.index', compact('stores', 'languages'));
+    }
     /**
      * Show the form for creating a new store.
      */
@@ -87,7 +93,7 @@ class AdminStoreController extends Controller
 
         $channel->save();
 
-        return redirect()->route('admin.stores.index')
+        return redirect()->route('stores.index')
             ->with('success', 'Store created successfully.');
     }
 
@@ -96,7 +102,8 @@ class AdminStoreController extends Controller
      */
     public function edit(Channel $store)
     {
-        return view('admin.stores.edit', compact('store'));
+        $languages = Language::all();
+        return view('admin.stores.edit', compact('store', 'languages'));
     }
 
     /**
@@ -104,16 +111,55 @@ class AdminStoreController extends Controller
      */
     public function update(Request $request, Channel $store)
     {
+        $attribute_data = $request->validate([
+            'attribute_data.name.en' => 'required|string|max:255',
+            'attribute_data.name.gr' => 'required|string|max:255',
+            'attribute_data.description.en' => 'required|string|max:500',
+            'attribute_data.description.gr' => 'required|string|max:500',
+            'attribute_data.url.en' => 'required|string|max:255',
+            'attribute_data.url.gr' => 'required|string|max:255',
+        ]);
+        $attributes = $attribute_data['attribute_data'];
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'handle' => 'required|string|max:255|unique:'.Channel::class.',handle,'.$store->id,
-            'default' => 'boolean',
-            'url' => 'nullable|url',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|string|max:255',
+            'website' => 'string|max:255',
+            'address' => 'nullable|string|max:500',
+            'map_location' => 'nullable|string',
+            'working_hours' => 'nullable|json',
+            // 'status' => 'sometimes|in:active,inactive',
+            'logo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $store->update($validated);
+        $store->name = $attributes['name']['en'];
+        $store->handle = $attributes['url']['en'];
+        $store->phone = $validated['phone'] ?? null;
+        $store->email = $validated['email'] ?? null;
+        $store->website = $validated['website'] ?? null;
+        $store->address = $validated['address'] ?? null;
+        $store->map_location = $validated['map_location'] ?? null;
+        $store->working_hours = $validated['working_hours'] ?? null;
+        // $store->status = $validated['status'] ?? $store->status;
 
-        return redirect()->route('admin.stores.index')
+        $store->attribute_data = [
+            'name' => new TranslatedText([
+                'en' => new Text($attributes['name']['en']),
+                'gr' => new Text($attributes['name']['gr']),
+            ]),
+            'description' => new TranslatedText([
+                'en' => new Text($attributes['description']['en']),
+                'gr' => new Text($attributes['description']['gr']),
+            ]),
+            'url' => new TranslatedText([
+                'en' => new Text($attributes['url']['en']),
+                'gr' => new Text($attributes['url']['gr']),
+            ]),
+        ];
+
+        $store->save();
+
+        return redirect()->route('stores.edit', $store->id)
             ->with('success', 'Store updated successfully.');
     }
 

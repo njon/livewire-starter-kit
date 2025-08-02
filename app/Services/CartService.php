@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Lunar\Facades\CartSession;
-use Lunar\Models\CartLine;
+use App\Models\CartLine;
 use Lunar\Base\StandardMedia;
 use Lunar\Models\Cart;
 use Lunar\Models\ProductVariant;
@@ -14,9 +14,9 @@ class CartService
 {
     public function getCart(): Cart
     {
-return CartSession::current() ?: CartSession::create([
-        'user_id' => auth()->id(),
-    ]);
+        return CartSession::current() ?: CartSession::create([
+            'user_id' => auth()->id(),
+        ]);
     }
 
     public function userHasCart()
@@ -93,6 +93,7 @@ return CartSession::current() ?: CartSession::create([
                     'purchasable_type' => get_class($purchasable),
                     'purchasable_id' => $purchasable->id,
                     'quantity' => $quantity,
+                    'partner_id' => random_int(1, 999),
                     'meta' => [
                         'product_name' => $purchasable->product->translateAttribute('name'),
                         'variant_name' => $variantName,

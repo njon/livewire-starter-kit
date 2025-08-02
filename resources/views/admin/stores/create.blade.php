@@ -170,8 +170,6 @@ const exampleData = {
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgEzqtsDF9vccmavcM9nqftFqXSgASHGE&libraries=places&callback=initMap"  defer></script>
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.1.0/css/flag-icons.min.css">
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

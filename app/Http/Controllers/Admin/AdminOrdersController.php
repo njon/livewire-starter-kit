@@ -12,11 +12,7 @@ class AdminOrdersController extends Controller
     public function index()
     {
         $orders = Order::with('customer')->latest()->paginate(25);
-        $lines = CartLine::skip(1)->first();;
-        dd($lines);
-        
 
-        
         return view('admin.orders.index', compact('orders'));
     }
 

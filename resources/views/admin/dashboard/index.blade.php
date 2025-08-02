@@ -24,7 +24,7 @@
                     <div class="stat-title">Total Revenue</div>
                     <div class="stat-value">{{ $totalRevenue }}</div>
                     <div class="stat-change positive">
-                        <i class="bi bi-arrow-up me-1"></i> <!-- You can calculate % change if needed -->
+                        <i class="bi bi-arrow-up me-1"></i>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-currency-dollar"></i>
@@ -41,6 +41,7 @@
                         <i class="bi bi-cart-check"></i>
                     </div>
                 </div>
+
                 
                 <div class="stat-card warning">
                     <div class="stat-title">Active Customers</div>
@@ -70,15 +71,15 @@
                 <div class="col-lg-8">
                     <div class="chart-container">
                         <div class="chart-header">
-                            <h3>Sales Overview</h3>
+                            <h3>Sales Overview (Yearly)</h3>
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    This Month
+                                    Year: {{ $salesYear ?? date('Y') }}
                                 </button>
                             </div>
                         </div>
                         <div class="chart-placeholder">
-                            <i class="bi bi-bar-chart"></i>
+                            <canvas id="salesYearChart" height="120"></canvas>
                         </div>
                     </div>
                 </div>
@@ -142,7 +143,40 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Best Sellers Table -->
+            <div class="orders-container mt-4">
+                <div class="orders-header">
+                    <h3>Best Sellers </h3><span class="text-secondary">last 12 months</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <!-- <th>Identifier</th> -->
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($bestSellers as $item)
+                            @if($item)
+                            <tr>
+                                <td>
+                                    <span class="fw-bold">{{ $item['product']->translateAttribute('name') ?? 'N/A' }}</span>
+                                    <span class="text-muted">Variant:</span>
+                                    <span class="fst-italic text-secondary small">{{ $item['variant']->translateAttribute('name') ?? 'N/A' }}</span>
+                                </td>
+                                <!-- <td>{{ $item['variant']->name ?? 'N/A' }}</td> -->
+                                <td>{{ $item['quantity'] }}</td>
+                            </tr>
+                            @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Recent Orders -->
             <div class="orders-container mt-4">
                 <div class="orders-header">
@@ -170,8 +204,9 @@
                                 <td>{{ $order->created_at->format('M d, Y') }}</td>
                                 <td>{{ $order->total->formatted() }}</td>
                                 <td>
-                                    <span class="status-badge {{ strtolower($order->status) }}">{{ ucfirst($order->status) }}</span>
-                                </td>
+                                    <span class="badge bg-{{ $order->status == 'payment-received' ? 'success' : 'secondary' }} bg-opacity-10 text-{{ $order->status == 'payment-received' ? 'success' : 'secondary' }}">
+                                        {{ ucfirst(str_replace('-', ' ', $order->status)) }}
+                                    </span>
                                 <td>
                                     <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i>
@@ -183,25 +218,66 @@
                     </table>
                 </div>
             </div>
-            
-            <!-- Footer -->
-            <footer class="footer mt-4">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="text-center text-md-start">
-                                &copy; 2023 LunarPHP. All rights reserved.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-center text-md-end">
-                                <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
-                                <a href="#" class="text-decoration-none">Terms of Service</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
 
-        @endsection
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Example 1: Bar chart (default)
+    var ctx = document.getElementById('salesYearChart').getContext('2d');
+    
+    // Example 2: Line chart
+    // Uncomment below to use a line chart instead
+    var lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($salesMonths) !!},
+            datasets: [{
+                label: 'Sales (€)',
+                data: {!! json_encode($salesPerMonth) !!},
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' €';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Example 3: Pie chart
+    // Uncomment below to use a pie chart (for proportions)
+    /*
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: {!! json_encode($salesMonths) !!},
+            datasets: [{
+                label: 'Sales',
+                data: {!! json_encode($salesPerMonth) !!},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ]
+            }]
+        }
+    });
+    */
+});
+</script>
+@endsection

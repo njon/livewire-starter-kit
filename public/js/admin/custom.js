@@ -1,8 +1,10 @@
 $(document).ready(function () {
     
     let debounceTimer;
+    const isBussinessHoursPage = $('#business-hours-container').length > 0;
 
-     const days = [
+    
+    const days = [
         { id: 'monday', name: 'Monday' },
         { id: 'tuesday', name: 'Tuesday' },
         { id: 'wednesday', name: 'Wednesday' },
@@ -240,6 +242,6 @@ $(document).ready(function () {
         updateHours();
     });
 
-    initBusinessHours();
-    loadBusinessHours(exampleData);
+    isBussinessHoursPage && initBusinessHours();
+    isBussinessHoursPage && loadBusinessHours(exampleData);
 });

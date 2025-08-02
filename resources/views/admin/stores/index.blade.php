@@ -1,151 +1,187 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', [
-        'title' => 'Stores', 
-        'asset' => 'Stores', 
-        'buttons' => [['new' => true]]
-    ])
+    @include('admin.partials.buttons', ['title' => 'Stores', 'asset' => 'Stores', 'buttons' => [
+        ['new' => true]
+    ]])
 @endsection
 
 @section('content')
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-        <div class="card-header bg-transparent border-bottom py-3">
-            <h3 class="h5 mb-0 d-flex align-items-center">
-                <input type="checkbox" id="selectAll" class="form-check-input"> 
-                <label for="selectAll" class="form-check-label ms-3 fs-14">Select all stores</label>
-            </h3>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="storesTable">
-                <thead class="table-light">
-                    <tr>
-                        <th width="40" class="ps-4"></th>
-                        <th>Status</th>
-                        <th>Store Details</th>
-                        <th>Contact</th>
-                        <th>Location</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($stores as $store)
-                    <tr>
-                        <td class="ps-4">
-                            <input type="checkbox" name="selected_stores[]" value="{{ $store->id }}" class="form-check-input store-checkbox">
-                        </td>
-                        <td>
-                            <span class="badge bg-{{ $store->status == 'active' ? 'success' : 'secondary' }} bg-opacity-10 text-{{ $store->status == 'active' ? 'success' : 'secondary' }}">
-                                {{ ucfirst($store->status) }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-3">
-                                @if($store->logo)
-                                <img src="{{ asset('storage/'.$store->logo) }}" alt="{{ $store->name }}" class="rounded" style="width: 48px; height: 48px; object-fit: cover;">
-                                @else
-                                <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                    <i class="bi bi-shop text-secondary"></i>
-                                </div>
-                                @endif
-                                <div>
-                                    <h6 class="mb-0">
-                                        <a class="text-muted text-decoration-none" href="{{ route('stores.edit', $store->id) }}">
-                                            {{ $store->name }}
-                                        </a>
-                                    </h6>
-                                    <small class="text-muted">
-                                        {{ $store->description ? Str::limit(strip_tags($store->description), 50) : 'No description' }}
-                                    </small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="small">
-                                <div><i class="bi bi-telephone me-2"></i> {{ $store->phone ?? 'N/A' }}</div>
-                                <div><i class="bi bi-envelope me-2"></i> {{ $store->email ?? 'N/A' }}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="small">
-                                <div><i class="bi bi-geo-alt me-2"></i> {{ $store->address ?? 'N/A' }}</div>
-                                @if($store->website)
-                                <div><i class="bi bi-globe me-2"></i> <a href="{{ $store->website }}" target="_blank">Website</a></div>
-                                @endif
-                            </div>
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-gear"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('stores.edit', $store->id) }}">
-                                            <i class="bi bi-pencil me-2"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('stores.edit', $store->id) }}">
-                                            <i class="bi bi-eye me-2"></i> View
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form action="{{ route('stores.destroy', $store->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="dropdown-item text-danger"
-                                                onclick="return confirm('Are you sure?')">
-                                                <i class="bi bi-trash me-2"></i> Delete
+
+  <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="card-header bg-transparent border-bottom py-3">
+                        <h3 class="h5 mb-0">Store Locations</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="storesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="80">Image</th>
+                                    <th>Title</th>
+                                    <th>Address</th>
+                                    <th>URL</th>
+                                    <th>Phone</th>
+                                    <th>Working Hours</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($stores as $store)
+                                @php
+                                    $workingHours = $store->working_hours ? json_decode($store->working_hours, true) : [
+                                        "monday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "tuesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "wednesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "thursday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "friday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "saturday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+                                        "sunday" => ["active" => true, "open" => "10:00", "close" => "18:00"]
+                                    ];
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <div class="ratio ratio-1x1 bg-light rounded" style="width: 60px;">
+                                            @if($store->thumbnail)
+                                                <img src="{{ $store->thumbnail->getUrl('thumb') }}" class="img-cover" alt="{{ $store->name }}">
+                                            @else
+                                                <div class="d-flex align-items-center justify-content-center text-muted">
+                                                    <i class="bi bi-shop" style="font-size: 1.5rem;"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h6 class="mb-0">
+                                            <a href="{{ route('stores.edit', $store->id) }}" class="text-decoration-none">
+                                                {{ $store->name }}
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted">{{ $store->handle }}</small>
+                                    </td>
+                                    <td>
+                                        {{ $store->address }}
+                                    </td>
+                                    <td>
+                                        @foreach($languages as $language)
+                                            @if(isset($store->attribute_data['url'][$language->code]))
+                                                <a href="{{ $store->attribute_data['url'][$language->code] }}" target="_blank" class="text-decoration-none">
+                                                   {!! lang_icon($language->code) !!} {{ $store->attribute_data['url'][$language->code] }}
+                                                </a>
+                                                @if(!$loop->last)<br> @endif
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if($store->phone)
+                                            {{ $store->phone }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success btn-floating shadow-sm rounded-circle m-0" data-bs-toggle="modal" data-bs-target="#hoursModal-{{ $store->id }}" title="View Hours">
+                                            <i class="bi bi-clock"></i>
+                                        </button>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-gear"></i>
                                             </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-shop me-2"></i> No stores found
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('stores.edit', $store->id) }}">
+                                                        <i class="bi bi-pencil me-2"></i> Edit
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('stores.destroy', $store->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">
+                                                            <i class="bi bi-trash me-2"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+<!-- Modals should be placed outside the main table -->
+@foreach($stores as $store)
+@php
+    $workingHours = $store->working_hours ? json_decode($store->working_hours, true) : [
+        "monday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "tuesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "wednesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "thursday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "friday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "saturday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "sunday" => ["active" => true, "open" => "10:00", "close" => "18:00"]
+    ];
+@endphp
+<div class="modal fade" id="hoursModal-{{ $store->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ $store->name }} Working Hours</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Status</th>
+                                <th>Opening Time</th>
+                                <th>Closing Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
+                            <tr>
+                                <td class="text-capitalize">{{ $day }}</td>
+                                <td>
+                                    @if($workingHours[$day]['active'])
+                                        <span class="badge bg-success">Open</span>
+                                    @else
+                                        <span class="badge bg-secondary">Closed</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($workingHours[$day]['active'])
+                                        {{ $workingHours[$day]['open'] }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($workingHours[$day]['active'])
+                                        {{ $workingHours[$day]['close'] }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        
-        @if($stores->hasPages())
-        <div class="card-footer bg-transparent">
-            {{ $stores->links() }}
-        </div>
-        @endif
     </div>
 </div>
-@endsection
+@endforeach
 
-@section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Select all checkboxes
-    document.getElementById('selectAll').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('.store-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
-        });
-    });
-    
-    // Uncheck "select all" if any store checkbox is unchecked
-    const storeCheckboxes = document.querySelectorAll('.store-checkbox');
-    storeCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (!this.checked) {
-                document.getElementById('selectAll').checked = false;
-            }
-        });
-    });
-});
-</script>
 @endsection

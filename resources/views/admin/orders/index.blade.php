@@ -27,7 +27,6 @@
                         <th>Status</th>
                         <th>Reference</th>
                         <th>Customer</th>
-                        <th>Type</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Total</th>
@@ -46,12 +45,9 @@
                             </span>
                         </td>
                         <td>
-                            <a class="text-muted text-decoration-none" href="{{ route('admin.orders.show', $order->id) }}">
+                            <a class="text-muted text-decoration-none text-truncate d-block" href="{{ route('admin.orders.show', $order->id) }}">
                                 {{ $order->reference }}
                             </a>
-                            @if($order->customer_reference)
-                                <small class="text-muted d-block">{{ $order->customer_reference }}</small>
-                            @endif
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
@@ -61,12 +57,6 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <span class="text-muted fs-14">
-                                {{ $order->customer->type ?? '-' }}
-                            </span>
-                        </td>
-
                         <td>
                             <span class="text-muted fs-14">
                                 {{ $order->addresses->first()->contact_email ?? '-' }}

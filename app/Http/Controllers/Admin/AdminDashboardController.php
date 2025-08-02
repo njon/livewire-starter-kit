@@ -17,17 +17,50 @@ class AdminDashboardController extends Controller
         $products = Product::count();
         $customers = User::count();
 
-        // $order = Order::with(['lines', 'customer', 'shippingAddress', 'billingAddress', 'transactions'])->first();
-
-        // $cartLine = CartLine::where('purchasable_id', $order->lines->first()->purchasable_id)->get();
-        // dd($cartLine);
-
         $totalRevenue = Order::where('status', 'payment-received')->sum('total');
-        $totalRevenue = format_price($totalRevenue)->formatted(); // Assuming format_price returns a Price object with a formatted method
-        $latestOrders = Order::latest()->take(5)->get();
+        $totalRevenue = format_price($totalRevenue)->formatted();
 
-        // Example stats, adjust as needed
+        $latestOrders = Order::latest()->take(5)->get();
         $pendingOrders = Order::where('status', 'pending')->count();
+
+        // Average Order Value
+        $averageOrderValue = $orders > 0 ? format_price(Order::where('status', 'payment-received')->avg('total'))->formatted() : 0;
+
+        // Sales Overview (Yearly)
+        $salesYear = date('Y');
+        $salesMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        $salesPerMonth = [];
+        foreach (range(1, 12) as $month) {
+            $salesPerMonth[] = (float) Order::whereYear('created_at', $salesYear)
+                ->whereMonth('created_at', $month)
+                ->where('status', 'payment-received')
+                ->sum('total');
+        }
+
+
+        $bestSellers = \Lunar\Models\OrderLine::with(['purchasable.product.variants'])
+        ->whereHas('order', function($query) {
+            $query->where('created_at', '>=', now()->subMonths(12))
+                ->whereNotIn('status', ['cancelled', 'failed']);
+        })
+        ->select('purchasable_type', 'purchasable_id')
+        ->selectRaw('SUM(quantity) as total_quantity')
+        ->groupBy('purchasable_type', 'purchasable_id')
+        ->orderByDesc('total_quantity')
+        ->limit(10)
+        ->get()
+        ->map(function($item) {
+            if (!$item->purchasable || !$item->purchasable->product) {
+                return null;
+            }
+            return [
+                'product' => $item->purchasable->product,
+                'variant' => $item->purchasable,
+                'quantity' => $item->total_quantity,
+            ];
+        })
+        ->filter();
+
 
         return view('admin.dashboard.index', compact(
             'orders',
@@ -35,7 +68,12 @@ class AdminDashboardController extends Controller
             'customers',
             'totalRevenue',
             'latestOrders',
-            'pendingOrders'
+            'pendingOrders',
+            'averageOrderValue',
+            'salesYear',
+            'salesMonths',
+            'salesPerMonth',
+            'bestSellers'
         ));
     }
 }

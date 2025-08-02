@@ -52,6 +52,7 @@ class CartController extends Controller
     {
         $quantity = $request->validate(['quantity' => 'required|integer|min:1'])['quantity'];
 
+
         $request->input('to_cart') 
             ? $this->cart->addToCart($ProductVariant) 
             : $this->cart->updateQuantity($ProductVariant, $quantity);

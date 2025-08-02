@@ -22,7 +22,7 @@
                         </th>
                         <th>Status</th>
                         <th>Title</th>
-                        <th>Category</th>
+                        <th>Discount</th>
                         <th>Sales</th>
                         <th>Price</th>
                         <th class="text-end pe-4">Actions</th>
@@ -53,25 +53,21 @@
                             </div>
                         </td>
                         <td>
-                            @if($product->collections->isNotEmpty())
-                                {{ $product->collections->first()->translateAttribute('name') }}
-                                @if($product->collections->count() > 1)
-                                    <small class="text-muted">+{{ $product->collections->count() - 1 }} more</small>
-                                @endif
-                            @else
-                                -
-                            @endif
+                            <!-- @todo add discount -->
+                            <span class="badge bg-warning bg-opacity-10 text-warning">
+                                {{ $product->discount ? $product->discount . '%' : 'No discount' }}
+                            </span>
                         </td>
                         <td>
                             {{-- Sales count would need to be implemented based on your orders --}}
-                            {{ $product->sales_count ?? 0 }} sold
+                            @if($product->total_sales)
+                                {{ $product->total_sales . ' sales' }}
+                            @else
+                                <span class="small grey text-grey">No sales</span>
+                            @endif
                         </td>
                         <td>
-                            @if($product->variants->first())
-                                {{ $product->variants->first()->price }}
-                            @else
-                                -
-                            @endif
+                            {{ $product->variants->first()->price ?? '-' }}
                         </td>
                         <td class="text-end pe-4">
                             <div class="dropdown">

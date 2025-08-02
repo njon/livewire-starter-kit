@@ -24,6 +24,67 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statusModal">
   Update Status
 </button>
+
+
+
+
+<!-- Button to open offcanvas -->
+<button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart" aria-controls="shoppingCart">
+    Open Shopping Cart
+</button>
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="shoppingCart" aria-labelledby="shoppingCartLabel"
+    aria-modal="true" role="dialog">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="shoppingCartLabel">Select categories</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-2">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row gx-0 category-list-container">
+                    <div class="col-lg-12 pe-0 py-2 category-list">
+                        <ul class="list-unstyled">
+                            @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                            @if($mainCategory->parent_id == null)
+                            <li class="main-category @if($loop->first) active @endif"
+                                data-target="cat-{{ $loop->iteration }}"
+                                data-image="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
+                                <a href="#">{{ $mainCategory->translateAttribute('name') }}</a>
+                            </li>
+                            @endif
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-12 ps-0 py-2 subcategory-container" style="display: none !important;">
+                        @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
+                        @if($mainCategory->parent_id == null)
+                        <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
+                            <ul class="list-unstyled">
+                                @foreach($mainCategory->children as $subCategory)
+                                <li>
+                                    <a href="#"
+                                        class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
+                                        {{ $subCategory->translateAttribute('name') }}
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <div class="modal fade" tabindex="-1" id="statusModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -80,11 +141,14 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
     <div class="card mb-4 border-0 shadow-sm">
         <div class="row">
             <div class="col-lg-8">
+                <div class="col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-funnel me-2 text-primary"></i> Filter Categories
+                        <i class="bi bi-tag me-2 text-primary"></i> Pricing
                     </h3>
                 </div>
+                <div class="card-body">
                 <div class="filter-card accordion" id="filterAccordion">
                     @foreach($filterCategories as $index => $filterCategory)
                     <div class="accordion-item border-0">
@@ -118,140 +182,103 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                     </div>
                     @endforeach
                 </div>
-            </div>
-            <div class="col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-diagram-3 me-2 text-primary"></i> Categories
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <label class="form-label">Service Categories</label>
-                <div class="row gx-0 category-list-container">
-                <div class="col-lg-12 pe-0 py-2 category-list">
-                  <ul class="list-unstyled">
-                    @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
-                      @if($mainCategory->parent_id == null)
-                      <li class="main-category @if($loop->first) active @endif" data-target="cat-{{ $loop->iteration }}" data-image="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/{{ get_category_image($mainCategory->translateAttribute('name')) }}">
-                        <a href="#">{{ $mainCategory->translateAttribute('name') }}</a>
-                      </li>
-                      @endif
-                    @endforeach
-                  </ul>
-                </div>
-
-                <div class="col-lg-12 ps-0 py-2 subcategory-container">
-                  @foreach(\Lunar\Models\Collection::with(['defaultUrl', 'children.defaultUrl'])->get() as $mainCategory)
-                  @if($mainCategory->parent_id == null)
-                  <div class="subcategory-group @if(!$loop->first) d-none @endif" id="cat-{{ $loop->iteration }}">
-                    <ul class="list-unstyled">
-                      @foreach($mainCategory->children as $subCategory)
-                      <li>
-                        <a href="#"
-                          class="d-block w-100 px-3 py-2 text-body text-decoration-none hover-bg @if(request()->url() == url($subCategory->defaultUrl->slug)) active @endif">
-                          {{ $subCategory->translateAttribute('name') }}
-                        </a>
-                      </li>
-                      @endforeach
-                    </ul>
-                  </div>
-                  @endif
-                  @endforeach
                 </div>
                 </div>
             </div>
-        </div>
-        </div>
+            
         </div>
     </div>
 
 
     <!-- Details Section -->
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-transparent border-bottom py-3">
-            <h3 class="h5 mb-0 d-flex align-items-center">
-                <i class="bi bi-card-text me-2 text-primary"></i> Service Details
-            </h3>
-        </div>
-        <div class="card-body">
-            <!-- Language Tabs -->
-            <ul id="languageTabs" role="tablist">
-                Click to change language translations
-                @foreach($languages as $language)
-                <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
-                        data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button" role="tab">
-                        {{ $language->name }}
-                        <span class="fi fi-{{ $language->code == 'gr' ? 'gr' : 'gb' }} fis"></span>
-                    </button></li>
-                @endforeach
-            </ul>
+     <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h3 class="h5 mb-0 d-flex align-items-center">
+                        <i class="bi bi-card-text me-2 text-primary"></i> Service Details
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Language Tabs -->
+                    <ul id="languageTabs" role="tablist">
+                        Click to change language translations
+                        @foreach($languages as $language)
+                        <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
+                                data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button" role="tab">
+                                {{ $language->name }}
+                                <span class="fi fi-{{ $language->code == 'gr' ? 'gr' : 'gb' }} fis"></span>
+                            </button></li>
+                        @endforeach
+                    </ul>
 
-            <!-- Tab Content -->
-            <div class="tab-content" id="languageTabsContent">
-                @foreach($languages as $language)
-                @php
-                $url = $product->urls->firstWhere('language.code', $language->code);
-                @endphp
-                <div class="tab-pane fade @if($loop->first) show active @endif" id="{{ $language->code }}-content"
-                    role="tabpanel">
-                    <div class="row g-4">
-                        <div class="col-lg-12">
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="languageTabsContent">
+                        @foreach($languages as $language)
+                        @php
+                        $url = $product->urls->firstWhere('language.code', $language->code);
+                        @endphp
+                        <div class="tab-pane fade @if($loop->first) show active @endif" id="{{ $language->code }}-content"
+                            role="tabpanel">
+                            <div class="row g-4">
+                                <div class="col-lg-12">
 
-                            <label for="product_title_{{ $language->code }}" class="form-label">Service title</label>
-                            <input type="text" data-slug="true"
-                                class="form-control @error('name.'.$language->code) is-invalid @enderror"
-                                id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
-                                value="{{ old('name.'.$language->code, $variant->translateAttribute('name', $language->code) ?? '') }}"
-                                @if($language->default) required @endif>
-                            @error('name.'.$language->code)
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label d-flex align-items-center gap-2">
-                                URL
-                            </label>
-                            <div class="input-group">
+                                    <label for="product_title_{{ $language->code }}" class="form-label">Service title</label>
+                                    <input type="text" data-slug="true"
+                                        class="form-control @error('name.'.$language->code) is-invalid @enderror"
+                                        id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
+                                        value="{{ old('name.'.$language->code, $variant->translateAttribute('name', $language->code) ?? '') }}"
+                                        @if($language->default) required @endif>
+                                    @error('name.'.$language->code)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label d-flex align-items-center gap-2">
+                                        URL
+                                    </label>
+                                    <div class="input-group">
 
-                                <input type="text" id="product_url_{{ $language->code }}" data-auto="true"
-                                    class="form-control url-field @error('urls.'.$language->code) is-invalid @enderror"
-                                    name="urls[{{ $language->code }}]" data-lang="{{ $language->code }}"
-                                    placeholder="product-name"
-                                    value="{{ old('urls.'.$language->code, $url->slug ?? '') }}">
-                                <span class="input-group-text no-bg">
-                                    <span id="slugCheckIcon"> </span>
-                                </span>
+                                        <input type="text" id="product_url_{{ $language->code }}" data-auto="true"
+                                            class="form-control url-field @error('urls.'.$language->code) is-invalid @enderror"
+                                            name="urls[{{ $language->code }}]" data-lang="{{ $language->code }}"
+                                            placeholder="product-name"
+                                            value="{{ old('urls.'.$language->code, $url->slug ?? '') }}">
+                                        <span class="input-group-text no-bg">
+                                            <span id="slugCheckIcon"> </span>
+                                        </span>
 
-                                @error('urls.'.$language->code)
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                        @error('urls.'.$language->code)
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
 
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label class="form-label mb-1">Service Description</label>
+                                    <textarea id="productDescription_{{ $language->code }}"
+                                        name="description[{{ $language->code }}]"
+                                        class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
+                                        data-lang="{{ $language->code }}">{{ old('description.'.$language->code, $variant->translateAttribute('description', $language->code) ?? '') }}</textarea>
+                                    @error('description.'.$language->code)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-text">Describe your product in detail (supports rich text
+                                        formatting)</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-lg-12">
-                            <label class="form-label mb-1">Service Description</label>
-                            <textarea id="productDescription_{{ $language->code }}"
-                                name="description[{{ $language->code }}]"
-                                class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
-                                data-lang="{{ $language->code }}">{{ old('description.'.$language->code, $variant->translateAttribute('description', $language->code) ?? '') }}</textarea>
-                            @error('description.'.$language->code)
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Describe your product in detail (supports rich text
-                                formatting)</div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-                @endforeach
             </div>
-        </div>
-    </div>
+</div>
 
 
-    <!-- Pricing & Inventory Section -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-12">
+            
+
+
+            <div class="col-lg-4">
             <div class="card h-100 border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
@@ -261,7 +288,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                 <div class="card-body">
                     <div class="row g-3">
 
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label">Base Price</label>
                             <div class="input-group">
                                 <span class="input-group-text">Eur</span>
@@ -272,7 +299,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label" for="taxClass">Tax Class</label>
                             <select class="form-select @error('tax_class_id') is-invalid @enderror" id="taxClass"
                                 name="tax_class_id">
@@ -288,26 +315,25 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                             <label class="form-label" for="productSku">SKU</label>
                             <input type="text" class="form-control @error('sku') is-invalid @enderror" id="productSku"
                                 name="sku" placeholder="SKU"
                                 value="{{ old('sku', $product->variants->first()->sku ?? '') }}">
                             @error('sku')
                             <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @enderror -->
                             <!-- <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="track_inventory" id="trackInventory" 
                                 {{ old('track_inventory', true) ? 'checked' : '' }}>
                             <label class="form-check-label" for="trackInventory">Track inventory</label>
                         </div> -->
-                        </div>
+                        <!-- </div> -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+</div>
 
     <div class="row">
         <!-- Stores Section -->
@@ -669,8 +695,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.1.0/css/flag-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

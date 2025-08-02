@@ -8,6 +8,17 @@
     </div>
 @endif
 
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="shoppingCart" aria-labelledby="shoppingCartLabel"
+    aria-modal="true" role="dialog">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="shoppingCartLabel">Shopping cart</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+
+    </div>
+</div>
+
 <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="product_type_id" value="1">
@@ -371,8 +382,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.1.0/css/flag-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

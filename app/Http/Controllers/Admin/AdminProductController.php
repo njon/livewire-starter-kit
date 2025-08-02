@@ -19,9 +19,16 @@ use App\Models\FilterCategory;
 
 class AdminProductController extends Controller
 {
-     public function index()
+    public function index()
     {
-        $products = Product::with(['variants'])->paginate(25);
+        // @todo check only sold items
+        $products = Product::with(['variants'])
+            ->leftJoin('lunar_order_lines', 'lunar_order_lines.id', '=', 'lunar_products.id')
+            ->select('lunar_products.*', DB::raw('SUM(lunar_order_lines.quantity) as total_sales'))
+            ->groupBy('lunar_products.id')
+            ->paginate(25);
+
+        // return view('admin.products.only', compact('products'));
         return view('admin.products.index', compact('products'));
     }
 
@@ -170,7 +177,7 @@ class AdminProductController extends Controller
         $defaultVariant = $product->variants()->updateOrCreate(
                 ['id' => $product->variants()->first()?->id],
                 [
-                    'sku' => $validated['sku'],
+                    // 'sku' => $validated['sku'],
                     'tax_class_id' => $validated['tax_class_id'],
                     'stock' => 500,
                     'attribute_data' => [
@@ -205,13 +212,18 @@ class AdminProductController extends Controller
             
             foreach ($validated['variants'] as $variantData) {
                 $variant = $product->variants()->updateOrCreate(
-                    ['id' => $variantData['id']],
+                    ['id' => $variantData['id'] ?? null],
                     [
                         'stock' => $variantData['stock'] ?? 0,
                         'tax_class_id' => $validated['tax_class_id'],
                         'attribute_data' => [
                             'name' => new TranslatedText([
-                                'en' => new Text($variantData['name']['en']),
+                                'en' => new Text($validated['name']['en']),
+                                'gr' => new Text($validated['name']['gr']),
+                            ]),
+                            'description' => new TranslatedText([
+                                'en' => new Text($validated['description']['en']),
+                                'gr' => new Text($validated['description']['gr']),
                             ]),
                         ]
                     ]
@@ -281,7 +293,7 @@ class AdminProductController extends Controller
             'tax_class_id' => 'required|exists:lunar_tax_classes,id',
             'price' => 'required|numeric|min:0',
             // 'sku' => 'required|string|max:255|unique:lunar_product_variants,sku',
-            'sku' => 'required|string|max:255',
+            // 'sku' => 'required|string|max:255',
             'track_inventory' => 'nullable|boolean',
             'collections' => 'nullable|array',
             'collections.*' => 'exists:lunar_collections,id',

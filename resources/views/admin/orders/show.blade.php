@@ -200,7 +200,8 @@
                 
                 <div class="border-bottom pb-3 mb-3">
                     <h6 class="fs-14 text-muted mb-2">Channel</h6>
-                    <p class="mb-0">{{ $order->channel }}</p>
+                    <p class="mb-0">{{ $order->channel->name }}</p>
+                    <p class="mb-0">{{ $order->channel->address }}</p>
                 </div>
                 
                 <div>
