@@ -11,11 +11,22 @@ use Illuminate\Support\Str;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class HomepageController extends Controller
 {
     function index()
     {
+        
+        // $staff = new User();
+        // $staff->name = 'test';
+        // $staff->email = 'test@test.com';
+        // $staff->password = bcrypt('test');
+        // $staff->save();
+
+
+
         // $channels = \Lunar\Models\Channel::all();
         // dd($channels);
 

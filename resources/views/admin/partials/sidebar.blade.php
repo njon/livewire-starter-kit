@@ -68,12 +68,14 @@
                                     <span>Orders</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
+                             <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}"
+                                    href="/admin/users">
                                     <i class="bi bi-people"></i>
                                     <span>Staff</span>
                                 </a>
                             </li>
+                   
                         </ul>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use Lunar\Models\Product;
+use App\Models\Product;
 use Lunar\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

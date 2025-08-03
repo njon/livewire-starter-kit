@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductReview;
 use Illuminate\Http\Request;
-use Lunar\Models\Product;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\GuestReviewInvitation;

@@ -16,28 +16,20 @@ use App\Http\Controllers\Admin\AdminStoreController;
 use App\Http\Controllers\Admin\AdminOrdersController;
 use App\Http\Controllers\Admin\AdminImageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 
 Route::get('/', [HomepageController::class, 'index']);
 
-// Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::resource('products', AdminProductController::class)
-        ->names([
-            'index' => 'admin.products.index',
-            'create' => 'admin.products.create',
-            'store' => 'admin.products.store',
-            'show' => 'admin.products.show',
-            'edit' => 'admin.products.edit',
-            'update' => 'admin.products.update',
-            'destroy' => 'admin.products.destroy',
-        ]);
+    Route::resource('products', AdminProductController::class)->names('admin.products');
     Route::resource('stores', AdminStoreController::class)->except(['show']);
+    Route::resource('users', AdminUserController::class)->except(['show']);
 
     Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
     Route::get('/order/{id}', [AdminOrdersController::class, 'show'])->name('admin.orders.show');
@@ -46,6 +38,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');
 
     Route::get('/check-slug', [AdminProductController::class, 'slugExists']);
+
 });
 
 

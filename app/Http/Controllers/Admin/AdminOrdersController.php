@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use \Lunar\Models\Order;
+use App\Models\Order;
 use \Lunar\Models\CartLine;
 use Illuminate\Http\Request;
 

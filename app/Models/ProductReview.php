@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Lunar\Models\Product;
+use App\Models\Product;
 
 class ProductReview extends Model
 {

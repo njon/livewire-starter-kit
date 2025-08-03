@@ -17,9 +17,12 @@ use Lunar\Models\Currency;
 use App\Models\ProductQuestion;
 use App\Models\ProductReview;
 use Lunar\Models\Price;
+use App\Models\Scopes\PriceBetweenScope;
+use App\Traits\OwnerScope;
 
 class Product extends LunarProduct
 {
+    use OwnerScope;
 
     public static array $listingWith = [];
 
@@ -163,10 +166,9 @@ class Product extends LunarProduct
         ->orderBy('priority', 'desc');
     }
 
-    protected static function booted()
+    public function owner()
     {
-        static::addGlobalScope(new \App\Models\Scopes\PriceBetweenScope);
-        // static::addGlobalScope(new \App\Models\Scopes\PublishedScope);
+        return $this->belongsTo(User::class, 'owner_id');
     }
     
     public function filterOptions()

@@ -55,5 +55,47 @@ class User extends Authenticatable
         return $this->hasMany(Wishlist::class);
     }
 
+    public function staffMembers()
+    {
+        return $this->hasMany(User::class, 'owner_id');
+    }
+
+    public function shopOwner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'owner_id', 'owner_id');
+    }
+
+    
+    // @todo then owner creates staff
+    public static function createStaff(array $data, $ownerId)
+    {
+        $staff = new self($data);
+        $staff->owner_id = $ownerId;
+        $staff->save();
+        return $staff;
+
+        // $staff = User::createStaff([
+        //     'name' => 'Staff Name',
+        //     'email' => 'staff@example.com',
+        //     'password' => bcrypt('password'),
+        // ], auth()->id());
+    }
+
+    protected static function booted()
+    {
+        // @todo add a check if user register as a shop owner
+        static::created(function ($user) {
+            if (is_null($user->owner_id)) {
+                $user->owner_id = $user->id;
+                $user->save();
+            }
+        });
+    }
+
 
 }

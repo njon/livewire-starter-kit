@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Channel;
 use Illuminate\Http\Request;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
 use Illuminate\Support\Facades\Validator;
 use Lunar\Models\Language;
-
-
+use App\Models\Channel as Channel;
 
 class AdminStoreController extends Controller
 {
@@ -19,13 +17,8 @@ class AdminStoreController extends Controller
      */
     public function index()
     {
-        $stores = Channel::paginate(10);
+        $stores = Channel::all();
         $languages = Language::all();
-
-        $stores->getCollection()->transform(function ($store) {
-            $store->attribute_data = json_decode($store->attribute_data, true);
-            return $store;
-        });
 
         return view('admin.stores.index', compact('stores', 'languages'));
     }
@@ -52,6 +45,7 @@ class AdminStoreController extends Controller
             'attribute_data.url.en' => 'required|string|max:255',
             'attribute_data.url.gr' => 'required|string|max:255',
         ]);
+
         $attributes = $attribute_data['attribute_data'];
 
         $validated = $request->validate([
@@ -73,6 +67,7 @@ class AdminStoreController extends Controller
 
         $validated['name'] = $attributes['name']['en'];
         $validated['handle'] = $attributes['url']['en'];
+        $validated['owner_id'] = auth()->user()->owner_id;
 
         $channel = Channel::create($validated);
 

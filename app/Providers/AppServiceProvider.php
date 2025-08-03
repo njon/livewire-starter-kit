@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
             ])
         )
             ->register();
+
+
     }
 
     /**
@@ -37,8 +39,14 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
             \App\Models\Product::class,
-            // \App\Models\CustomProduct::class,
+
+            \Lunar\Models\Order::class,
+            \App\Models\Order::class,
+
+            \Lunar\Models\Contracts\Channel::class,
+            \App\Models\Channel::class,
         );
+        
 
         Paginator::useBootstrapFive(); // or Paginator::useBootstrapFive();
 

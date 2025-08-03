@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\OwnerScope;
 
 class Channel extends \Lunar\Models\Channel
 {
+    use OwnerScope;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -27,6 +30,12 @@ class Channel extends \Lunar\Models\Channel
      * @var array
      */
     public $casts = [
-        'attribute_data' => 'array', // <-- Change 'boolean' to 'array' for JSON attribute
+        'attribute_data' => 'array',
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
 }

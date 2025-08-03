@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use \Lunar\Models\TaxClass;
-use \Lunar\Models\Channel;
-use \Lunar\Models\Collection;
+use App\Models\Channel;
+use Lunar\Models\Collection;
 use Lunar\Models\Language;
-use Lunar\Models\Product;
+use Lunar\Models\TaxClass;
+use App\Models\Product;
 use Lunar\Models\Currency;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
@@ -22,6 +22,7 @@ class AdminProductController extends Controller
     public function index()
     {
         // @todo check only sold items
+        // @todo add owner_id to other models
         $products = Product::with(['variants'])
             ->leftJoin('lunar_order_lines', 'lunar_order_lines.id', '=', 'lunar_products.id')
             ->select('lunar_products.*', DB::raw('SUM(lunar_order_lines.quantity) as total_sales'))
@@ -48,6 +49,9 @@ class AdminProductController extends Controller
             'channels'
         ));
     }
+
+    // @todo add         $validated['owner_id'] = auth()->user()->owner_id;
+
 
     // public function store(Request $request)
     // {

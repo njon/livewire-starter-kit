@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Lunar\Models\Product;
+use App\Models\Product;
 use Lunar\Models\ProductType;
 use Lunar\Models\TaxClass;
 use Lunar\Models\Collection;

@@ -29,6 +29,9 @@ class PriceBetweenScope implements Scope
             });
         }
 
+        // Apply owner_id filter to products
+        $builder->where('owner_id', auth()->user()->owner_id);
+
         // @todo fix backend exclude
         // $request = request();
         // $filters = $request->except(['min_price', 'max_price']);

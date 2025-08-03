@@ -13,9 +13,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('lunar_cart_lines', function (Blueprint $table) {
-            $table->foreignId('partner_id')->nullable()->constrained('users');
-            // Or if partners are in a different table:
-            // $table->foreignId('partner_id')->nullable()->constrained('partners');
+        $table->unsignedBigInteger('owner_id')->nullable()->after('id');
+
         });
     }
 
@@ -24,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('cart_lines', function (Blueprint $table) {
-            //
+        Schema::table('lunar_cart_lines', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('partner_id');
         });
     }
 };

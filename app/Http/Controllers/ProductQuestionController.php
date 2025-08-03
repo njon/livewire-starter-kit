@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductQuestion;
 use Illuminate\Http\Request;
-use Lunar\Models\Product;
+use App\Models\Product;
 
 class ProductQuestionController extends Controller
 {
