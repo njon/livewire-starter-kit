@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PayPalController;
@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\App;
 Route::get('/', [HomepageController::class, 'index']);
 
 Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
-
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource('products', AdminProductController::class)->names('admin.products');
@@ -37,18 +36,10 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::post('/order/{id}/refund', [AdminOrdersController::class, 'refund'])->name('admin.orders.refund');
     Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');
 
-    Route::get('/check-slug', [AdminProductController::class, 'slugExists']);
-
+    Route::put('/products/{product}/media', [AdminProductController::class, 'storeMedia'])->name('admin.products.media.store');
+    Route::delete('/products/{product}/media', [AdminProductController::class, 'destroyMedia'])->name('admin.products.media.destroy');
 });
 
-
-
-// Cart Routes
-Route::resource('cart', CartController::class)->only(['index', 'update', 'destroy'])->parameters(['cart' => 'ProductVariant']);
-    
-Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.canvas-items');
-
-// Checkout Routes
 Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::get('/success/{reference_id}', 'order')->name('success');
@@ -57,27 +48,7 @@ Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::cla
     Route::post('/complete-order', 'completeOrder')->name('complete');
 });
 
-// Product Routes
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
-
-// Product Questions Routes
-Route::resource('products.questions', ProductQuestionController::class)->only(['index', 'store', 'destroy'])->parameters(['questions' => 'productQuestion']);
-
-Route::post('/product/{product}/answer/{productquestion}', [ProductQuestionController::class, 'answer'])
-    ->name('products.questions.answer');
-
-// Product Reviews Routes
-Route::resource('products.reviews', ProductReviewController::class)->only(['index', 'create', 'store']);
-
-Route::get('/reviews/verify/{token}', [ProductReviewController::class, 'verify'])->name('reviews.verify');
-Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpful'])->name('reviews.helpful');
-
-// Wishlist Routes
-Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 'destroy']);
-Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])
-    ->name('wishlist.ajaxItems');
-
+// Authentication Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
     Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
@@ -91,7 +62,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile/delete', [UserController::class, 'deleteAccount'])->name('profile.destroy');
 });
 
-// Authentication Routes
+// Paypal
+Route::group(['middleware' => ['web']], function () {
+    Route::post('/paypal/create', [PayPalController::class, 'create'])->name('paypal.create');
+    Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
+    Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
+});
+Route::post('/paypal/webhook', [PayPalController::class, 'webhook'])->name('paypal.webhook');
+
+// Auth
 Route::controller(AuthController::class)->group(function() {
     Route::get('/login', 'showLogin')->name('login');
     Route::post('/login', 'login');
@@ -99,34 +78,31 @@ Route::controller(AuthController::class)->group(function() {
     Route::post('/register', 'register');
     Route::post('/logout', 'logout')->name('logout');
     
-    // Social Login Routes
     Route::get('/auth/{provider}', 'socialRedirect')->where('provider', 'facebook|google');
     Route::get('/auth/{provider}/callback', 'socialCallback')->where('provider', 'facebook|google');
 });
 
+// Cart
+Route::resource('cart', CartController::class)->only(['index', 'update', 'destroy'])->parameters(['cart' => 'ProductVariant']);
+Route::get('/canvasItems', [CartController::class, 'canvasItems'])->name('cart.canvas-items');
+Route::get('/ajax-search', [ProductController::class, 'ajaxResults'])->name('products.ajax-search');
 
-Route::post('/paypal/webhook', [PayPalController::class, 'webhook'])->name('paypal.webhook');
+// Product Questions 
+Route::resource('products.questions', ProductQuestionController::class)->only(['index', 'store', 'destroy'])->parameters(['questions' => 'productQuestion']);
+Route::post('/product/{product}/answer/{productquestion}', [ProductQuestionController::class, 'answer'])->name('products.questions.answer');
 
+// Reviews
+Route::resource('products.reviews', ProductReviewController::class)->only(['index', 'create', 'store']);
+Route::get('/reviews/verify/{token}', [ProductReviewController::class, 'verify'])->name('reviews.verify');
+Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpful'])->name('reviews.helpful');
 
-Route::group(['middleware' => ['web']], function () {
-    Route::post('/paypal/create', [PayPalController::class, 'create'])->name('paypal.create');
-    Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
-    Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
-});
-
-// routes/admin.php
-
-
-
-
-
-
-
-
-
+// Wishlist Routes
+Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 'destroy']);
+Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])->name('wishlist.ajaxItems');
 
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
+    
     if ($product = \App\Models\Product::findBySlug($slug)) {
         return app(ProductController::class)->show($product);
     }
