@@ -270,45 +270,54 @@ public function destroyMedia(Request $request, Product $product)
                 ]);
             }
             
-        if(!empty($validated['variants'])) {
-            // Handle when variants are provided
-            $existingVariantIds = [];
-            $existingVariantIds[] = $product->variants()->first()?->id; 
-
-
+        if (!empty($validated['variants'])) {
+        $existingVariantIds = [];
+        
+        foreach ($validated['variants'] as $variantId => $variantData) {
+            // Check if this is a new variant (key starts with "new_")
+            $isNewVariant = str_starts_with($variantId, 'new_');
             
-            foreach ($validated['variants'] as $variantData) {
+            // Prepare the variant data
+            $variantAttributes = [
+                'stock' => $variantData['stock'] ?? 9999,
+                'tax_class_id' => $validated['tax_class_id'],
+                'attribute_data' => [
+                    'name' => new TranslatedText([
+                        'en' => new Text($variantData['name']['en'] ?? $validated['name']['en']),
+                        'gr' => new Text($variantData['name']['gr'] ?? $validated['name']['gr']),
+                    ])
+                ]
+            ];
+            
+            // Handle new variants
+            if ($isNewVariant) {
+                $variant = $product->variants()->create($variantAttributes);
+            } 
+            else {
                 $variant = $product->variants()->updateOrCreate(
-                    ['id' => $variantData['id'] ?? null],
-                    [
-                        'stock' => $variantData['stock'] ?? 0,
-                        'tax_class_id' => $validated['tax_class_id'],
-                        'attribute_data' => [
-                            'name' => new TranslatedText([
-                                'en' => new Text($validated['name']['en']),
-                                'gr' => new Text($validated['name']['gr']),
-                            ]),
-                            'description' => new TranslatedText([
-                                'en' => new Text($validated['description']['en']),
-                                'gr' => new Text($validated['description']['gr']),
-                            ]),
-                        ]
-                    ]
+                    ['id' => $variantId],
+                    $variantAttributes
                 );
-
-                $variant->prices()->delete();
-                $variant->prices()->create([
-                    'price' => $variantData['price'],
-                    'currency_id' => 1,
-                ]);
-
-                $existingVariantIds[] = $variant->id;
             }
-
             
-            // Delete variants that weren't included in the request
+            // Update prices
+            $variant->prices()->delete();
+            $variant->prices()->create([
+                'price' => $variantData['price'],
+                'currency_id' => 1, // Assuming default currency
+            ]);
+            
+            // Track existing variants (excluding new ones that were just created)
+            $existingVariantIds[] = $variant->id;
+
+            $variantAttributes = [];
+        }
+
+        // Delete variants that weren't included in the request (excluding new variants)
+        if (!empty($existingVariantIds)) {
             $product->variants()->whereNotIn('id', $existingVariantIds)->delete();
         }
+    }
 
         // Update URLs
         $product->urls()->delete();

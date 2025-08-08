@@ -1,5 +1,6 @@
 $(document).ready(function () {
     
+    let variantCounter = 0;
     const isBussinessHoursPage = $('#business-hours-container').length > 0;
     const days = [
         { id: 'monday', name: 'Monday' },
@@ -175,6 +176,110 @@ $(document).ready(function () {
 
     isBussinessHoursPage && initBusinessHours();
     isBussinessHoursPage && loadBusinessHours(exampleData);
+
+
+    $('#saveVariantBtn').click(function() {
+        // Collect all language-specific names
+        let names = {};
+        languages.forEach(lang => {
+            names[lang] = $(`input[name="name_${lang}"]`).val();
+        });
+        
+        const price = $('#variant-price').val();
+        const sku = $('#variant-sku').val();
+        
+        // Validate required fields
+        if (!names['en'] || !price) {
+            alert('Please fill in at least the English title and price');
+            return;
+        }
+        
+        // Create a new variant ID
+        const vLengh = $('#variantsContainer > div').length;
+        const variantId = 'new_' + vLengh;
+
+        // Format price for display (€5,555.00 format)
+        const formattedPrice = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'EUR',
+            minimumFractionDigits: 2
+        }).format(price);
+        
+        // Create the variant HTML
+        const variantHtml = `
+        <div class="p-3 border-bottom border-end-md border-primary flex-grow-1" data-variant-id="${variantId}">
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold">${names['en'].replace(/ /g, '&nbsp;')}</div>
+                <div class="text-primary fw-500">${formattedPrice}</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-primary bg-opacity-10 text-white me-2">
+                        SKU: ${sku || 'N/A'}</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm edit-variant" data-variant-id="${variantId}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary delete-variant" data-variant-id="${variantId}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" name="variants[${variantId}][id]" value="${variantId}">
+            ${languages.map(lang => `<input type="hidden" name="variants[${variantId}][name][${lang}]" value="${names[lang].replace(/"/g, '&quot;')}">`).join('')}
+            <input type="hidden" name="variants[${variantId}][price]" value="${parseFloat(price) * 100}">
+            <input type="hidden" name="variants[${variantId}][sku]" value="${sku}">
+        </div>
+        `;
+        
+        // Add to container
+        $('#variantsContainer').append(variantHtml);
+        
+        // Reset and close modal
+        $('#variantForm')[0].reset();
+        $('#variantModal').modal('hide');
+    });
+    
+    // Delete variant handler
+    $(document).on('click', '.delete-variant', function() {
+        const variantId = $(this).data('variant-id');
+        $(`[data-variant-id="${variantId}"]`).remove();
+    });
+    
+    // Edit variant handler (you would need to implement this)
+    $(document).on('click', '.edit-variant', function() {
+        const variantId = $(this).data('variant-id');
+        const variantElement = $(`[data-variant-id="${variantId}"]`);
+        
+        // Get current values
+        // Get current values for all languages
+        let names = {};
+        languages.forEach(lang => {
+            names[lang] = variantElement.find(`input[name="variants[${variantId}][name][${lang}]"]`).val();
+        });
+        const price = variantElement.find(`input[name="variants[${variantId}][price]"]`).val() / 100;
+        const sku = variantElement.find(`input[name="variants[${variantId}][sku]"]`).val();
+
+        // Populate modal fields
+        languages.forEach(lang => {
+            $(`input[name="name_${lang}"]`).val(names[lang]);
+        });
+        $('#variant-price').val(price);
+        $('#variant-sku').val(sku);
+        
+        // Change modal to edit mode
+        $('#variantModal .modal-title').text('Edit Variant');
+        $('#saveVariantBtn').text('Update Variant').data('edit-mode', true).data('variant-id', variantId);
+        $('#variantModal').modal('show');
+    });
+    
+    // Clear modal when hidden
+    $('#variantModal').on('hidden.bs.modal', function() {
+        $('#variantForm')[0].reset();
+        $('#variantModal .modal-title').text('Add Variant');
+        $('#saveVariantBtn').text('Add Variant').data('edit-mode', false).removeData('variant-id');
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -254,4 +359,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
 });
