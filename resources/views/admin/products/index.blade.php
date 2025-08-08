@@ -106,8 +106,63 @@
         </div>
     </div>
 </div>
+<!-- Create Product Modal -->
+<div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="createProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.products.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="productTitle" class="form-label">Product Title</label>
+                        <input type="text" class="form-control" id="productTitle" name="name" required>
+                    </div>
+                    <!-- Minimal required fields for LunarPHP -->
+                    <!-- <div class="mb-3">
+                        <label for="productSlug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="productSlug" name="slug" required>
+                    </div> -->
+                    <input type="hidden" name="product_type_id" value="1"/>
 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i> New
+</a>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+
+    // Auto-generate slug from title
+    const titleInput = document.getElementById('productTitle');
+    const slugInput = document.getElementById('productSlug');
+    
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', function() {
+            const slug = this.value.toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+            slugInput.value = slug;
+        });
+    }
+});
+
+// Show modal when "New" button is clicked
+function showCreateModal() {
+    const modal = new bootstrap.Modal(document.getElementById('createProductModal'));
+    modal.show();
+}
 document.addEventListener('DOMContentLoaded', function() {
     // Select all checkboxes
     document.getElementById('selectAll').addEventListener('change', function() {

@@ -16,9 +16,43 @@ use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\Price;
 use Lunar\Models\ProductType;
 use App\Models\FilterCategory;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class AdminProductController extends Controller
 {
+ public function storeMedia(Request $request, Product $product)
+{
+    $request->validate(['file' => 'required|image|max:2048']);
+    $validated = $request->validate(['thumbnail' => 'boolean']);
+
+    $collection = $validated['thumbnail'] ?? false ? 'thumbnails' : 'products';
+
+    if ($collection === 'thumbnails') {
+        $product->clearMediaCollection('thumbnails');
+    }
+
+    $media = $product->addMediaFromRequest('file')->toMediaCollection($collection);
+    
+
+    return response()->json([
+        'id' => $media->id, // Return media ID
+        'url' => $media->getUrl()
+    ]);
+}
+public function destroyMedia(Request $request, Product $product)
+{
+    $mediaId = $request->input('media_id');
+    $media = $product->media()->where('id', $mediaId)->first();
+
+    if ($media) {
+        $media->delete();
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Media not found'], 404);
+}
+
     public function index()
     {
         // @todo check only sold items
@@ -37,7 +71,7 @@ class AdminProductController extends Controller
     {
         $productTypes = ProductType::all();
         $taxClasses = TaxClass::all();
-        $collections = Collection::with(['defaultUrl'])->get();
+        $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
         $languages = Language::all();
         $channels = Channel::all();
         
@@ -50,98 +84,62 @@ class AdminProductController extends Controller
         ));
     }
 
-    // @todo add         $validated['owner_id'] = auth()->user()->owner_id;
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'product_type_id' => 'required|exists:'.ProductType::class.',id',
+        ]);
 
+        // Create the base product
+        $product = Product::create([
+            'product_type_id' => $validated['product_type_id'],
+            'status' => 'draft', 
+            'attribute_data' => [
+                'name' => new TranslatedText([
+                    'gr' => new Text($validated['name']),
+                ])
+            ]
+        ]);
 
-    // public function store(Request $request)
-    // {
-    //     $validated = $this->validateRequest($request);
-        
-    //     $product = Product::create([
-    //         'product_type_id' => $validated['product_type_id'],
-    //         'status' => $validated['status'],
-    //         'brand_id' => $validated['brand_id'] ?? null,
-    //     ]);
-        
-    //     // Save attributes
-    //     foreach ($validated['name'] as $locale => $name) {
-    //         $product->translate('name', $locale, $name);
-    //         $product->translate('description', $locale, $validated['description'][$locale] ?? null);
-    //     }
-        
-    //     // Save URLs
-    //     foreach ($validated['urls'] as $locale => $slug) {
-    //         $product->urls()->create([
-    //             'slug' => $slug,
-    //             'language_id' => Language::where('code', $locale)->first()->id,
-    //             'default' => true,
-    //         ]);
-    //     }
-        
-    //     // Save pricing
-    //     $product->variants()->create([
-    //         'sku' => $validated['sku'],
-    //         'tax_class_id' => $validated['tax_class_id'],
-    //         'prices' => [
-    //             [
-    //                 'price' => $validated['price'] * 100, // Convert to cents
-    //                 'currency_id' => 1, // Default currency
-    //             ]
-    //         ],
-    //     ]);
-        
-    //     // Save collections
-    //     if (!empty($validated['collections'])) {
-    //         $product->collections()->sync($validated['collections']);
-    //     }
-        
-    //     // Save channels
-    //     if (!empty($validated['channels'])) {
-    //         foreach ($validated['channels'] as $channelId => $channelData) {
-    //             $product->channels()->attach($channelId, [
-    //                 'starts_at' => $channelData['start_date'] ?? null,
-    //                 'ends_at' => $channelData['end_date'] ?? null,
-    //                 'enabled' => $channelData['enabled'] ?? false,
-    //             ]);
-    //         }
-    //     }
-        
-    //     // Save variants
-    //     if (!empty($validated['variants'])) {
-    //         foreach ($validated['variants'] as $variantData) {
-    //             $variation = $product->variants()->create([
-    //                 'sku' => $variantData['sku'],
-    //                 'stock' => $variantData['stock'] ?? 0,
-    //                 'tax_class_id' => $validated['tax_class_id'],
-    //                 'attribute_data' => [
-    //                     'name' => new TranslatedText([
-    //                         'en' => new Text($variantData['name']['en']),
-    //                     ]),
-    //                 ]
-    //             ]);
+        $product->save();
 
-    //             $variation->prices()->create([
-    //                 'price' => $variantData['price'],
-    //                 'currency_id' => 1, // Adjust as needed for your currency setup
-    //             ]);
-    //         }
-    //     }
+        $variant = $product->variants()->updateOrCreate(
+            ['id' => $product->variants()->first()?->id],
+            [
+                'stock' => 500,
+                'tax_class_id' => 1, // Default tax class
+                'attribute_data' => [
+                    'name' => new TranslatedText([
+                        'gr' => new Text($validated['name']),
+                    ])
+                ]
+            ]
+        );
 
-    //     return redirect()->route('admin.products.edit', $product->id)
-    //         ->with('success', 'Product created successfully');
-    // }
+        // Set default pricing
+        $variant->prices()->create([
+            'price' => 0, // Default to 0, can be updated later
+            'currency_id' => 1, // Default currency
+        ]);
+
+        // Redirect to edit page to complete the product setup
+        return redirect()->route('admin.products.edit', $product->id)
+            ->with('success', 'Product created successfully. Please complete the details.');
+    }
 
     public function edit(Product $product)
     {
         $product->load(['variants', 'collections', 'channels', 'urls']);
+
         $productTypes = ProductType::all();
         $taxClasses = TaxClass::all();
-        $collections = Collection::with(['defaultUrl'])->get();
+        $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
         $languages = Language::all();
+        $filterCategories = FilterCategory::with('options')->get();
         $channels = Channel::all();
         $variant = $product->variants->first();
-        $filterCategories = FilterCategory::with('options')->where('id', '!=', 4)->get();
-
+        $sub_category = $product->collections->where('parent_id', '!==', null)->pluck('id')->first();
 
         return view('admin.products.edit', compact(
             'product',
@@ -151,13 +149,78 @@ class AdminProductController extends Controller
             'languages',
             'channels',
             'variant',
-            'filterCategories'
+            'filterCategories',
+            'sub_category'
         ));
+    }
+
+
+   protected function validateRequest(Request $request, $product = null)
+    {
+        $baseRules = [
+            'product_type_id' => 'required|exists:lunar_product_types,id',
+            'status' => 'required|string',
+            'name.*' => 'required|string|max:255',
+            'description.*' => 'nullable|string',
+            'filters.*' => 'nullable|array',
+            'tax_class_id' => 'required|exists:lunar_tax_classes,id',
+            'price' => 'required|numeric|min:0',
+            'channels' => 'nullable|array',
+            'channels.*.id' => 'exists:lunar_channels,id',
+            'channels.*.start_date' => 'nullable|date',
+            'channels.*.end_date' => 'nullable|date|after:channels.*.start_date',
+            'channels.*.enabled' => 'nullable|boolean',
+            'variants' => 'nullable|array',
+            'variants.*.id' => 'string',
+            'variants.*.name.*' => 'required|string|max:255',
+            // 'variants.*.sku' => 'required|string|max:255',
+            'variants.*.price' => 'required|numeric|min:0',
+            'variants.*.stock' => 'nullable|integer|min:0',
+            'category' => 'nullable|exists:lunar_collections,id',
+            'sub_category' => 'nullable|exists:lunar_collections,id',
+        ];
+
+        // @todo check for multilanguage messages
+        if ($request->has('urls')) {
+                $baseRules['urls'] = 'required|array';
+
+                foreach ($request->input('urls', []) as $lang => $slug) {
+                    $baseRules["urls.{$lang}"] = [
+                        'required',
+                        'string',
+                        'max:255',
+                        function ($attribute, $value, $fail) use ($lang, $product) {
+                            $existingUrl = \Lunar\Models\Url::where('slug', $value)
+                                ->where('language_id',  Language::where('code', $lang)->first()->id)
+                                ->first();
+
+                            if ($existingUrl) {
+                                // If creating new product or updating to a URL owned by another product
+                                if (!$product || $existingUrl->element_id != $product->id) {
+                                    $fail("The URL for {$lang} is already taken.");
+                                }
+                            }
+                        }
+                    ];
+                }
+            }
+
+        return $request->validate($baseRules);
     }
 
     public function update(Request $request, Product $product)
     {
-        $validated = $this->validateRequest($request);
+        if ($request->has('urls')) {
+            $urls = $request->input('urls');
+            foreach ($urls as $locale => $slug) {
+                $urls[$locale] = \Illuminate\Support\Str::slug($slug);
+            }
+            $request->merge(['urls' => $urls]);
+        }
+        
+        $validated = $this->validateRequest($request, $product);
+
+        $product->collections()->sync([$validated['category'], $validated['sub_category']]);
 
         $ids = [];
 
@@ -168,7 +231,7 @@ class AdminProductController extends Controller
                 }
             }
         }
-        // $product->filterOptions()->attach($ids);
+        $product->filterOptions()->sync($ids);
 
         // Update product basic info
         $product->update([
@@ -257,9 +320,6 @@ class AdminProductController extends Controller
             ]);
         }
 
-        // Update collections
-        $product->collections()->sync($validated['collections'] ?? []);
-
         // Update channels
         $product->channels()->detach();
         if (!empty($validated['channels'])) {
@@ -283,38 +343,6 @@ class AdminProductController extends Controller
             ->with('success', 'Product deleted successfully');
     }
 
-    protected function validateRequest(Request $request)
-    {
-        return $request->validate([
-            'product_type_id' => 'required|exists:lunar_product_types,id',
-            'status' => 'required|string',
-            'brand_id' => 'nullable|exists:lunar_brands,id',
-            'name.*' => 'required|string|max:255',
-            'description.*' => 'nullable|string',
-            'filters.*' => 'nullable|array',
-            // 'urls.*' => 'required|string|max:255|unique:lunar_urls,slug',
-            'urls.*' => 'required|string|max:255',
-            'tax_class_id' => 'required|exists:lunar_tax_classes,id',
-            'price' => 'required|numeric|min:0',
-            // 'sku' => 'required|string|max:255|unique:lunar_product_variants,sku',
-            // 'sku' => 'required|string|max:255',
-            'track_inventory' => 'nullable|boolean',
-            'collections' => 'nullable|array',
-            'collections.*' => 'exists:lunar_collections,id',
-            'channels' => 'nullable|array',
-            'channels.*.id' => 'exists:lunar_channels,id',
-            'channels.*.start_date' => 'nullable|date',
-            'channels.*.end_date' => 'nullable|date|after:channels.*.start_date',
-            'channels.*.enabled' => 'nullable|boolean',
-            'variants' => 'nullable|array',
-            'variants.*.id' => 'string',
-            'variants.*.name.*' => 'required|string|max:255',
-            // 'variants.*.sku' => 'required|string|max:255|unique:lunar_product_variants,sku',
-            'variants.*.sku' => 'required|string|max:255',
-            'variants.*.price' => 'required|numeric|min:0',
-            'variants.*.stock' => 'nullable|integer|min:0',
-        ]);
-    }
 
     public function slugExists(Request $request)
     {

@@ -594,7 +594,7 @@ h3.h5 {
 }
 
 .card-body {
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .form-control,  .form-floating>.form-select {
@@ -790,6 +790,7 @@ div#orderDetails .table tbody td {
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s ease;
+  width: 100px;
 }
 
 .filter-option:hover {
@@ -886,5 +887,95 @@ td .fw-bold {
     padding: 8px;
 }
 a {
-    color: #686ac7;
+    color: #98b68a;
+}
+.dz-preview > * { display: none; } .dz-progress { display: block !important; } .dz-preview { position: relative; height: 35px; }
+.dz-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    z-index: 9999;
+    background: #10a37f9e;
+    border-radius: 50px !important;
+    overflow: hidden;
+    border: 3px solid #69c4ae;
+}
+span.dz-upload {
+    height: 100%;
+    width: 1%;
+    background: #10a37f;
+    display: block;
+    transition: 0.3s;
+    border-radius: 50px;
+}
+
+.dz-preview {
+    position: relative;
+}
+    div#image-preview {
+    width: 100%;
+}
+
+.image-preview-container {
+    display: inline-block;
+    width: 180px;
+    height: 160px;
+    position: relative;
+}
+.position-relative.h-100.upload-placeholder {
+    border: 2px dashed #6495ed8c;
+    background: #7073f20d;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.position-relative.h-100.upload-placeholder:hover {
+    background: #7073f21a;
+}
+button.absolute.top-0.right-0.bg-red-500.text-white.p-1.rounded-full {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+}
+button.remove-button-d {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 31px;
+    margin: auto;
+    width: 80px;
+    background: white;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.image-preview-container:hover button.remove-button-d {
+    opacity: 1;
+}
+.image-preview-container img {
+    transition: filter 0.3s ease; /* Smooth transition for the effect */
+}
+
+.image-preview-container:hover {
+    filter: grayscale(100%);
+}
+.bg-primary {
+    background: #98B68A !important;
+}
+.border-primary {
+    border-color: #98B68A !important;
+}
+.text-primary {
+    color:  #98B68A !important;
+}
+body .form-control:focus {
+    border-width: 2px;
+    border-color: #98b68a !important;
+    box-shadow: 0 0 6px 0px #8080806b !important;
+    outline: none !important;
+}
+.no-d {
+    display:none;
 }

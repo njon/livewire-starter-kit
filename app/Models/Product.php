@@ -22,7 +22,6 @@ use App\Traits\OwnerScope;
 
 class Product extends LunarProduct
 {
-    use OwnerScope;
 
     public static array $listingWith = [];
 
@@ -76,9 +75,10 @@ class Product extends LunarProduct
 
     public static function findBySlug(string $slug): ?self
     {
-        return static::with(static::$detailWith)
-            ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
-            ->first();
+        return static::where('status', 'published')->first();
+        // return static::with(static::$detailWith)
+        //     ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
+        //     ->first();
     }
 
     public static function getForCollection(Collection $collection, int $perPage = 12)

@@ -1,9 +1,6 @@
 $(document).ready(function () {
     
-    let debounceTimer;
     const isBussinessHoursPage = $('#business-hours-container').length > 0;
-
-    
     const days = [
         { id: 'monday', name: 'Monday' },
         { id: 'tuesday', name: 'Tuesday' },
@@ -14,46 +11,8 @@ $(document).ready(function () {
         { id: 'sunday', name: 'Sunday' }
     ];
 
-    function checkSlugAvailability(slug, lang = 'en') {
-        $.ajax({
-            url: '/admin/check-slug', // 🔁 Replace with your actual endpoint
-            method: 'GET',
-            data: {
-                slug: slug,
-                lang: lang
-            },
-            success: function(response) {
-                // Expected: response.exists === true or false
-                const $icon = $('#slugCheckIcon');
-                if (response.exists) {
-                    $icon.removeClass('valid').addClass('invalid').html('<i class="bi bi-x-circle-fill text-danger"></i>');
-                } else {
-                    $icon.removeClass('invalid').addClass('valid').html('<i class="bi bi-check-circle-fill text-success"></i>');
-                }
-            },
-            error: function() {
-                console.error('Slug check failed');
-            }
-        });
-    }
-
     function createSlug(title) {
-        const accentMap = {
-                'α': 'a', 'β': 'v', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i',
-                'θ': 'th','ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x',
-                'ο': 'o', 'π': 'p', 'ρ': 'r', 'σ': 's', 'ς': 's', 'τ': 't', 'υ': 'y',
-                'φ': 'f', 'χ': 'ch','ψ': 'ps','ω': 'o',
-
-                'ά': 'a', 'έ': 'e', 'ή': 'i', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ώ': 'o',
-                'ϊ': 'i', 'ΐ': 'i', 'ϋ': 'y', 'ΰ': 'y',
-
-                'Α': 'a', 'Β': 'v', 'Γ': 'g', 'Δ': 'd', 'Ε': 'e', 'Ζ': 'z', 'Η': 'i',
-                'Θ': 'th','Ι': 'i', 'Κ': 'k', 'Λ': 'l', 'Μ': 'm', 'Ν': 'n', 'Ξ': 'x',
-                'Ο': 'o', 'Π': 'p', 'Ρ': 'r', 'Σ': 's', 'Τ': 't', 'Υ': 'y',
-                'Φ': 'f', 'Χ': 'ch','Ψ': 'ps','Ω': 'o',
-
-                'Ά': 'a', 'Έ': 'e', 'Ή': 'i', 'Ί': 'i', 'Ό': 'o', 'Ύ': 'y', 'Ώ': 'o'
-            };
+        const accentMap = { 'α': 'a', 'β': 'v', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i', 'θ': 'th','ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x', 'ο': 'o', 'π': 'p', 'ρ': 'r', 'σ': 's', 'ς': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'ch','ψ': 'ps','ω': 'o', 'ά': 'a', 'έ': 'e', 'ή': 'i', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ώ': 'o', 'ϊ': 'i', 'ΐ': 'i', 'ϋ': 'y', 'ΰ': 'y', 'Α': 'a', 'Β': 'v', 'Γ': 'g', 'Δ': 'd', 'Ε': 'e', 'Ζ': 'z', 'Η': 'i', 'Θ': 'th','Ι': 'i', 'Κ': 'k', 'Λ': 'l', 'Μ': 'm', 'Ν': 'n', 'Ξ': 'x', 'Ο': 'o', 'Π': 'p', 'Ρ': 'r', 'Σ': 's', 'Τ': 't', 'Υ': 'y', 'Φ': 'f', 'Χ': 'ch','Ψ': 'ps','Ω': 'o', 'Ά': 'a', 'Έ': 'e', 'Ή': 'i', 'Ί': 'i', 'Ό': 'o', 'Ύ': 'y', 'Ώ': 'o' };
 
         return title
             .toLowerCase()
@@ -175,55 +134,6 @@ $(document).ready(function () {
             slider.noUiSlider.set([dayData.open, dayData.close]);
         });
     }
-
-
-    $('.main-category').on('mouseenter', function () {
-        var image = $(this).data('image');
-        const targetId = $(this).data('target');
-
-        $('.main-category').removeClass('active');
-        $('.subcategory-group').addClass('d-none');
-        
-        $(this).addClass('active');
-        $('#' + targetId).removeClass('d-none');
-        $('#menu-description-image').attr('src', image);
-    });
-
-    $('.main-category, .subcategory-group').on('click', function () {
-        console.log($(this));
-        $(this).addClass('actived');
-
-    });
-
-    $('#product_url_en').on('input', function() {
-        clearTimeout(debounceTimer);
-        const slug = $(this).val().trim();
-        const lang = 'en'; //$(this).data('lang') || 'en';
-
-        // Don't send request if input is empty
-        if (!slug) {
-            $('#slugCheckIcon').removeClass('valid invalid').html('');
-            return;
-        }
-
-        debounceTimer = setTimeout(function() {
-            checkSlugAvailability(slug, lang);
-        }, 400); 
-    });
-    
-
-    $('#product_title_en').on('input', function() {
-        clearTimeout(debounceTimer);
-        const lang = 'en';
-
-        const slug = createSlug($(this).val());
-        var slugEmpty = $('#product_url_en').val();
-        $('#product_url_en').val(slug);
-
-        debounceTimer = setTimeout(function() {
-            checkSlugAvailability(slug, lang);
-        }, 400); 
-    });
     
     $('#product_title_gr').on('input', function() {
         const slug = createSlug($(this).val());
@@ -242,6 +152,106 @@ $(document).ready(function () {
         updateHours();
     });
 
+    $('.subcategory-list').hide();
+    var curId = $('select[name="category"]').val();
+    if(curId) {
+        $('.subcategory-list[data-target="' + curId + '"]').show();
+    }
+    
+    $('select[name="category"]').change(function() {
+        var selectedValue = $(this).val();
+        $('.subcategory-list').hide();
+        $('.subcategory-list[data-target="' + selectedValue + '"]').show();
+    });
+
+    $('select.form-select.subcategory-select').change(function() {
+        var selectedValue = $(this).val();
+        $('input[name="sub_category"]').val(selectedValue);
+    });
+
+    
+    
+    $('select[name="category"]').trigger('change');
+
     isBussinessHoursPage && initBusinessHours();
     isBussinessHoursPage && loadBusinessHours(exampleData);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    function toggleFirstThumbnailPreview() {
+        const thumbnailPreview = document.getElementById('thumbnail-preview');
+        if (!thumbnailPreview) return; // Exit if element doesn't exist
+        
+        const previews = thumbnailPreview.querySelectorAll('.image-preview-container');
+        
+        if (previews.length >= 2) {
+            previews[0].style.display = 'none';
+        } else if (previews.length === 1) {
+            previews[0].style.display = '';
+        }
+    }
+
+    toggleFirstThumbnailPreview();
+
+    const sortable = new Sortable(document.getElementById('image-preview'), {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: function() {
+            // updateImageOrder();
+        }
+    });
+
+    const dropzone = new Dropzone("#media-dropzone", { maxFiles: 4 });
+    dropzone.on("success", function(file, response) {
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'image-preview-container col-md-4 col-lg-3';
+        previewContainer.innerHTML = `
+            <div class="position-relative h-100 rounded-2">
+                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100" alt="Product image" draggable="false">
+                <button onclick="deleteImage(${response.id})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
+                    Remove
+                </button>
+            </div>
+        `;
+        document.getElementById('image-preview').appendChild(previewContainer);
+    });
+
+    const thumbDropzone = new Dropzone("#thumbnail-dropzone");
+    thumbDropzone.on("success", function(file, response) {
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'image-preview-container col-md-4 col-lg-3 relative';
+        previewContainer.innerHTML = `
+            <div class="position-relative h-100 rounded-2">
+                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100" alt="Product image" draggable="false">
+                <button type="button" onclick="deleteImage(${response.id})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
+                    Remove
+                </button>
+            </div>
+        `;
+        document.getElementById('thumbnail-preview').appendChild(previewContainer);
+        setTimeout(toggleFirstThumbnailPreview, 100);
+    });
+
+    const languages = ["en", "gr"];
+
+    languages.forEach(lang => {
+        tinymce.init({
+            selector: `#productDescription_${lang}`,
+            plugins: 'lists link image table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic | \
+                     alignleft aligncenter alignright alignjustify | \
+                     bullist numlist outdent indent | link image | help',
+            skin: 'oxide',
+            height: 300,
+            menubar: false,
+            branding: false,
+            statusbar: false,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
+    });
 });

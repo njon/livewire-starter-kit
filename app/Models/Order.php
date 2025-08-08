@@ -14,9 +14,4 @@ class Order extends \Lunar\Models\Order
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function scopeForOwner($query)
-    {
-        return $query->where('owner_id', auth()->id());
-    }
-
 }

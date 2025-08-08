@@ -70,8 +70,8 @@
     </div>
 
     <div class="row g-3">
-       @foreach($categories->slice(6,6) as $collection)
-        <div class="col mb-0 px-2">
+       @foreach($categories->slice(6,5) as $collection)
+        <div class="col-lg col-md-6 mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">
@@ -100,7 +100,7 @@
     </div>
 
     <div class="row g-3 mt-1">
-       @foreach($categories->slice(0,6) as $collection)
+       @foreach($categories->slice(0,5) as $collection)
         <div class="col mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
