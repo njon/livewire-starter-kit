@@ -3,7 +3,6 @@
 @section('title', $collection->translateAttribute('name'))
 
 @section('content')
-@csrf
 
 <section class="pb-4">
   <div class="row">

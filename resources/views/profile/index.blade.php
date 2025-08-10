@@ -3,7 +3,7 @@
  @section('title', 'User Profile')
 
  @section('content')
- @csrf
+ 
         <h1 class="py-4 fs-2">{{ __('User Profile') }}</h1>
 
  <div class="row">
@@ -36,7 +36,7 @@
                      <i class="bi bi-people me-2"></i>{{ __('Invite Friends') }}
                  </a>
                  <form method="POST" action="{{ route('logout') }}" class="list-group-item list-group-item-action">
-                     @csrf
+                     
                      <button type="submit"
                          class="btn btn-link text-decoration-none p-0 border-0 bg-transparent w-100 text-start">
                          <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
@@ -57,7 +57,7 @@
                      </div>
                      <div class="card-body">
                          <form method="POST" action="{{ route('profile.update') }}">
-                             @csrf
+                             
                              @method('PUT')
 
                              <div class="mb-3">
@@ -86,7 +86,7 @@
                      </div>
                      <div class="card-body">
                          <form method="POST" action="{{ route('password.update') }}">
-                             @csrf
+                             
                              @method('PUT')
 
                              <div class="mb-3">
@@ -224,7 +224,7 @@
                      </div>
                      <div class="card-body">
                          <form method="POST" action="{{ route('newsletter.update') }}">
-                             @csrf
+                             
                              <div class="form-check form-switch mb-3">
                                  <input class="form-check-input" type="checkbox" id="newsletter_subscribe"
                                      name="newsletter_subscribe"
@@ -260,7 +260,7 @@
                      </div>
                      <div class="card-body">
                          <form method="POST" action="{{ route('invite.send') }}">
-                             @csrf
+                             
 
                              <div class="mb-3">
                                  <label for="emails"

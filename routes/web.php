@@ -17,9 +17,16 @@ use App\Http\Controllers\Admin\AdminOrdersController;
 use App\Http\Controllers\Admin\AdminImageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
+
+Route::group(['prefix' => 'admin/products/{product}/variants', 'as' => 'admin.products.variants.'], function() {
+    Route::post('/', [ProductVariantController::class, 'store'])->name('store');
+    Route::put('/{variant}', [ProductVariantController::class, 'update'])->name('update');
+    Route::delete('/{variant}', [ProductVariantController::class, 'destroy'])->name('destroy');
+});
 
 Route::get('/', [HomepageController::class, 'index']);
 

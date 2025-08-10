@@ -361,3 +361,106 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
 });
+
+$(document).ready(function() {
+    const modal = $('#variantModal');
+    const form = $('#variantForm');
+    const variantsContainer = $('#variantsContainer');
+    
+    // Show modal for new variant
+    $('.add-variant-btn').click(function() {
+        form.trigger('reset');
+        modal.find('.modal-title').text('Add Variant');
+        modal.find('.modal-footer .btn-primary').text('Add Variant').data('action', 'create');
+        modal.modal('show');
+    });
+    
+    // Show modal for editing variant
+    $(document).on('click', '.edit-variant-btn', function() {
+        const btn = $(this);
+        form.find('input[name="name[en]"]').val(btn.data('variant-name-en'));
+        form.find('input[name="name[gr]"]').val(btn.data('variant-name-gr'));
+        form.find('input[name="price"]').val(btn.data('variant-price'));
+        form.find('input[name="sku"]').val(btn.data('variant-sku'));
+        form.find('input[name="stock"]').val(btn.data('variant-stock'));
+        
+        modal.find('.modal-title').text('Edit Variant');
+        modal.find('.modal-footer .btn-primary')
+            .text('Update Variant')
+            .data('action', 'update')
+            .data('variant-id', btn.data('variant-id'));
+        modal.modal('show');
+    });
+    
+    // Save/Update variant
+    modal.find('.btn-primary').click(function() {
+        console.log(modal);
+        console.log($(this));
+        const action = $(this).data('action');
+        const url = action === 'create' 
+            ? form.data('store-url')
+            : form.data('update-url').replace('__variant__', variantID);
+        const variantID = $(this).data('variant-id');
+
+        $.ajax({
+            url: url,
+            method: action === 'create' ? 'POST' : 'PUT',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    modal.modal('hide');
+                    
+                    if (action === 'create') {
+                        variantsContainer.append(response.html);
+                    } else {
+                        alert(`data-variant-id="${variantID}"`);
+                        $(`#variantsContainer [data-variant-id="${variantID}"]`).replaceWith(response.html);
+                    }
+                    
+                    showToast('success', response.message);
+                }
+            },
+            error: function(xhr) {
+                showErrors(xhr.responseJSON.errors);
+            }
+        });
+    });
+    
+    // Delete variant
+    $(document).on('click', '.delete-variant-btn', function() {
+        if (confirm('Are you sure you want to delete this variant?')) {
+            const btn = $(this);
+            $.ajax({
+                url: btn.data('url'),
+                method: 'DELETE',
+                    data: form.serialize(),
+                    success: function(response) {
+                    if (response.success) {
+                        btn.closest('[data-variant-id]').remove();
+                        showToast('success', response.message);
+                    }
+                }
+            });
+        }
+    });
+    
+    function showToast(type, message) {
+        // Implement using your preferred toast library
+        const toast = new bootstrap.Toast(document.getElementById('toast'));
+        document.getElementById('toast-message').textContent = message;
+        document.getElementById('toast').classList.add(`text-bg-${type}`);
+        toast.show();
+        
+        setTimeout(() => {
+            document.getElementById('toast').classList.remove(`text-bg-${type}`);
+        }, 5000);
+    }
+    
+    function showErrors(errors) {
+        let errorMessages = [];
+        for (const [field, messages] of Object.entries(errors)) {
+            errorMessages.push(...messages);
+        }
+        showToast('danger', errorMessages.join('\n'));
+    }
+});

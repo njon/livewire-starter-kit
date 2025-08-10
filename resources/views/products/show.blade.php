@@ -193,7 +193,6 @@
                                         id="btn-add-to-cart">
                                         {{ __('Add to Cart') }}
                                     </button>
-                                    @csrf
                                     <input type="hidden" name="to_cart" value="1">
                                     <input type="hidden" name="product_id" value="1">
                                     <input type="hidden" name="quantity" value="1">

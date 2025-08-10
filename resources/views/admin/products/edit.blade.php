@@ -56,7 +56,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                 data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
                                 role="tab">
                                 {{ $language->name }}
-                                {!! lang_icon($language->code) !!}
+                                <span class="fi fi-{{ $language->code == 'gr' ? 'gr' : 'gb' }} fis"></span>
                             </button></li>
                         @endforeach
                     </ul>
@@ -146,13 +146,11 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
             <!-- STORE -->
 
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="fs-5 d-flex align-items-center">
-                            <i class="bi bi-shop me-2 text-primary"></i> Store Availability
-                        </h3>
-                        <small class="text-muted">Stores where this service is available</small>
-                    </div>
+                <div class="card-header bg-transparent border-bottom py-3">
+                <h3 class="fs-5 d-flex align-items-center">
+                    <i class="bi bi-shop me-2 text-primary"></i> Store Availability
+                </h3>
+                <small class="text-muted">Stores where this service is available</small>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -282,45 +280,28 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                     @enderror
                 </div>
             </div>
-            <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="h6 mb-0 py-2">Product variants</h3>
-                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#variantModal">
-                        Add Variant
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <div class="d-flex column flex-column" id="variantsContainer">
-                        @foreach($product->variants as $key => $variant)
-                        <div class="p-3 border-bottom border-end-md border-primary flex-grow-1">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div class="fw-bold">{{ $variant->translateAttribute('name') }}</div>
-                                <div class="text-primary fw-500">{{ $variant->prices->first()->price->formatted() }}</div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="badge bg-primary bg-opacity-10 text-white me-2">
-                                        SKU: BAG-CRS-BRN</span>
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-sm">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <input type="hidden" name="variants[{{ $variant->id }}][id]" value="{{ $variant->id }}">
-                            @foreach($languages as $language)
-                                <input type="hidden" name="variants[{{ $variant->id }}][name][{{ $language->code }}]" value="{{ $variant->translateAttribute('name', $language->code) }}">
-                            @endforeach
-                            <input type="hidden" name="variants[{{ $variant->id }}][price]" value="{{ $variant->prices->first()->price->value }}">
-                        </div>
-                        @endforeach
-                    </div>
+        <!-- Add this to your product edit view -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="h6 mb-0 py-2">Product variants</h3>
+                <button type="button" class="btn btn-sm btn-light add-variant-btn">
+                    <i class="bi bi-plus me-1"></i> Add variant
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="d-flex column flex-column" id="variantsContainer">
+                    @foreach($product->variants as $variant)
+                        @include('admin.products.variant', ['variant' => $variant, 'product' => $product])
+                    @endforeach
                 </div>
             </div>
+        </div>
+
+
+        <!-- Add this to your layout file or this view -->
+        @section('scripts')
+            <script src="{{ asset('js/product-variants.js') }}"></script>
+        @endsection
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
@@ -372,41 +353,6 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
 
 </form>
 
-
-
-<!-- Add Variant Modal -->
-<div class="modal fade" id="variantModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Variant</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="variantForm">
-                    <div class="row g-3 mb-3">
-                        @foreach($languages as $language)
-                        <div class="col-12">
-                            <label class="form-label">Title for {{ $language->name }} visitor {!! lang_icon($language->code) !!}</label>
-                            <input type="text" class="form-control" id="title" name="name_{{ $language->code }}">
-                        </div>
-                        @endforeach
-                        <div class="col-12">
-                            <label class="form-label">Price</label>
-                            <input type="price" class="form-control" id="variant-price">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveVariantBtn">Add Variant</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <!-- Add Store Modal -->
 <div class="modal fade" id="storeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -436,7 +382,9 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                             <input type="datetime-local" class="form-control" id="endDate">
                         </div>
                     </div>
-                    <input type="hidden" id="enabled" value="1">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="enabled" checked>
+                        <label class="form-check-label" for="enableStore">Enable for this store</label>
                     </div>
                 </form>
             </div>
@@ -447,6 +395,9 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
         </div>
     </div>
 </div>
+
+@include('admin.products.variant-modal')
+
 
 <script>
 function deleteImage(mediaId) {
@@ -480,6 +431,8 @@ function deleteImage(mediaId) {
         });
     }
 }
+</script>
+<script>
 function deleteThumb(mediaId) {
     if (confirm('Are you sure you want to delete this image?')) {
         fetch("{{ route('admin.products.media.destroy', $product) }}", {

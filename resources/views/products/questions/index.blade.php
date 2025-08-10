@@ -61,7 +61,7 @@
                                             <form
                                                 action="{{ route('products.questions.destroy', [$product, $question]) }}"
                                                 method="POST">
-                                                @csrf
+                                                
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                                     <i class="fas fa-trash"></i>
@@ -78,7 +78,7 @@
                             @elseif(1 == 1)
                             <div class="mt-3">
                                 <form action="product/{{ $product->id }}/answer/{{ $question->id }}" method="POST" id="answer-form">
-                                    @csrf
+                                    
                                     <div class="mb-3">
                                         <textarea name="answer" class="form-control" rows="3"
                                             placeholder="{{ __('Write your answer...') }}"></textarea>
@@ -106,7 +106,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="products/{{ $product->id }}/questions" method="POST" id="ask-question-form">
-                @csrf
+                
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="question" class="form-label">{{ __('Your Question') }}</label>
@@ -131,7 +131,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ __('Write a Review') }}</h5>
                     <form action="products/{{ $product->id }}/reviews" method="POST" id="review-form">
-                        @csrf
+                        
                         @guest
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Your Name') }}</label>

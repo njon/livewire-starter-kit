@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    @csrf
-
     @php
         $products = $cart->lines;
         $sub_total = $cart->subTotal->formatted();
