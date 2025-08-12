@@ -142,7 +142,6 @@ $(document).ready(function () {
         $('#product_url_gr').val(slug);
     });
 
-    
     if($('#json-output').length != 0) {
         $('#save-asset').hover(function() {
             updateHours();
@@ -159,6 +158,7 @@ $(document).ready(function () {
         $('.subcategory-list[data-target="' + curId + '"]').show();
     }
     
+    // @todo subcategory change fix ( when selecting new might not updat corrctly)
     $('select[name="category"]').change(function() {
         var selectedValue = $(this).val();
         $('.subcategory-list').hide();
@@ -172,7 +172,7 @@ $(document).ready(function () {
 
     
     
-    $('select[name="category"]').trigger('change');
+    // $('select[name="category"]').trigger('change');
 
     isBussinessHoursPage && initBusinessHours();
     isBussinessHoursPage && loadBusinessHours(exampleData);
@@ -394,13 +394,12 @@ $(document).ready(function() {
     
     // Save/Update variant
     modal.find('.btn-primary').click(function() {
-        console.log(modal);
-        console.log($(this));
+        const variantID = $(this).data('variant-id');
+
         const action = $(this).data('action');
         const url = action === 'create' 
             ? form.data('store-url')
             : form.data('update-url').replace('__variant__', variantID);
-        const variantID = $(this).data('variant-id');
 
         $.ajax({
             url: url,

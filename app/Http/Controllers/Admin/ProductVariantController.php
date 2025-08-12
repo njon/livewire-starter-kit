@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\ProductVariant;
+use Lunar\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Lunar\FieldTypes\Text;

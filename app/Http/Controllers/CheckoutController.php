@@ -208,12 +208,13 @@ class CheckoutController extends Controller
 
         foreach ($cart->lines as $line) {
             $order->lines()->create([
+                'owner_id' => $line->purchasable->owner_id,
                 'purchasable_type' => $line->purchasable_type,
                 'purchasable_id' => $line->purchasable_id,
                 'type' => 'physical',
                 'description' => 'no',
                 'option' => $line->purchasable->getOption(),
-                'identifier' => $line->purchasable->getIdentifier(),
+                'identifier' => uniqid(),
                 'unit_price' => $line->unitPrice->value,
                 'unit_quantity' => $line->purchasable->unit_quantity,
                 'quantity' => $line->quantity,

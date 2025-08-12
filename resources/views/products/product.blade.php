@@ -1,4 +1,4 @@
-<div class="mb-5 col product px-2 col-sm-12 col-lg-3 col-md-6">
+<div class="mb-5 product px-2 {{ isset($col) ? 'col-lg-' . $col . ' col-md-6' : 'col col-md-6' }}">
     <div class="product-item-list card border-0 shadow h-100">
         <!-- Product Image -->
         <div class="position-relative overflow-hidden">

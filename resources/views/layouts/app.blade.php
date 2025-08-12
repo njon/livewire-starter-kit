@@ -41,7 +41,7 @@ const helpful = '{{ __("Helpful") }}';
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@350" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -58,6 +58,21 @@ const helpful = '{{ __("Helpful") }}';
     </style>
     @cookieconsentscripts
 </head>
+<!-- Simple form with button -->
+<div id="dashboard" style="position: absolute; left: 0; top: 0; z-index: 99999;">
+    <form action="{{ route('lunar.cache.refresh') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Refresh Lunar Cache
+        </button>
+    </form>
+    <form action="{{ route('lunar.orders.remove') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Remove Orders
+        </button>
+    </form>
+</div>
 
 <body class="antialiased text-gray-900">
 

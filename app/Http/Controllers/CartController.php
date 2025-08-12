@@ -84,6 +84,19 @@ class CartController extends Controller
         ]);
     }
 
+    public function removeOrders() {
+
+    }
+
+
+   public function refreshLunarCache()
+    {
+        $cart = $this->cart->getCart();
+        $this->cart->clearCartx($cart);
+
+        return redirect()->back();
+    }
+
     // @todo remove later
     public function deleteCollections()
     {

@@ -51,7 +51,6 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-light" style="width: 32px; height: 32px;"></div>
                                 <div>
                                     {{ $order->customer->name ?? 'Guest' }}
                                 </div>

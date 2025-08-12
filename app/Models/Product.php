@@ -11,7 +11,7 @@ use Lunar\Models\Product as LunarProduct;
 use Lunar\Models\Collection;
 use Lunar\Models\Discount;
 use Lunar\Models\TaxRateAmount;
-use App\Models\ProductVariant;
+use Lunar\Models\ProductVariant;
 use App\Services\DiscountService;
 use Lunar\Models\Currency;
 use App\Models\ProductQuestion;
@@ -75,10 +75,10 @@ class Product extends LunarProduct
 
     public static function findBySlug(string $slug): ?self
     {
-        return static::where('status', 'published')->first();
-        // return static::with(static::$detailWith)
-        //     ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
-        //     ->first();
+        // return static::where('status', 'published')->first();
+        return static::with(static::$detailWith)
+            ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
+            ->first();
     }
 
     public static function getForCollection(Collection $collection, int $perPage = 12)

@@ -22,6 +22,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 
+
+Route::post('/refresh-lunar-cache', [CartController::class, 'refreshLunarCache'])->name('lunar.cache.refresh');
+Route::post('/remove-orders', [CartController::class, 'removeOrders'])->name('lunar.orders.remove');
+
+
+
+
+
+
+
+
 Route::group(['prefix' => 'admin/products/{product}/variants', 'as' => 'admin.products.variants.'], function() {
     Route::post('/', [ProductVariantController::class, 'store'])->name('store');
     Route::put('/{variant}', [ProductVariantController::class, 'update'])->name('update');
@@ -110,7 +121,12 @@ Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])->nam
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     
+    $d = request()->query('d');
+
     if ($product = \App\Models\Product::findBySlug($slug)) {
+        if($d) {
+            dd($product);
+        }
         return app(ProductController::class)->show($product);
     }
 

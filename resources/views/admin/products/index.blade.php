@@ -41,8 +41,20 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <div class="rounded bg-light" style="width: 48px; height: 48px;"></div>
-                                <div>
+                            
+                                @if($product->getMedia('thumbnails')->empty())
+                                <img src="{{ $product->getMedia('thumbnails')->first()->getUrl() }}" 
+                                     alt="{{ $product->translateAttribute('name') }}" 
+                                     class="rounded" 
+                                     style="width: 48px; height: 48px; object-fit: cover;">
+                                @else
+                                <div class="rounded bg-light d-flex align-items-center justify-content-center" 
+                                     style="width: 48px; height: 48px;">
+                                     <img src=""/>
+                                    <i class="bi bi-box-seam text-muted"></i>
+                                </div>
+                                @endif
+                                   <div>
                                     <h6 class="mb-0">
                                         <a class="text-muted text-decoration-none" href="{{ route('admin.products.edit', $product->id) }}">{{ $product->translateAttribute('name') }}</a>
                                     </h6>

@@ -77,7 +77,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                     <input type="text" data-slug="true"
                                         class="form-control @error('name.'.$language->code) is-invalid @enderror"
                                         id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
-                                        value="{{ old('name.'.$language->code, $variant->translateAttribute('name', $language->code) ?? '') }}"
+                                        value="{{ old('name.'.$language->code, $product->translateAttribute('name', $language->code) ?? '') }}"
                                         @if($language->default) required @endif>
                                     @error('name.'.$language->code)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -106,7 +106,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                     <textarea id="productDescription_{{ $language->code }}"
                                         name="description[{{ $language->code }}]"
                                         class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
-                                        data-lang="{{ $language->code }}">{{ old('description.'.$language->code, $variant->translateAttribute('description', $language->code) ?? '') }}</textarea>
+                                        data-lang="{{ $language->code }}">{{ old('description.'.$language->code, $product->translateAttribute('description', $language->code) ?? '') }}</textarea>
                                     @error('description.'.$language->code)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -229,7 +229,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                             <label class="form-label">Subcategory</label>
                             <select class="form-select subcategory-select mb-3" name="collection_id"
                                 data-target="{{ $loop->iteration }}">
-                                <option>Select subcategory</option>
+                                <option value="0">Select subcategory</option>
                                 @foreach($mainCategory->children as $subCategory)
                                 <option value="{{ $subCategory->id }}">
                                     {{ $subCategory->translateAttribute('name') }}
@@ -290,7 +290,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
             </div>
             <div class="card-body p-0">
                 <div class="d-flex column flex-column" id="variantsContainer">
-                    @foreach($product->variants as $variant)
+                    @foreach($variants as $variant)
                         @include('admin.products.variant', ['variant' => $variant, 'product' => $product])
                     @endforeach
                 </div>

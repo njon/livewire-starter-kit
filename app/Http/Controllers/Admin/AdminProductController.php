@@ -9,6 +9,7 @@ use App\Models\Channel;
 use Lunar\Models\Collection;
 use Lunar\Models\Language;
 use Lunar\Models\TaxClass;
+use Lunar\Models\ProductVariant;
 use App\Models\Product;
 use Lunar\Models\Currency;
 use Lunar\FieldTypes\TranslatedText;
@@ -91,10 +92,10 @@ public function destroyMedia(Request $request, Product $product)
             'product_type_id' => 'required|exists:'.ProductType::class.',id',
         ]);
 
-        // Create the base product
         $product = Product::create([
+            'stock' => 99999999,
             'product_type_id' => $validated['product_type_id'],
-            'status' => 'draft', 
+            'status' => 'published', 
             'attribute_data' => [
                 'name' => new TranslatedText([
                     'gr' => new Text($validated['name']),
@@ -102,30 +103,114 @@ public function destroyMedia(Request $request, Product $product)
             ]
         ]);
 
-        $product->save();
+        $productVariant = ProductVariant::create([
+            'owner_id' => auth()->user()->id,
+            'product_id' => $product->id,
+            'stock' => 99999999, // Default stock
+            'tax_class_id' => 1, // Default tax class
+            'attribute_data' => [
+                'name' => new TranslatedText([
+                    'gr' => new Text($validated['name']),
+                ]),
+            ]
+        ]);
 
-        $variant = $product->variants()->updateOrCreate(
+        $productVariant->prices()->create([
+            'price' => 0, 
+            'currency_id' => 1, 
+        ]);
+
+        return redirect()->route('admin.products.edit', $product->id)
+            ->with('success', 'Product created successfully. Please complete the details.');
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $validated = $this->validateRequest($request, $product);
+
+        
+        if ($request->has('urls')) {
+            $urls = $request->input('urls');
+            foreach ($urls as $locale => $slug) {
+                $urls[$locale] = \Illuminate\Support\Str::slug($slug);
+            }
+            $request->merge(['urls' => $urls]);
+        }
+        
+        $product->collections()->sync([$validated['category'], $validated['sub_category']]);
+
+        $ids = collect($validated['filters'] ?? [])->flatten()->all();
+        $product->filterOptions()->sync($ids);
+
+        // Update product basic info
+        $product->update([
+            'product_type_id' => $validated['product_type_id'],
+            'status' => $validated['status'],
+            'tax_class_id' => $validated['tax_class_id'],
+            'stock' => 9999,
+            'attribute_data' => [
+                'name' => new TranslatedText([
+                    'en' => new Text($validated['name']['en']),
+                    'gr' => new Text($validated['name']['gr']),
+                ]),
+                'description' => new TranslatedText([
+                    'en' => new Text($validated['description']['en']),
+                    'gr' => new Text($validated['description']['gr']),
+                ]),
+            ]
+        ]);
+
+        $defaultVariant = $product->variants()->updateOrCreate(
             ['id' => $product->variants()->first()?->id],
             [
+                'tax_class_id' => $validated['tax_class_id'],
                 'stock' => 500,
-                'tax_class_id' => 1, // Default tax class
                 'attribute_data' => [
                     'name' => new TranslatedText([
-                        'gr' => new Text($validated['name']),
-                    ])
+                        'en' => new Text($validated['name']['en']),
+                        'gr' => new Text($validated['name']['gr']),
+                    ]),
+                    'description' => new TranslatedText([
+                        'en' => new Text($validated['description']['en']),
+                        'gr' => new Text($validated['description']['gr']),
+                    ]),
                 ]
             ]
         );
 
-        // Set default pricing
-        $variant->prices()->create([
-            'price' => 0, // Default to 0, can be updated later
-            'currency_id' => 1, // Default currency
-        ]);
+        if ($defaultVariant) {
+            $defaultVariant->prices()->delete();
+            $defaultVariant->prices()->create([
+                'price' => $validated['price'],
+                'currency_id' => 1,
+                'priceable_type' => Product::class,
+                'priceable_id' => $defaultVariant->id,
+            ]);
+        }
+            
+        $product->urls()->delete();
+        foreach ($validated['urls'] as $locale => $slug) {
+            $product->urls()->create([
+                'slug' => $slug,
+                'language_id' => Language::where('code', $locale)->first()->id,
+                'default' => true,
+            ]);
+        }
 
-        // Redirect to edit page to complete the product setup
+        // Update channels
+        $product->channels()->detach();
+        if (!empty($validated['channels'])) {
+            foreach ($validated['channels'] as $channelId => $channelData) {
+                $product->channels()->attach($channelId, [
+                    'starts_at' => $channelData['start_date'] ?? null,
+                    'ends_at' => $channelData['end_date'] ?? null,
+                    'enabled' => $channelData['enabled'] ?? false,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.products.edit', $product->id)
-            ->with('success', 'Product created successfully. Please complete the details.');
+            ->with('success', 'Product updated successfully');
     }
 
     public function edit(Product $product)
@@ -139,6 +224,7 @@ public function destroyMedia(Request $request, Product $product)
         $filterCategories = FilterCategory::with('options')->get();
         $channels = Channel::all();
         $variant = $product->variants->first();
+        $variants = $product->variants->slice(1);
         $sub_category = $product->collections->where('parent_id', '!==', null)->pluck('id')->first();
 
         return view('admin.products.edit', compact(
@@ -150,7 +236,8 @@ public function destroyMedia(Request $request, Product $product)
             'channels',
             'variant',
             'filterCategories',
-            'sub_category'
+            'sub_category',
+            'variants'
         ));
     }
 
@@ -208,142 +295,7 @@ public function destroyMedia(Request $request, Product $product)
         return $request->validate($baseRules);
     }
 
-    public function update(Request $request, Product $product)
-    {
-        if ($request->has('urls')) {
-            $urls = $request->input('urls');
-            foreach ($urls as $locale => $slug) {
-                $urls[$locale] = \Illuminate\Support\Str::slug($slug);
-            }
-            $request->merge(['urls' => $urls]);
-        }
-        
-        $validated = $this->validateRequest($request, $product);
-
-        $product->collections()->sync([$validated['category'], $validated['sub_category']]);
-
-        $ids = [];
-
-        if (!empty($validated['filters'])) {
-            foreach($validated['filters'] as $index => $key) {
-                foreach($key as $x) {
-                    $ids[] = $x;
-                }
-            }
-        }
-        $product->filterOptions()->sync($ids);
-
-        // Update product basic info
-        $product->update([
-            'product_type_id' => $validated['product_type_id'],
-            'status' => $validated['status'],
-        ]);
-
-
-        // Handle default variant when no variants are provided
-        $defaultVariant = $product->variants()->updateOrCreate(
-                ['id' => $product->variants()->first()?->id],
-                [
-                    // 'sku' => $validated['sku'],
-                    'tax_class_id' => $validated['tax_class_id'],
-                    'stock' => 500,
-                    'attribute_data' => [
-                        'name' => new TranslatedText([
-                            'en' => new Text($validated['name']['en']),
-                            'gr' => new Text($validated['name']['gr']),
-                        ]),
-                        'description' => new TranslatedText([
-                            'en' => new Text($validated['description']['en']),
-                            'gr' => new Text($validated['description']['gr']),
-                        ]),
-                    ]
-                ]
-            );
-
-            if ($defaultVariant) {
-                $defaultVariant->prices()->delete();
-                $defaultVariant->prices()->create([
-                    'price' => $validated['price'],
-                    'currency_id' => 1,
-                    'priceable_type' => Product::class,
-                    'priceable_id' => $defaultVariant->id,
-                ]);
-            }
-            
-        if (!empty($validated['variants'])) {
-        $existingVariantIds = [];
-        
-        foreach ($validated['variants'] as $variantId => $variantData) {
-            // Check if this is a new variant (key starts with "new_")
-            $isNewVariant = str_starts_with($variantId, 'new_');
-            
-            // Prepare the variant data
-            $variantAttributes = [
-                'stock' => $variantData['stock'] ?? 9999,
-                'tax_class_id' => $validated['tax_class_id'],
-                'attribute_data' => [
-                    'name' => new TranslatedText([
-                        'en' => new Text($variantData['name']['en'] ?? $validated['name']['en']),
-                        'gr' => new Text($variantData['name']['gr'] ?? $validated['name']['gr']),
-                    ])
-                ]
-            ];
-            
-            // Handle new variants
-            if ($isNewVariant) {
-                $variant = $product->variants()->create($variantAttributes);
-            } 
-            else {
-                $variant = $product->variants()->updateOrCreate(
-                    ['id' => $variantId],
-                    $variantAttributes
-                );
-            }
-            
-            // Update prices
-            $variant->prices()->delete();
-            $variant->prices()->create([
-                'price' => $variantData['price'],
-                'currency_id' => 1, // Assuming default currency
-            ]);
-            
-            // Track existing variants (excluding new ones that were just created)
-            $existingVariantIds[] = $variant->id;
-
-            $variantAttributes = [];
-        }
-
-        // Delete variants that weren't included in the request (excluding new variants)
-        if (!empty($existingVariantIds)) {
-            $product->variants()->whereNotIn('id', $existingVariantIds)->delete();
-        }
-    }
-
-        // Update URLs
-        $product->urls()->delete();
-        foreach ($validated['urls'] as $locale => $slug) {
-            $product->urls()->create([
-                'slug' => $slug,
-                'language_id' => Language::where('code', $locale)->first()->id,
-                'default' => true,
-            ]);
-        }
-
-        // Update channels
-        $product->channels()->detach();
-        if (!empty($validated['channels'])) {
-            foreach ($validated['channels'] as $channelId => $channelData) {
-                $product->channels()->attach($channelId, [
-                    'starts_at' => $channelData['start_date'] ?? null,
-                    'ends_at' => $channelData['end_date'] ?? null,
-                    'enabled' => $channelData['enabled'] ?? false,
-                ]);
-            }
-        }
-
-        return redirect()->route('admin.products.edit', $product->id)
-            ->with('success', 'Product updated successfully');
-    }
+    
 
     public function destroy(Product $product)
     {

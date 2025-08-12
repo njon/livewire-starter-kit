@@ -7,7 +7,7 @@ use Illuminate\View\Component;
 use Illuminate\View\View;
 use Lunar\Facades\Pricing;
 use Lunar\Models\Price;
-use Lunar\Models\ProductVariant;
+use App\Models\ProductVariant;
 
 class ProductPrice extends Component
 {

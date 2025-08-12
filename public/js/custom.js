@@ -2,7 +2,7 @@ let $form;
 
 $(document).ready(function () {
 
-    // Variables for control
+    const csrf_token = $('meta[name="csrf-token"]').attr('content');
     let searchTimeout;
     let isSubmitting = false;
     let isInitialLoad = true; // New flag for initial load detection
@@ -165,6 +165,9 @@ $(document).ready(function () {
             url: $form.attr('action'),
             type: $form.attr('method'),
             data: $form.serialize(),
+            headers: {
+                'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
+            },
             dataType: 'json',
             success: function (response) {
                 if (response.success) {
@@ -292,99 +295,6 @@ $(document).ready(function () {
             }
         }
     });
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-
-
-    // Parse initial values from the HTML
-    const daysElement = document.getElementById('countdown-days');
-    const timeElement = document.getElementById('countdown-time');
-
-    if (!daysElement || !timeElement) {
-        return false;
-    }
-    // Extract initial values (trim whitespace)
-    let days = parseInt(daysElement.textContent.trim());
-    let [hours, minutes, seconds] = timeElement.textContent.trim().split(':').map(Number);
-
-    // Update the countdown every second
-    const countdown = setInterval(function () {
-        // Decrement seconds
-        seconds--;
-
-        // Handle time rollover
-        if (seconds < 0) {
-            seconds = 59;
-            minutes--;
-
-            if (minutes < 0) {
-                minutes = 59;
-                hours--;
-
-                if (hours < 0) {
-                    hours = 23;
-                    days--;
-                    daysElement.textContent = days >= 0 ? `\xa0${days}` : '0';
-                }
-            }
-        }
-
-        // Stop if time is up
-        if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
-            clearInterval(countdown);
-            timeElement.textContent = '00:00:00';
-            return;
-        }
-
-        // Update display (with leading zeros)
-        timeElement.textContent =
-            `${hours.toString().padStart(2, '0')}:` +
-            `${minutes.toString().padStart(2, '0')}:` +
-            `${seconds.toString().padStart(2, '0')}`;
-    }, 1000);
-});
-
-// @todo Probably remove this function. Loading items in HTML blade file
-function loadCartItems() {
-    fetch('/cartItems')
-        .then(response => response.json())
-        .then(data => {
-            document.querySelector('.cart').innerHTML = data.html
-        })
-        .catch(error => console.error('Error fetching cart items:', error));
-}
-
-function loadOffcanvasCartItems(showElement = true) {
-    fetch('/canvasItems')
-        .then(response => response.json())
-        .then(data => {
-            cartElement = document.querySelector('#shoppingCart .offcanvas-body');
-            if (!cartElement) {
-                return false;
-            }
-
-            if (showElement) {
-                $('#shoppingCart').offcanvas('show');
-            }
-            // Generate the HTML structure
-            cartElement.innerHTML = data.html;
-
-            const cartCounter = document.querySelector('.cart-count');
-            if (cartCounter) cartCounter.textContent = Object.keys(data).length;
-        })
-        .catch(error => console.error('Error loading cart:', error));
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    loadOffcanvasCartItems(false);
-});
-
-
-$(document).ready(function () {
-
-    const csrf_token = $('[name="_token"]').val();
-
 
     $('#review-form').on('submit', function (e) {
         e.preventDefault(); // Prevent default form submission
@@ -498,12 +408,14 @@ $(document).ready(function () {
             $button.removeClass('is-active');
         }
 
-
         $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + adding);
 
         $.ajax({
             url: $form.attr('action'),
             type: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': csrf_token // Include CSRF token in headers
+            },
             data: $form.serialize(),
             dataType: 'json',
             success: function (response) {
@@ -684,5 +596,88 @@ $(document).ready(function () {
         $('#price-tax').html(data.tax);
         $('#price-total').html(data.price_total);
     }
+});
 
+document.addEventListener('DOMContentLoaded', function () {
+
+    const daysElement = document.getElementById('countdown-days');
+    const timeElement = document.getElementById('countdown-time');
+
+    if (!daysElement || !timeElement) {
+        return false;
+    }
+    // Extract initial values (trim whitespace)
+    let days = parseInt(daysElement.textContent.trim());
+    let [hours, minutes, seconds] = timeElement.textContent.trim().split(':').map(Number);
+
+    // Update the countdown every second
+    const countdown = setInterval(function () {
+        // Decrement seconds
+        seconds--;
+
+        // Handle time rollover
+        if (seconds < 0) {
+            seconds = 59;
+            minutes--;
+
+            if (minutes < 0) {
+                minutes = 59;
+                hours--;
+
+                if (hours < 0) {
+                    hours = 23;
+                    days--;
+                    daysElement.textContent = days >= 0 ? `\xa0${days}` : '0';
+                }
+            }
+        }
+
+        // Stop if time is up
+        if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+            clearInterval(countdown);
+            timeElement.textContent = '00:00:00';
+            return;
+        }
+
+        // Update display (with leading zeros)
+        timeElement.textContent =
+            `${hours.toString().padStart(2, '0')}:` +
+            `${minutes.toString().padStart(2, '0')}:` +
+            `${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+});
+
+// @todo Probably remove this function. Loading items in HTML blade file
+function loadCartItems() {
+    fetch('/cartItems')
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.cart').innerHTML = data.html
+        })
+        .catch(error => console.error('Error fetching cart items:', error));
+}
+
+function loadOffcanvasCartItems(showElement = true) {
+    fetch('/canvasItems')
+        .then(response => response.json())
+        .then(data => {
+            cartElement = document.querySelector('#shoppingCart .offcanvas-body');
+            if (!cartElement) {
+                return false;
+            }
+
+            if (showElement) {
+                $('#shoppingCart').offcanvas('show');
+            }
+            // Generate the HTML structure
+            cartElement.innerHTML = data.html;
+
+            const cartCounter = document.querySelector('.cart-count');
+            if (cartCounter) cartCounter.textContent = Object.keys(data).length;
+        })
+        .catch(error => console.error('Error loading cart:', error));
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadOffcanvasCartItems(false);
 });

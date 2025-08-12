@@ -36,7 +36,7 @@
                      <i class="bi bi-people me-2"></i>{{ __('Invite Friends') }}
                  </a>
                  <form method="POST" action="{{ route('logout') }}" class="list-group-item list-group-item-action">
-                     
+                     @csrf
                      <button type="submit"
                          class="btn btn-link text-decoration-none p-0 border-0 bg-transparent w-100 text-start">
                          <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}

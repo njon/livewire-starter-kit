@@ -63,7 +63,6 @@ class CartService
      */
     public function addToCart($purchasable, $quantity = 1): array
     {
-        try {
             // Find the purchasable variant directly
             $cart = $this->getCart();
 
@@ -93,7 +92,6 @@ class CartService
                     'purchasable_type' => get_class($purchasable),
                     'purchasable_id' => $purchasable->id,
                     'quantity' => $quantity,
-                    'partner_id' => random_int(1, 999),
                     'meta' => [
                         'product_name' => $purchasable->product->translateAttribute('name'),
                         'variant_name' => $variantName,
@@ -110,12 +108,6 @@ class CartService
                 'cart' => $cart->toArray()
             ];
 
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-        }
     }
 
     /**
@@ -193,6 +185,14 @@ class CartService
         }
 
         return $cart->total->formatted();
+    }
+
+    public function clearCartx($cart)
+    {
+        if ($cart) {
+            $cart->lines()->delete();
+            CartSession::use($cart->refresh());
+        }
     }
 
     /**
