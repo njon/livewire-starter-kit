@@ -49,8 +49,9 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                 </div>
                 <div class="card-body">
                     <!-- Language Tabs -->
+                    <div class="mb-2 small">Click to change language translations</div>
                     <ul id="languageTabs" role="tablist">
-                        Click to change language translations
+                        
                         @foreach($languages as $language)
                         <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
                                 data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
@@ -145,64 +146,83 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
 
             <!-- STORE -->
 
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="fs-5 d-flex align-items-center">
-                    <i class="bi bi-shop me-2 text-primary"></i> Store Availability
-                </h3>
-                <small class="text-muted">Stores where this service is available</small>
+            <div class="card border-0 mb-3">
+                <div class="card-header bg-transparent py-3">
+                    <h3 class="fs-5 d-flex align-items-center">
+                        <i class="bi bi-shop me-2 text-primary"></i> Store Availability
+                    </h3>
+                    <small class="text-muted">Stores where this service is available</small>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 col-lg-6 mt-4">
-                            <div class="card text-center">
-                                <img class="card-img-top"
-                                    src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/spa1.png"
-                                    alt="Cover Image" style="max-height: 200px; object-fit: cover;">
-                                <div class="card-body p-4 px-3">
-                                    <h3 class="m-0 mb-1 fs-5">
-                                        <a class="card-btn text-decoration-none" href="#">Le Massage Kallithea</a>
-                                    </h3>
-                                    <div class="mt-2">
-                                        <p class="text-secondary m-0 small">Leof. El. Venizelou 163A, Kallithea 176 72
-                                        </p>
-                                    </div>
+            </div>
+            <div>
+                <div class="row">
+                    @foreach($channels as $channel)
+                    <div class="col-md-6 col-lg-4 mt-3">
+                        <div class="card text-center relative border-1">
+                            <div class="form-check form-switch position-absolute">
+                                <input class="form-check-input" name="channels[{{ $channel->id }}][enabled]"
+                                    type="checkbox" value="1"
+                                    {{ $product->channels->contains($channel->id) ? 'checked' : '' }} role="switch">
+                            </div>
+
+                            <div class="store-image-container">
+                                @if($channel->image_url)
+                                <img class="card-img-top object-fit-cover h-100" src="{{ $channel->image_url }}"
+                                    alt="Cover Image">
+                                @else
+                                <div class="d-flex align-items-center justify-content-center text-muted bg-light h-100">
+                                    <i class="bi bi-shop store-icon fs-3"></i>
                                 </div>
-                                <div class="p-3 border-top">
-                                    <a href="#" class="card-btn text-decoration-none">View store</a>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-2 py-3">
+                                <h3 class="m-0 mb-1 fs-6">
+                                    <a class="card-btn text-decoration-none" target="_blank"
+                                        href="{{ route('stores.edit', $channel->id) }}">{{ $channel->name }}</a>
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-secondary m-0 small">{{ $channel->address ?? '' }}</p>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 mt-4">
-                            <div class="card text-center">
-                                <img class="card-img-top"
-                                    src="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/images/spa1.png"
-                                    alt="Cover Image" style="max-height: 200px; object-fit: cover;">
-                                <div class="card-body p-4 px-3">
-                                    <h3 class="m-0 mb-1 fs-5">
-                                        <a class="card-btn text-decoration-none" href="#">Le Massage Kallithea</a>
-                                    </h3>
-                                    <div class="mt-2">
-                                        <p class="text-secondary m-0 small">Leof. El. Venizelou 163A, Kallithea 176 72
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="p-3 border-top">
-                                    <a href="#" class="card-btn text-decoration-none">View store</a>
-                                </div>
+                            <div class="p-2 border-top">
+                                <a href="{{ route('stores.edit', $channel->id) }}" target="_blank"
+                                    class="card-btn text-decoration-none fs-14">View store</a>
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" name="channels[{{ $channel->id }}][]" value="{{ $channel->id }}">
+                    @endforeach
                 </div>
             </div>
         </div>
 
         <div class="col-lg-5">
 
+            <!-- Pricing -->
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Pricing
+                        <i class="bi bi-tag me-2 text-primary"></i> Service status
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Status</label>
+                    <div class="input-group">
+                        <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+                            <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>Published
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h3 class="h5 mb-0 d-flex align-items-center">
+                        <i class="bi bi-tag me-2 text-primary"></i> Categories
                     </h3>
                 </div>
                 <div class="card-body">
@@ -213,7 +233,8 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                 <option>Select Category</option>
                                 @foreach($collections as $mainCategory)
                                 @if($mainCategory->parent_id == null)
-                                <option value="{{ $mainCategory->id }}" {{ $product->collections->contains('id', $mainCategory->id) ? 'selected' : '' }}>
+                                <option value="{{ $mainCategory->id }}"
+                                    {{ $product->collections->contains('id', $mainCategory->id) ? 'selected' : '' }}>
                                     {{ $mainCategory->translateAttribute('name') }}
                                 </option>
                                 @endif
@@ -226,16 +247,16 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                             @if($mainCategory->parent_id == null)
                             <div class="subcategory-list mb-3 no-d" data-target="{{ $loop->iteration }}">
 
-                            <label class="form-label">Subcategory</label>
-                            <select class="form-select subcategory-select mb-3" name="collection_id"
-                                data-target="{{ $loop->iteration }}">
-                                <option value="0">Select subcategory</option>
-                                @foreach($mainCategory->children as $subCategory)
-                                <option value="{{ $subCategory->id }}">
-                                    {{ $subCategory->translateAttribute('name') }}
-                                </option>
-                                @endforeach
-                            </select>
+                                <label class="form-label">Subcategory</label>
+                                <select class="form-select subcategory-select mb-3" name="collection_id"
+                                    data-target="{{ $loop->iteration }}">
+                                    <option value="0">Select subcategory</option>
+                                    @foreach($mainCategory->children as $subCategory)
+                                    <option value="{{ $subCategory->id }}">
+                                        {{ $subCategory->translateAttribute('name') }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
                             @endif
                             @endforeach
@@ -244,9 +265,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                 </div>
             </div>
 
-
-
-            <!-- VARIANTS -->
+            <!-- Pricing -->
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
@@ -280,28 +299,28 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                     @enderror
                 </div>
             </div>
-        <!-- Add this to your product edit view -->
-        <div class="card mb-4 border-primary">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h3 class="h6 mb-0 py-2">Product variants</h3>
-                <button type="button" class="btn btn-sm btn-light add-variant-btn">
-                    <i class="bi bi-plus me-1"></i> Add variant
-                </button>
-            </div>
-            <div class="card-body p-0">
-                <div class="d-flex column flex-column" id="variantsContainer">
-                    @foreach($variants as $variant)
+            <!-- Add this to your product edit view -->
+            <div class="card mb-4 border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="h6 mb-0 py-2">Product variants</h3>
+                    <button type="button" class="btn btn-sm btn-light add-variant-btn m-0">
+                        <i class="bi bi-plus me-1"></i> Add variant
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="d-flex column flex-column" id="variantsContainer">
+                        @foreach($variants as $variant)
                         @include('admin.products.variant', ['variant' => $variant, 'product' => $product])
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-        <!-- Add this to your layout file or this view -->
-        @section('scripts')
+            <!-- Add this to your layout file or this view -->
+            @section('scripts')
             <script src="{{ asset('js/product-variants.js') }}"></script>
-        @endsection
+            @endsection
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
@@ -349,52 +368,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
     </div>
     <input type="hidden" name="product_type_id" value="1">
     <input type="hidden" name="sub_category" value="{{ $sub_category }}">
-    <input type="hidden" name="status" value="published">
-
 </form>
-
-<!-- Add Store Modal -->
-<div class="modal fade" id="storeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Store Availability</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="channelForm">
-                    <div class="mb-3">
-                        <label class="form-label">Select Store</label>
-                        <select class="form-select" id="channelSelect">
-                            <option selected disabled>Choose a store</option>
-                            @foreach($channels as $channel)
-                            <option value="{{ $channel->id }}">{{ $channel->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Start Date</label>
-                            <input type="datetime-local" class="form-control" id="startDate">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">End Date</label>
-                            <input type="datetime-local" class="form-control" id="endDate">
-                        </div>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="enabled" checked>
-                        <label class="form-check-label" for="enableStore">Enable for this store</label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="addChannelBtn">Add Store</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 @include('admin.products.variant-modal')
 
@@ -417,16 +391,16 @@ function deleteImage(mediaId) {
             buttons.forEach(button => {
                 button.closest('.image-preview-container').remove();
             });
-                const thumbnailPreview = document.getElementById('thumbnail-preview');
-                if (!thumbnailPreview) return; // Exit if element doesn't exist
+            const thumbnailPreview = document.getElementById('thumbnail-preview');
+            if (!thumbnailPreview) return; // Exit if element doesn't exist
 
-                const previews = thumbnailPreview.querySelectorAll('.image-preview-container');
+            const previews = thumbnailPreview.querySelectorAll('.image-preview-container');
 
-                if (previews.length >= 2) {
-                    previews[0].style.display = 'none';
-                } else if (previews.length === 1) {
-                    previews[0].style.display = '';
-                }
+            if (previews.length >= 2) {
+                previews[0].style.display = 'none';
+            } else if (previews.length === 1) {
+                previews[0].style.display = '';
+            }
 
         });
     }
@@ -451,7 +425,7 @@ function deleteThumb(mediaId) {
             buttons.forEach(button => {
                 button.closest('.image-preview-container').remove();
             });
-            
+
         });
     }
 }

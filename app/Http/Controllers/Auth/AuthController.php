@@ -17,6 +17,51 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    // @todo remove later
+    public function loginPartner(Request $request)
+    {
+        $credentials = ['email' => 'new_test@newtest.com', 'password' => 'new_test'];
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/')->with('success', 'Login successful!');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials',
+        ]);
+    }
+
+    // @todo remove later
+    public function loginPartner2(Request $request)
+    {
+        $credentials = ['email' => 'partner2@newtest.com', 'password' => 'partner2'];
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/')->with('success', 'Login successful!');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials',
+        ]);
+    }
+
+        // @todo remove later
+    public function loginVisitor(Request $request)
+    { 
+        $credentials = ['email' => 'buyer@mail.com', 'password' => 'buyerbuyer'];
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/')->with('success', 'Login successful!');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials',
+        ]);
+    }
+
     // Handle login
     public function login(Request $request)
     {

@@ -1,5 +1,5 @@
 <div class="images-upload">
-    <div class="mb-4">
+    <div>
         <div class="row g-3" id="image-preview">
             <div class="image-preview-container col-md-4 col-lg-3 relative">
                 <div class="position-relative h-100 border-2 upload-placeholder rounded-2" onclick="document.getElementById('media-dropzone').click()">

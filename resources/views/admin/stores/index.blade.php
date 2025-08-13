@@ -20,9 +20,10 @@
                                     <th width="80">Image</th>
                                     <th>Title</th>
                                     <th>Address</th>
-                                    <th>URL</th>
+                                    <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Working Hours</th>
+                                    <th>Services</th>
+                                    <th>Hours</th>
                                     <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
@@ -57,12 +58,12 @@
                                                 {{ $store->name }}
                                             </a>
                                         </h6>
-                                        <small class="text-muted">{{ $store->handle }}</small>
+                                        <!-- <small class="text-muted">{{ $store->handle }}</small> -->
                                     </td>
                                     <td>
                                         {{ $store->address }}
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @foreach($languages as $language)
                                             @if(isset($store->attribute_data['url'][$language->code]))
                                                 <a href="{{ $store->attribute_data['url'][$language->code] }}" target="_blank" class="text-decoration-none">
@@ -71,6 +72,13 @@
                                                 @if(!$loop->last)<br> @endif
                                             @endif
                                         @endforeach
+                                    </td> -->
+                                    <td>
+                                        @if($store->email)
+                                            {{ $store->email }}
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                     <td>
                                         @if($store->phone)
@@ -80,13 +88,22 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @foreach($store->products as $service)
+                                            <span class="badge bg-secondary">
+                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="text-decoration-none text-white">
+                                                    {{ $service->translateAttribute('name') }}
+                                                </a>
+                                            </span>
+                                        @endforeach
+                                    </td>
+                                    <td>
                                         <button class="btn btn-sm btn-success btn-floating shadow-sm rounded-circle m-0" data-bs-toggle="modal" data-bs-target="#hoursModal-{{ $store->id }}" title="View Hours">
                                             <i class="bi bi-clock"></i>
                                         </button>
                                     </td>
                                     <td class="text-end pe-4">
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle m-0" type="button" data-bs-toggle="dropdown">
                                                 <i class="bi bi-gear"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">

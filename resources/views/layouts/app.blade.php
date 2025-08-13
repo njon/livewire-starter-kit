@@ -59,7 +59,7 @@ const helpful = '{{ __("Helpful") }}';
     @cookieconsentscripts
 </head>
 <!-- Simple form with button -->
-<div id="dashboard" style="position: absolute; left: 0; top: 0; z-index: 99999;">
+<div id="dashboard">
     <form action="{{ route('lunar.cache.refresh') }}" method="POST">
         @csrf
         <button type="submit" class="btn btn-primary">
@@ -72,7 +72,51 @@ const helpful = '{{ __("Helpful") }}';
             <i class="fas fa-sync-alt"></i> Remove Orders
         </button>
     </form>
+
+    <form action="{{ route('login-partner') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Login partner
+        </button>
+    </form>
+        <form action="{{ route('login-partner2') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Second partner
+        </button>
+    </form>
+    <form action="{{ route('login-visitor') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Login visitor
+        </button>
+    </form>
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Logout
+        </button>
+    </form>
+
 </div>
+<style>
+    div#dashboard button {
+    width: 100% !important;
+    margin-top: 5px;
+}
+div#dashboard:hover {
+    left:0;
+}
+
+div#dashboard {
+    position: absolute;
+    left: -170px;
+    top: 50px;
+    z-index: 99999;
+    background: white;
+    padding: 10px;
+}
+</style>
 
 <body class="antialiased text-gray-900">
 

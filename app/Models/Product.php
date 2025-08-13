@@ -22,6 +22,14 @@ use App\Traits\OwnerScope;
 
 class Product extends LunarProduct
 {
+    use OwnerScope;
+
+    protected $fillable = [
+        "attribute_data",
+        "product_type_id",
+        "status",
+        "owner_id"
+    ];
 
     public static array $listingWith = [];
 

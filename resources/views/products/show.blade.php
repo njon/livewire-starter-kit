@@ -234,7 +234,7 @@
             <h3 class="py-4 fs-4 mb-3">{{ __('Similar Experiences you may like') }}</h3>
             <div class="row">
                 @foreach ($relatedProducts as $product)
-                @include('products.product', ['col' => 'col'])
+                @include('products.product', ['col' => '3'])
                 @endforeach
             </div>
         </div>

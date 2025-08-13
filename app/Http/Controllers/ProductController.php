@@ -10,7 +10,7 @@ use App\Models\FilterCategory;
 use App\Services\ProductSearchService;
 use Illuminate\Support\Facades\DB;
 use App\Models\FilterOption;
-
+use App\Models\User;
 
 class ProductController extends Controller
 {
@@ -31,6 +31,10 @@ class ProductController extends Controller
      */
     public function show($product): View
     {
+        // @todo remove later
+        // $us = auth()->user();
+        // $user = User::find($us->id);
+
         $counter = end_in_counter($product->discounts);
         $relatedProducts = Product::limit(5)->get();
         $category = $product->collections->first()->id ?? null;

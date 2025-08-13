@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         
-        $orders = Order::where('user_id', $user->id)->get();
+        $orders = Order::where('user_id', $user->id)->orderByDesc('created_at')->paginate(10);
 
         return view('profile.index', compact('orders')); // This would be your blade file with the menu structure
     }

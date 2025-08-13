@@ -1,10 +1,12 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Services', 'asset' => 'Services', 'buttons' => [
-        ['new' => true]
+    @include('admin.partials.buttons', ['title' => 'Services', 'asset' => 'Services', 'custom_button' => '<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create New </a>', 'buttons' => [
+        []
     ]])
+
 @endsection
+
 
 @section('content')
 <div class="card border-0 shadow-sm">
@@ -42,7 +44,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                             
-                                @if($product->getMedia('thumbnails')->empty())
+                                @if($product->getMedia('thumbnails')->empty() && $product->getMedia('thumbnails')->first())
                                 <img src="{{ $product->getMedia('thumbnails')->first()->getUrl() }}" 
                                      alt="{{ $product->translateAttribute('name') }}" 
                                      class="rounded" 
@@ -79,7 +81,8 @@
                             @endif
                         </td>
                         <td>
-                            {{ $product->variants->first()->price ?? '-' }}
+
+                            {{ $product->variants->first()->prices->first()->price->formatted() ?? '-' }} {!! $product->variants->count() > 1 ? '' : '' !!} 
                         </td>
                         <td class="text-end pe-4">
                             <div class="dropdown">
@@ -149,9 +152,7 @@
         </div>
     </div>
 </div>
-<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary btn-sm">
-    <i class="bi bi-plus-lg me-1"></i> New
-</a>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     

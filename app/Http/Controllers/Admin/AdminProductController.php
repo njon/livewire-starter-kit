@@ -93,6 +93,7 @@ public function destroyMedia(Request $request, Product $product)
         ]);
 
         $product = Product::create([
+            'owner_id' => auth()->user()->id,
             'stock' => 99999999,
             'product_type_id' => $validated['product_type_id'],
             'status' => 'published', 
@@ -127,7 +128,6 @@ public function destroyMedia(Request $request, Product $product)
     public function update(Request $request, Product $product)
     {
         $validated = $this->validateRequest($request, $product);
-
         
         if ($request->has('urls')) {
             $urls = $request->input('urls');
@@ -197,15 +197,20 @@ public function destroyMedia(Request $request, Product $product)
             ]);
         }
 
+        
+
         // Update channels
         $product->channels()->detach();
         if (!empty($validated['channels'])) {
             foreach ($validated['channels'] as $channelId => $channelData) {
-                $product->channels()->attach($channelId, [
-                    'starts_at' => $channelData['start_date'] ?? null,
-                    'ends_at' => $channelData['end_date'] ?? null,
-                    'enabled' => $channelData['enabled'] ?? false,
-                ]);
+                if(isset($channelData['enabled'])) {
+                    $product->channels()->attach($channelId, [
+                        'starts_at' => $channelData['start_date'] ?? null,
+                        'ends_at' => $channelData['end_date'] ?? null,
+                        'enabled' => $channelData['enabled'] ?? 1,
+                    ]);
+                }
+                
             }
         }
 
@@ -215,6 +220,8 @@ public function destroyMedia(Request $request, Product $product)
 
     public function edit(Product $product)
     {
+        $product->when(auth()->user()->owner_id != 0, fn($q) => $q->where('owner_id', auth()->id()));
+        
         $product->load(['variants', 'collections', 'channels', 'urls']);
 
         $productTypes = ProductType::all();
@@ -252,19 +259,15 @@ public function destroyMedia(Request $request, Product $product)
             'filters.*' => 'nullable|array',
             'tax_class_id' => 'required|exists:lunar_tax_classes,id',
             'price' => 'required|numeric|min:0',
-            'channels' => 'nullable|array',
-            'channels.*.id' => 'exists:lunar_channels,id',
-            'channels.*.start_date' => 'nullable|date',
-            'channels.*.end_date' => 'nullable|date|after:channels.*.start_date',
-            'channels.*.enabled' => 'nullable|boolean',
+            'channels.*' => 'array|required',
             'variants' => 'nullable|array',
             'variants.*.id' => 'string',
             'variants.*.name.*' => 'required|string|max:255',
             // 'variants.*.sku' => 'required|string|max:255',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.stock' => 'nullable|integer|min:0',
-            'category' => 'nullable|exists:lunar_collections,id',
-            'sub_category' => 'nullable|exists:lunar_collections,id',
+            'category' => 'required|exists:lunar_collections,id',
+            'sub_category' => 'required|exists:lunar_collections,id',
         ];
 
         // @todo check for multilanguage messages

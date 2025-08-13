@@ -566,7 +566,7 @@ ul#languageTabs {
 }
 
 ul#languageTabs li button:hover {
-    box-shadow: 1px 2px 0px 3px #646464;
+    box-shadow: 0px 0px 0px 1px #98b68a;
 }
 
 ul#languageTabs li {
@@ -578,14 +578,17 @@ ul#languageTabs .nav-link {
     padding-top: 6px;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 1px 2px 0px 3px #a1a1a1;
-    margin-right: 15px !important;
+    box-shadow: 0px 0px 0px 1px #a1a1a1;
+    margin-right: 5px !important;
     transition: 0.2s;
     transition-timing-function: cubic-bezier(0.68, -0.01, 0.93, 0.4);
+    background: #f6f6f6;
+    margin-top: 0;
 }
 ul#languageTabs .nav-link[aria-selected="true"] {
     cursor: pointer;
-    box-shadow: 1px 1px 0px 2px #505050;
+    box-shadow: 0px 0px 0px 2px #98b68a;
+    background: #ffffff;
 }
 h3.h5 {
     font-size: 1rem;
@@ -978,4 +981,14 @@ body .form-control:focus {
 }
 .no-d {
     display:none;
+}
+.form-check.form-switch.position-absolute {
+    right: 5px !important;
+    top: 10px !important;
+}
+.store-image-container {
+    height: 110px;
+}
+a.card-btn.text-decoration-none.fs-14 {
+    font-size: 14px;
 }

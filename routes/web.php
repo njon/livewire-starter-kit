@@ -21,17 +21,41 @@ use App\Http\Controllers\Admin\ProductVariantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * Display column names of the lunar_products table
+ * 
+ * @return \Illuminate\Http\JsonResponse|array
+ */
+function showLunarProductColumns()
+{
+    try {
+        // Check if the table exists
+        if (!Schema::hasTable('lunar_products')) {
+            return response()->json([
+                'error' => 'lunar_products table does not exist'
+            ], 404);
+        }
+
+        // Get the column names
+        $columns = Schema::getColumnListing('lunar_products');
+
+
+        return $columns;
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'An error occurred: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
 
 
 Route::post('/refresh-lunar-cache', [CartController::class, 'refreshLunarCache'])->name('lunar.cache.refresh');
 Route::post('/remove-orders', [CartController::class, 'removeOrders'])->name('lunar.orders.remove');
-
-
-
-
-
-
-
 
 Route::group(['prefix' => 'admin/products/{product}/variants', 'as' => 'admin.products.variants.'], function() {
     Route::post('/', [ProductVariantController::class, 'store'])->name('store');
@@ -92,9 +116,14 @@ Route::post('/paypal/webhook', [PayPalController::class, 'webhook'])->name('payp
 Route::controller(AuthController::class)->group(function() {
     Route::get('/login', 'showLogin')->name('login');
     Route::post('/login', 'login');
+    Route::post('/login-partner', 'loginPartner')->name('login-partner');
+    Route::post('/login-partner2', 'loginPartner2')->name('login-partner2');
+    Route::post('/login-visitor', 'loginVisitor')->name('login-visitor');
     Route::get('/register', 'showRegister')->name('register');
     Route::post('/register', 'register');
     Route::post('/logout', 'logout')->name('logout');
+
+    
     
     Route::get('/auth/{provider}', 'socialRedirect')->where('provider', 'facebook|google');
     Route::get('/auth/{provider}/callback', 'socialCallback')->where('provider', 'facebook|google');

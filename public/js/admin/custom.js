@@ -412,7 +412,6 @@ $(document).ready(function() {
                     if (action === 'create') {
                         variantsContainer.append(response.html);
                     } else {
-                        alert(`data-variant-id="${variantID}"`);
                         $(`#variantsContainer [data-variant-id="${variantID}"]`).replaceWith(response.html);
                     }
                     

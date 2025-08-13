@@ -5,7 +5,7 @@ use Lunar\Facades\CartSession;
 use Lunar\DataTypes\Price;
 use Lunar\Models\Currency;
 use Carbon\Carbon;
-
+use Lunar\Models\Order;
 
 if (!function_exists('format_price')) {
     /**
@@ -140,3 +140,47 @@ if (!function_exists('discounted_item_price')) {
         return $price;
     }
 }
+
+
+if (!function_exists('generate_order_prices')) {
+    /**
+     * Get discounted price for a purchasable item
+     */
+    function generate_order_prices($order)
+    {
+        $subTotal = 0;
+        $vatTotal = 0;
+        $totalTotal = 0;
+        $total = 0;
+        $paid = 0;
+        $lines = $order->lines->where('owner_id', auth()->user()->id);
+
+        // Calculate totals from order lines
+        foreach ($lines as $line) {
+            if (!$line->owner_id) {
+                continue;  // Skip lines without owner if needed
+            }
+            $lineTotal = $line->unit_price->value * $line->quantity;
+            $subTotal += $lineTotal;
+            
+            $vatAmount = $line->tax_total->value * $line->quantity;
+            $vatTotal += $vatAmount;
+
+            $total = $line->total->value * $line->quantity;
+            $totalTotal += $total;
+        }
+        
+        // Calculate grand total
+        $total = $subTotal + $vatTotal;
+        
+        // Return all calculated values
+        return [
+            'sub_total' => formatted_price($subTotal),
+            'vat_total' => formatted_price($vatTotal),
+            'total' => formatted_price($totalTotal),
+            'paid' => formatted_price($paid),
+            'balance' => formatted_price($total - $paid),
+        ];
+    }
+}
+    

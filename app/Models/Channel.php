@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\OwnerScope;
+use Lunar\Models\Channel as LunarChannel;
 
-class Channel extends \Lunar\Models\Channel
+class Channel extends LunarChannel
 {
     use OwnerScope;
 

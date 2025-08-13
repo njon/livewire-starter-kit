@@ -26,6 +26,9 @@
                     <i class="bi bi-plus-circle me-1"></i> Create New
                 </a>
             @endif
+            @if(isset($custom_button))
+                {!! $custom_button !!}
+            @endif
         @endforeach
     </div>
 </div>
