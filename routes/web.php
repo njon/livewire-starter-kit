@@ -11,10 +11,9 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\MediaUploadController;
-use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminStoreController;
 use App\Http\Controllers\Admin\AdminOrdersController;
-use App\Http\Controllers\Admin\AdminImageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ProductVariantController;
@@ -28,28 +27,28 @@ use Illuminate\Support\Facades\Schema;
  * 
  * @return \Illuminate\Http\JsonResponse|array
  */
-function showLunarProductColumns()
-{
-    try {
-        // Check if the table exists
-        if (!Schema::hasTable('lunar_products')) {
-            return response()->json([
-                'error' => 'lunar_products table does not exist'
-            ], 404);
-        }
+// function showLunarProductColumns()
+// {
+//     try {
+//         // Check if the table exists
+//         if (!Schema::hasTable('lunar_products')) {
+//             return response()->json([
+//                 'error' => 'lunar_products table does not exist'
+//             ], 404);
+//         }
 
-        // Get the column names
-        $columns = Schema::getColumnListing('lunar_products');
+//         // Get the column names
+//         $columns = Schema::getColumnListing('lunar_products');
 
 
-        return $columns;
+//         return $columns;
         
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => 'An error occurred: ' . $e->getMessage()
-        ], 500);
-    }
-}
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'error' => 'An error occurred: ' . $e->getMessage()
+//         ], 500);
+//     }
+// }
 
 
 
@@ -68,9 +67,13 @@ Route::get('/', [HomepageController::class, 'index']);
 Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::resource('products', AdminProductController::class)->names('admin.products');
+    Route::resource('products', AdminServiceController::class)->names('admin.products');
+    Route::put('/products/{product}/media', [AdminServiceController::class, 'storeMedia'])->name('admin.products.media.store');
+    Route::delete('/products/{product}/media', [AdminServiceController::class, 'destroyMedia'])->name('admin.products.media.destroy');
+    
     Route::resource('stores', AdminStoreController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->except(['show']);
+
 
     Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
     Route::get('/order/{id}', [AdminOrdersController::class, 'show'])->name('admin.orders.show');
@@ -78,8 +81,7 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::post('/order/{id}/refund', [AdminOrdersController::class, 'refund'])->name('admin.orders.refund');
     Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');
 
-    Route::put('/products/{product}/media', [AdminProductController::class, 'storeMedia'])->name('admin.products.media.store');
-    Route::delete('/products/{product}/media', [AdminProductController::class, 'destroyMedia'])->name('admin.products.media.destroy');
+
 });
 
 Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {

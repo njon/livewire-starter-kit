@@ -284,6 +284,10 @@ $(document).ready(function () {
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    function removeLoaders() {
+        setTimeout(() => { document.querySelectorAll('.dz-preview').forEach(el => el.remove()); }, 1000);
+    }
+
     function toggleFirstThumbnailPreview() {
         const thumbnailPreview = document.getElementById('thumbnail-preview');
         if (!thumbnailPreview) return; // Exit if element doesn't exist
@@ -297,38 +301,91 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    toggleFirstThumbnailPreview();
+    function toggleFirstMediaPreview() {
+        const thumbnailPreview = document.getElementById('image-preview');
+        if (!thumbnailPreview) return; // Exit if element doesn't exist
+        
+        const previews = thumbnailPreview.querySelectorAll('.image-preview-container');
+        
+        if (previews.length >= 5) {
+            previews[0].style.display = 'none';
+        } else if (previews.length === 1) {
+            previews[0].style.display = '';
+        }
+    }
 
-    const sortable = new Sortable(document.getElementById('image-preview'), {
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onEnd: function() {
-            // updateImageOrder();
+    toggleFirstThumbnailPreview();
+    toggleFirstMediaPreview();
+
+    let totalFiles = 0;
+    let completedFiles = 0;
+
+    const dropzone = new Dropzone("#media-dropzone", { 
+        maxFiles: 4,
+        previewTemplate: `
+            <div class="dz-preview dz-file-preview">
+                <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+            </div>
+        `
+    });
+
+    dropzone.on("addedfile", function() {
+        totalFiles++;
+        document.getElementById('media-dropzone').classList.add('uploading');
+    });
+
+    dropzone.on("complete", function(file) {
+        completedFiles++;
+        if (!file.accepted) return; 
+
+        if (completedFiles === totalFiles) {
+            document.getElementById('media-dropzone').classList.remove('uploading');
+            removeLoaders();
         }
     });
 
-    const dropzone = new Dropzone("#media-dropzone", { maxFiles: 4 });
+    // Your existing success handler with improved preview
     dropzone.on("success", function(file, response) {
         const previewContainer = document.createElement('div');
         previewContainer.className = 'image-preview-container col-md-4 col-lg-3';
         previewContainer.innerHTML = `
             <div class="position-relative h-100 rounded-2">
-                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100" alt="Product image" draggable="false">
-                <button onclick="deleteImage(${response.id})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
+                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100 h-100" alt="Product image" draggable="false">
+                <button type="button" onclick="deleteImage(${response.id})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
                     Remove
                 </button>
             </div>
         `;
         document.getElementById('image-preview').appendChild(previewContainer);
+        
+        // Remove the Dropzone preview after successful upload
+        file.previewElement.remove();
+        setTimeout(toggleFirstMediaPreview, 100);
     });
 
-    const thumbDropzone = new Dropzone("#thumbnail-dropzone");
+    const thumbDropzone = new Dropzone("#thumbnail-dropzone", {
+        previewTemplate: `
+            <div class="dz-preview dz-file-preview">
+                <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+            </div>
+        `
+    });
+
+    thumbDropzone.on("addedfile", function() {
+        document.getElementById('thumbnail-dropzone').classList.add('uploading');
+    });
+
+    thumbDropzone.on("complete", function() {
+        document.getElementById('thumbnail-dropzone').classList.remove('uploading');
+        removeLoaders();
+    });
+
     thumbDropzone.on("success", function(file, response) {
         const previewContainer = document.createElement('div');
         previewContainer.className = 'image-preview-container col-md-4 col-lg-3 relative';
         previewContainer.innerHTML = `
             <div class="position-relative h-100 rounded-2">
-                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100" alt="Product image" draggable="false">
+                <img src="${response.url}" class="img-fluid rounded-3 object-fit-cover w-100 h-100" alt="Product image" draggable="false">
                 <button type="button" onclick="deleteImage(${response.id})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
                     Remove
                 </button>

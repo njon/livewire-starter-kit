@@ -900,15 +900,14 @@ a {
     width: 100%;
     height: 15px;
     z-index: 9999;
-    background: #10a37f9e;
+    background: #b5b4b4;
     border-radius: 50px !important;
     overflow: hidden;
-    border: 3px solid #69c4ae;
 }
 span.dz-upload {
     height: 100%;
-    width: 1%;
-    background: #10a37f;
+    width: 0;
+    background: #90ad83;
     display: block;
     transition: 0.3s;
     border-radius: 50px;
@@ -917,13 +916,9 @@ span.dz-upload {
 .dz-preview {
     position: relative;
 }
-    div#image-preview {
-    width: 100%;
-}
 
 .image-preview-container {
     display: inline-block;
-    width: 180px;
     height: 160px;
     position: relative;
 }
@@ -991,4 +986,30 @@ body .form-control:focus {
 }
 a.card-btn.text-decoration-none.fs-14 {
     font-size: 14px;
+}
+#media-dropzone, #thumbnail-dropzone {
+    backdrop-filter: blur(8px); /* Standard blur effect */
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 999999999;
+    background: #6e6e6e4f;
+    
+    /* Flexbox centering */
+    display: flex;
+    justify-content: center; /* horizontal centering */
+    align-items: center;    /* vertical centering */
+    flex-direction: column; /* if you want stacked items */
+    opacity: 0;
+    transition: 0.5s;
+    pointer-events: none;
+}
+#media-dropzone.uploading, #thumbnail-dropzone.uploading {
+    opacity: 1;
+}
+.dz-preview.dz-image-preview {
+    width: 400px;
 }

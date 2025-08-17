@@ -150,7 +150,6 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
             </div>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgEzqtsDF9vccmavcM9nqftFqXSgASHGE&libraries=places&callback=initMap"  defer></script>
 <script>

@@ -1,5 +1,5 @@
 <div class="thumbnail-upload">
-    <div id="thumbnail-preview" class="mb-4">
+    <div id="thumbnail-preview">
         <div class="image-preview-container col-md-4 col-lg-3 relative">
                 <div class="position-relative h-100 border-2 upload-placeholder rounded-2" onclick="document.getElementById('thumbnail-dropzone').click()">
                     <div class="text-center text-muted content mt-4">
@@ -15,7 +15,7 @@
             @foreach($product->getMedia('thumbnails') as $media)
             <div class="image-preview-container col-md-4 col-lg-3">
                 <div class="position-relative h-100  rounded-2">
-                    <img src="{{ $media->getUrl() }}" class="img-fluid rounded-3 object-fit-cover w-100" alt="Product image">
+                    <img src="{{ $media->getUrl('small') }}" class="img-fluid rounded-3 object-fit-cover w-100 h-100" alt="Product image">
                     <button type="button" onclick="deleteImage({{ $media->id }})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
                     Remove
                     </button>

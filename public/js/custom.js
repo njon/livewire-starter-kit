@@ -237,64 +237,103 @@ $(document).ready(function () {
         $button.closest('.filter-tag').remove();
     });
 
+    const galleryConfig = {
+        images: [],
+        currentIndex: 0,
+        $modal: $('#imageGalleryModal'),
+        $modalImage: $('#modalImage'),
+        $prevBtn: $('#prevImage'),
+        $nextBtn: $('#nextImage')
+    };
 
-
-    // Initialize variables
-    let currentImageIndex = 0;
-    let images = [];
-
-    // Collect all images from the gallery
+    // Initialize gallery
     function initGallery() {
-        images = [];
-
-        // Add main image first
-        images.push($('#mainProductImage').attr('src'));
-
-        // Add thumbnail images
-        $('.thumbnail-item').each(function () {
-            images.push($(this).data('target'));
+        // Collect all gallery images
+        $('.activate-gallery').each(function() {
+            const imgSrc = $(this).attr('src');
+            if (imgSrc && !galleryConfig.images.includes(imgSrc)) {
+                galleryConfig.images.push(imgSrc);
+            }
         });
+        
+        console.log('Gallery initialized with images:', galleryConfig.images);
+    }
+
+    // Handle gallery image click
+    function handleImageClick() {
+        const clickedSrc = $(this).attr('src');
+        galleryConfig.currentIndex = galleryConfig.images.indexOf(clickedSrc);
+        
+        if (galleryConfig.currentIndex === -1) {
+            galleryConfig.currentIndex = 0;
+        }
+        
+        updateModalImage();
+        galleryConfig.$modal.modal('show');
+        updateActiveState();
+    }
+
+    // Update modal with current image
+    function updateModalImage() {
+        galleryConfig.$modalImage.attr(
+            'src', 
+            galleryConfig.images[galleryConfig.currentIndex]
+        );
+    }
+
+    // Update active thumbnail state
+    function updateActiveState() {
+        $('.activate-gallery').removeClass('active')
+            .filter(`[src="${galleryConfig.images[galleryConfig.currentIndex]}"]`)
+            .addClass('active');
+    }
+
+    // Navigate to previous image
+    function showPreviousImage() {
+        galleryConfig.currentIndex = (
+            galleryConfig.currentIndex - 1 + 
+            galleryConfig.images.length
+        ) % galleryConfig.images.length;
+        
+        updateModalImage();
+        updateActiveState();
+    }
+
+    // Navigate to next image
+    function showNextImage() {
+        galleryConfig.currentIndex = (
+            galleryConfig.currentIndex + 1
+        ) % galleryConfig.images.length;
+        
+        updateModalImage();
+        updateActiveState();
+    }
+
+    // Handle keyboard navigation
+    function handleKeyNavigation(e) {
+        if (!galleryConfig.$modal.is(':visible')) return;
+        
+        switch(e.key) {
+            case 'ArrowLeft': showPreviousImage(); break;
+            case 'ArrowRight': showNextImage(); break;
+            case 'Escape': galleryConfig.$modal.modal('hide'); break;
+        }
     }
 
     // Initialize the gallery
     initGallery();
 
-    // Click handler for thumbnails
-    $('.thumbnail-item').click(function () {
-        currentImageIndex = $(this).index() + 1; // +1 because main image is first
-        $('#modalImage').attr('src', $(this).data('target'));
-        $('#imageGalleryModal').modal('show');
-    });
+    // Set up event listeners
+    $('.activate-gallery').on('click', handleImageClick);
+    galleryConfig.$prevBtn.on('click', showPreviousImage);
+    galleryConfig.$nextBtn.on('click', showNextImage);
+    $(document).on('keydown', handleKeyNavigation);
 
-    // Click handler for main image
-    $('#mainProductImage').click(function () {
-        currentImageIndex = 0;
-        $('#modalImage').attr('src', $(this).attr('src'));
-        $('#imageGalleryModal').modal('show');
-    });
-
-    // Previous image button
-    $('#prevImage').click(function () {
-        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-        $('#modalImage').attr('src', images[currentImageIndex]);
-    });
-
-    // Next image button
-    $('#nextImage').click(function () {
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        $('#modalImage').attr('src', images[currentImageIndex]);
-    });
-
-    // Keyboard navigation
-    $(document).keydown(function (e) {
-        if ($('#imageGalleryModal').hasClass('show')) {
-            if (e.keyCode == 37) { // Left arrow
-                $('#prevImage').click();
-            } else if (e.keyCode == 39) { // Right arrow
-                $('#nextImage').click();
-            }
-        }
-    });
+    // Optional: Preload images for better performance
+    function preloadImages() {
+        galleryConfig.images.forEach(src => new Image().src = src);
+    }
+    preloadImages();
 
     $('#review-form').on('submit', function (e) {
         e.preventDefault(); // Prevent default form submission

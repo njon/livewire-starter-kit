@@ -90,6 +90,7 @@ return [
             '--all-progressive', // this will make sure the resulting image is a progressive one
         ],
         Spatie\ImageOptimizer\Optimizers\Pngquant::class => [
+            '--quality=85-95', // Quality range
             '--force', // required parameter for this package
         ],
         Spatie\ImageOptimizer\Optimizers\Optipng::class => [

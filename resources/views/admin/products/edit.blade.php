@@ -21,11 +21,13 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
 @section('content')
 
 <form action="{{ route('admin.products.media.store', $product) }}" method="POST" id="media-dropzone">
+    <small class="text-black small">Files being uploaded...</small>
     @csrf
     @method('PUT')
 </form>
 
 <form action="{{ route('admin.products.media.store', $product) }}" method="POST" id="thumbnail-dropzone">
+    <small class="text-black small">Files being uploaded...</small>
     @csrf
     @method('PUT')
     <input type="hidden" name="thumbnail" value="1">
@@ -207,7 +209,6 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                     </h3>
                 </div>
                 <div class="card-body">
-                    <label class="form-label">Status</label>
                     <div class="input-group">
                         <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
                             <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>Draft</option>

@@ -45,7 +45,7 @@
                             <div class="d-flex align-items-center gap-3">
                             
                                 @if($product->getMedia('thumbnails')->empty() && $product->getMedia('thumbnails')->first())
-                                <img src="{{ $product->getMedia('thumbnails')->first()->getUrl() }}" 
+                                <img src="{{ $product->getMedia('thumbnails')->first()->getUrl('small') }}" 
                                      alt="{{ $product->translateAttribute('name') }}" 
                                      class="rounded" 
                                      style="width: 48px; height: 48px; object-fit: cover;">

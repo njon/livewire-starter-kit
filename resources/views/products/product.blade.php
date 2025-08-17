@@ -38,7 +38,7 @@
                     $images = array_values(array_unique($images));
                     $randomImage = $images[array_rand($images)];
                 @endphp
-                <img src="{{ $randomImage }}" class="product-image w-100 object-fit-cover" alt="{{ $product->translateAttribute('name') }}">
+                <img src="{{ $product->getMedia('thumbnails')->first()->getUrl('small') }}" class="product-image w-100 object-fit-cover" alt="{{ $product->translateAttribute('name') }}">
             </div>
             <a href="{{ $product->defaultUrl->slug }}" class="stretched-link"></a>
         </div>
