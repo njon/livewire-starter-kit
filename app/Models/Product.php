@@ -19,9 +19,11 @@ use App\Models\ProductReview;
 use Lunar\Models\Price;
 use App\Models\Scopes\PriceBetweenScope;
 use App\Traits\OwnerScope;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends LunarProduct
 {
+    use SoftDeletes; 
     use OwnerScope;
 
     protected $fillable = [

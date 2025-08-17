@@ -20,7 +20,7 @@ use App\Models\FilterCategory;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
-class AdminProductController extends Controller
+class AdminServiceController extends Controller
 {
  public function storeMedia(Request $request, Product $product)
 {

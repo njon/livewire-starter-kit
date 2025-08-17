@@ -6,6 +6,9 @@ use Lunar\DataTypes\Price;
 use Lunar\Models\Currency;
 use Carbon\Carbon;
 use Lunar\Models\Order;
+use Lunar\Models\Product;
+use Lunar\FieldTypes\TranslatedText;
+use Lunar\FieldTypes\Text;
 
 if (!function_exists('format_price')) {
     /**
@@ -13,13 +16,7 @@ if (!function_exists('format_price')) {
      */
     function format_price(int $value): Price
     {
-        $currency = Currency::where('code', 'EUR')->first();
-        $price = new Price(
-            $value, // value in smallest unit (cents/pence)
-            $currency,
-        );
-
-        return $price;
+        return new Price($value, Currency::where('code', 'EUR')->first());
     }
 }
 
@@ -184,3 +181,83 @@ if (!function_exists('generate_order_prices')) {
     }
 }
     
+if (!function_exists('delete_products')) {
+
+    function delete_products() {
+        $products = App\Models\Product::all();
+        
+        foreach ($products as $product) {
+            // Detach all relationships before deletion
+            $product->collections()->detach();
+            $product->tags()->detach();
+            $product->associations()->delete(); // For product associations
+            
+            $product->variants()->each(function ($variant) {
+                $variant->prices()->delete();
+                $variant->delete();
+            });
+            
+            // Finally delete the product
+            $product->delete();
+        }
+        
+        return "All products and their relationships have been deleted.";
+    }
+}
+
+if (!function_exists('get_table_columns')) {
+    /**
+     * Get all column names from a database table
+     *
+     * @param string $table The table name
+     * @return array
+     * @throws \Exception
+     */
+    function get_table_columns(string $table): array
+    {
+        try {
+            return \Illuminate\Support\Facades\Schema::getColumnListing($table);
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to get columns for table {$table}: " . $e->getMessage());
+        }
+    }
+}
+
+if (!function_exists('attribute_data')) {
+
+    function attribute_data($attributes): array
+    {
+        return [
+            'name' => new TranslatedText([
+                'en' => new Text($attributes['name']['en']),
+                'gr' => new Text($attributes['name']['gr']),
+            ]),
+            'description' => new TranslatedText([
+                'en' => new Text($attributes['description']['en']),
+                'gr' => new Text($attributes['description']['gr']),
+            ]),
+            'url' => new TranslatedText([
+                'en' => new Text($attributes['url']['en']),
+                'gr' => new Text($attributes['url']['gr']),
+            ]),
+        ];
+    }
+}
+
+
+if (!function_exists('product_attribute_data')) {
+
+    function product_attribute_data($attributes): array
+    {
+        return [
+            'name' => new TranslatedText([
+                'en' => new Text($attributes['name']['en']),
+                'gr' => new Text($attributes['name']['gr']),
+            ]),
+            'description' => new TranslatedText([
+                'en' => new Text($attributes['description']['en']),
+                'gr' => new Text($attributes['description']['gr']),
+            ])
+        ];
+    }
+}

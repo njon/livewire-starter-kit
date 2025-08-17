@@ -23,6 +23,7 @@ class Channel extends LunarChannel
         'address',
         'map_location',
         'attribute_data',
+        'working_hours'
     ];
 
     /**
