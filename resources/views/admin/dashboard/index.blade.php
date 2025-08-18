@@ -155,7 +155,7 @@
                             <tr>
                                 <th>Service</th>
                                 <!-- <th>Identifier</th> -->
-                                <th>Quantity</th>
+                                <th>Sales</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -163,7 +163,7 @@
                             @if($item)
                             <tr>
                                 <td>
-                                    <span class="fw-bold">{{ $item['product']->translateAttribute('name') ?? 'N/A' }}</span>
+                                    <span class="fw-bold"><a href="{{ $item['product_link'] }}">{{ $item['product']->translateAttribute('name') ?? 'N/A' }}</a></span>
                                     <span class="text-muted">Variant:</span>
                                     <span class="fst-italic text-secondary small">{{ $item['variant']->translateAttribute('name') ?? 'N/A' }}</span>
                                 </td>
@@ -230,31 +230,109 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Example 2: Line chart
     // Uncomment below to use a line chart instead
-    var lineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {!! json_encode($salesMonths) !!},
-            datasets: [{
-                label: 'Sales (€)',
-                data: {!! json_encode($salesPerMonth) !!},
-                fill: false,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: { 
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + ' €';
-                        }
+var lineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {!! json_encode($salesMonths) !!},
+        datasets: [{
+            label: 'Monthly Sales',
+            data: {!! json_encode($salesPerMonth) !!},
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: 'rgba(99, 102, 241, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+            pointBorderColor: '#fff',
+            // pointHoverRadius: 6,
+            // pointHoverBorderWidth: 2,
+            // pointRadius: 4,
+            // tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    color: '#6b7280',
+                    font: {
+                        size: 13,
+                        family: "'Inter', sans-serif",
+                        weight: 500
+                    },
+                    padding: 20,
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleFont: {
+                    size: 14,
+                    weight: 'bold',
+                    family: "'Inter', sans-serif"
+                },
+                bodyFont: {
+                    size: 13,
+                    family: "'Inter', sans-serif"
+                },
+                padding: 12,
+                usePointStyle: true,
+                callbacks: {
+                    label: function(context) {
+                        return ' ' + context.parsed.y.toLocaleString() + ' €';
                     }
                 }
             }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false,
+                    drawBorder: false
+                },
+                ticks: {
+                    color: '#9ca3af',
+                    font: {
+                        size: 12,
+                        family: "'Inter', sans-serif"
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(229, 231, 235, 0.5)',
+                    drawBorder: true
+                },
+                ticks: {
+                    color: '#9ca3af',
+                    font: {
+                        size: 12,
+                        family: "'Inter', sans-serif"
+                    },
+                    callback: function(value) {
+                        return value.toLocaleString() + ' €';
+                    },
+                    padding: 0,
+                    // stepSize: 1000, 
+                    maxTicksLimit: 10, 
+                }
+            }
+        },
+        elements: {
+            line: {
+                borderJoinStyle: 'round'
+            }
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index'
         }
-    });
+    }
+});
 
     // Example 3: Pie chart
     // Uncomment below to use a pie chart (for proportions)

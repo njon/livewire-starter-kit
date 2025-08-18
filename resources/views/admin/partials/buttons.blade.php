@@ -22,7 +22,7 @@
             @endif
 
             @if(isset($button['new']))
-                <a class="btn btn-primary" type="button" href="/admin/products/create">
+                <a class="btn btn-primary" type="button" href="{{ $button['link'] }}">
                     <i class="bi bi-plus-circle me-1"></i> Create New
                 </a>
             @endif

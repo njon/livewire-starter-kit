@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
-use \Lunar\Models\Product\Lines;
 use App\Models\User;
 use Lunar\Models\CartLine;
 use Illuminate\Support\Facades\Auth;
 use Lunar\Models\Channel;
 use Lunar\Models\Language;
+use Lunar\Models\OrderLine;
 
 class AdminDashboardController extends Controller
 {
@@ -27,7 +27,8 @@ class AdminDashboardController extends Controller
         $pendingOrders = Order::where('status', 'pending')->count();
 
         // Average Order Value
-        $averageOrderValue = $orders > 0 ? format_price(Order::where('status', 'payment-received')->avg('total'))->formatted() : 0;
+        $averageOrderValue = Order::where('status', 'payment-received')->avg('total') ?? 0;
+        $averageOrderValue = $orders > 0 ? format_price($averageOrderValue)->formatted() : 0;
 
         // Sales Overview (Yearly)
         $salesYear = date('Y');
@@ -36,12 +37,11 @@ class AdminDashboardController extends Controller
         foreach (range(1, 12) as $month) {
             $salesPerMonth[] = (float) Order::whereYear('created_at', $salesYear)
                 ->whereMonth('created_at', $month)
-                ->where('status', 'payment-received')
                 ->sum('total');
         }
 
 
-        $bestSellers = \Lunar\Models\OrderLine::with(['purchasable.product.variants'])
+        $bestSellers = OrderLine::with(['purchasable.product.variants'])
         ->whereHas('order', function($query) {
             $query->where('created_at', '>=', now()->subMonths(12))
                 ->whereNotIn('status', ['cancelled', 'failed']);
@@ -57,6 +57,7 @@ class AdminDashboardController extends Controller
                 return null;
             }
             return [
+                'product_link' => route('admin.products.edit', $item->purchasable->product->id),
                 'product' => $item->purchasable->product,
                 'variant' => $item->purchasable,
                 'quantity' => $item->total_quantity,

@@ -24,7 +24,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Login successful!');
+            return redirect()->intended('/admin/products')->with('success', 'Login successful!');
         }
 
         return back()->withErrors([
@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Login successful!');
+            return redirect()->intended('/admin/products')->with('success', 'Login successful!');
         }
 
         return back()->withErrors([

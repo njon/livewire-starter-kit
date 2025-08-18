@@ -219,42 +219,21 @@ class HomepageController extends Controller
 //  }
 // }
 
-        $products = Product::paginate(12);
+        // $u = get_customer();
+        // dd($u);
+
+        $products = Product::published()->paginate(12);
         $categories = \Lunar\Models\Collection::with([
             'defaultUrl',
             'parent.defaultUrl'
         ])->where('parent_id', null)->get();
 
-
         return view('homepage.index', compact('products', 'categories'));
     }
 
-    public function deleteOrders()
-    {
-        // Disable model events completely
-        \Lunar\Models\Order::flushEventListeners();
-        
-        try {
-            // Delete related tables first using direct DB queries
-            \DB::table('lunar_order_lines')->delete();
-            \DB::table('lunar_order_addresses')->delete();
-            \DB::table('lunar_transactions')->delete();
-            
-            // Then delete orders
-            $count = \Lunar\Models\Order::count();
-            \Lunar\Models\Order::query()->delete();
-            
-            return $count;
-        } finally {
-            // Restore event listeners
-            \Lunar\Models\Order::boot();
-        }
-    }
-
+    // @todo delete
     public function load($page) {
-
-                return view('admin.' . $page);
-
+        return view('admin.' . $page);
     }
 
 }

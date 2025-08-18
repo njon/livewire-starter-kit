@@ -280,6 +280,16 @@ $(document).ready(function () {
         $('#variantModal .modal-title').text('Add Variant');
         $('#saveVariantBtn').text('Add Variant').data('edit-mode', false).removeData('variant-id');
     });
+
+    $('.variant-card').on('click', function() {
+        const formattedPrice = $(this).find('.variant-price').text();
+        $('#cart-price')
+            .fadeOut(200, function() {
+                $(this).html(formattedPrice)
+                    .fadeIn(200);
+            });
+    });
+
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -435,9 +445,13 @@ $(document).ready(function() {
     // Show modal for editing variant
     $(document).on('click', '.edit-variant-btn', function() {
         const btn = $(this);
+        var price = btn.data('variant-price');
+        price = price.toString().slice(0, -2);
+        console.log(price);
+        console.log(typeof price);
         form.find('input[name="name[en]"]').val(btn.data('variant-name-en'));
         form.find('input[name="name[gr]"]').val(btn.data('variant-name-gr'));
-        form.find('input[name="price"]').val(btn.data('variant-price'));
+        form.find('input[name="price"]').val(price);
         form.find('input[name="sku"]').val(btn.data('variant-sku'));
         form.find('input[name="stock"]').val(btn.data('variant-stock'));
         

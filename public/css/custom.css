@@ -372,7 +372,7 @@ footer a {
   -webkit-animation: 0.8s;
   animation: 0.8s;
 }
-.button-animated.is-active:before, .button-animated.is-active:after {
+.button-animated.is-active:not(.static):before, .button-animated.is-active:not(.static):after {
   content: "";
   position: absolute;
   top: 50%;

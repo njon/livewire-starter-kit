@@ -23,6 +23,7 @@ class ChannelValidator extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'attribute_data.*' => 'array',
             'attribute_data.name.en' => 'required|string|max:255',
             'attribute_data.name.gr' => 'required|string|max:255',
             'attribute_data.description.en' => 'required|string|max:500',

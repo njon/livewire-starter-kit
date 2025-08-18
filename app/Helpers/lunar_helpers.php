@@ -9,6 +9,34 @@ use Lunar\Models\Order;
 use Lunar\Models\Product;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
+use Lunar\Models\OrderLine;
+use Lunar\Models\Transaction;
+use Lunar\Models\Customer;
+
+
+
+if (!function_exists('remove_orders')) {
+    /**
+     * Format discounted price
+     */
+    function remove_orders()
+    {
+        Order::query()->each(function ($order) {
+            // Delete transactions first
+            $order->transactions()->delete();
+            
+            // Delete order lines
+            $order->lines()->delete();
+            
+            // Delete addresses
+            $order->billingAddress()->delete();
+            $order->shippingAddress()->delete();
+            
+            // Finally delete the order
+            $order->delete();
+        });
+    }
+}
 
 if (!function_exists('format_price')) {
     /**
@@ -139,6 +167,8 @@ if (!function_exists('discounted_item_price')) {
 }
 
 
+
+
 if (!function_exists('generate_order_prices')) {
     /**
      * Get discounted price for a purchasable item
@@ -152,29 +182,28 @@ if (!function_exists('generate_order_prices')) {
         $paid = 0;
         $lines = $order->lines->where('owner_id', auth()->user()->id);
 
+
         // Calculate totals from order lines
         foreach ($lines as $line) {
             if (!$line->owner_id) {
                 continue;  // Skip lines without owner if needed
             }
-            $lineTotal = $line->unit_price->value * $line->quantity;
-            $subTotal += $lineTotal;
-            
-            $vatAmount = $line->tax_total->value * $line->quantity;
+            $vatAmount = $line->tax_total->value;
             $vatTotal += $vatAmount;
 
-            $total = $line->total->value * $line->quantity;
-            $totalTotal += $total;
+            $lineTotal = $line->unit_price->value * $line->quantity;
+            $subTotal += $lineTotal - $vatAmount;
+
+            $total += $line->total->value * $line->quantity;
+            $fullPrice = $line->unit_price->value + $line->tax_total->value;
+            $line->full_price = formatted_price($fullPrice);
         }
-        
-        // Calculate grand total
-        $total = $subTotal + $vatTotal;
         
         // Return all calculated values
         return [
             'sub_total' => formatted_price($subTotal),
             'vat_total' => formatted_price($vatTotal),
-            'total' => formatted_price($totalTotal),
+            'total' => formatted_price($total),
             'paid' => formatted_price($paid),
             'balance' => formatted_price($total - $paid),
         ];
@@ -223,6 +252,36 @@ if (!function_exists('get_table_columns')) {
     }
 }
 
+if (!function_exists('attributes_data')) {
+    function attributes_data(array $attributes, array $languages = ['en', 'gr']): array
+    {
+        $result = [];
+        $fields = ['name', 'description', 'url'];
+        
+        foreach ($fields as $field) {
+            if (!isset($attributes[$field])) {
+                continue;
+            }
+            
+            $translations = [];
+            
+            foreach ($languages as $lang) {
+                if (empty($attributes[$field][$lang])) {
+                    continue;
+                }
+                
+                $translations[$lang] = new Text($attributes[$field][$lang]);
+            }
+            
+            if (!empty($translations)) {
+                $result[$field] = new TranslatedText($translations);
+            }
+        }
+        
+        return $result;
+    }
+}
+
 if (!function_exists('attribute_data')) {
 
     function attribute_data($attributes): array
@@ -244,6 +303,19 @@ if (!function_exists('attribute_data')) {
     }
 }
 
+if (!function_exists('common_attributes')) {
+
+    function common_attributes($validated): array
+    {
+        return [
+            'tax_class_id' => 1,
+            'stock' => 5000,
+            'owner_id' => auth()->user()->owner_id,
+            'attribute_data' => attributes_data($validated)
+        ];
+    }
+}
+
 
 if (!function_exists('product_attribute_data')) {
 
@@ -259,5 +331,96 @@ if (!function_exists('product_attribute_data')) {
                 'gr' => new Text($attributes['description']['gr']),
             ])
         ];
+    }
+}
+
+if (!function_exists('product_has_filter_options')) {
+    /**
+     * Check if a product has specific filter options
+     *
+     * @param \Lunar\Models\Product $product
+     * @param array $filterOptionIds
+     * @return array [
+     *     'selected_ids' => array,
+     *     'checker' => \Closure
+     * ]
+     */
+    function product_has_filter_options(Product $product, array $filterOptionIds = []): array
+    {
+        $selectedIds = $product->filterOptions->pluck('id')->toArray();
+        
+        $checker = function(int $id) use ($selectedIds): bool {
+            return in_array($id, $selectedIds, true);
+        };
+        
+        return [
+            'selected_ids' => $selectedIds,
+            'checker' => $checker
+        ];
+    }
+}
+
+if (!function_exists('new_customer')) {
+    /**
+     * Check if a product has specific filter options
+     *
+     * @param \Lunar\Models\Product $product
+     * @param array $filterOptionIds
+     * @return array [
+     *     'selected_ids' => array,
+     *     'checker' => \Closure
+     * ]
+     */
+    function new_customer()
+    {
+        $customers = Customer::all();
+
+        $customer = Customer::create([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            
+            // Optional standard fields
+            'company_name' => 'ACME Corporation',
+            'account_ref' => 'CUST-12345', // Your internal reference
+            
+            // Contact information
+            
+            // Meta data (store any custom fields as JSON)
+            'meta' => [
+                'newsletter_subscribed' => true,
+                'preferred_contact_method' => 'email',
+                'lead_source' => 'website',
+                'customer_tier' => 'premium',
+                'notes' => 'Important client with special pricing',
+            ],
+    
+        ]);
+
+        $customer->users()->attach(auth()->id());
+
+        $defaultGroup = \Lunar\Models\CustomerGroup::whereDefault(true)->first();
+        $customer->customerGroups()->attach($defaultGroup);
+    }
+}
+
+use Illuminate\Support\Facades\Auth;
+
+if (!function_exists('get_customer')) {
+    /**
+     * Get the current user's customer record
+     *
+     * @return \Lunar\Models\Customer|null
+     */
+    function get_customer()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+        
+        if (!$user) {
+            return null;
+        }
+
+        // Return the first customer associated with the user
+        return $user->customers()->first();
     }
 }

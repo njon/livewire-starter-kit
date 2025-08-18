@@ -134,39 +134,21 @@ const exampleData = {
 
 <div>
     <div class="card mb-4">
-        <div class="card-header bg-transparent border-bottom py-3">
+            <div class="card-header bg-transparent border-bottom py-3">
                 <h3 class="h5 mb-0 d-flex align-items-center">
-                    <i class="bi bi-card-text me-2 text-primary"></i> Contact Information
+                    <i class="bi bi-card-text me-2 text-primary"></i> Business hours
                 </h3>
             </div>
-        <div class="card-body">
-        
-                
-
-
-                <!-- Images Section -->
-                <div>
-                    <div class="mb-3">
-                        <label for="images" class="form-label">Upload Images</label>
-                        <input class="form-control" type="file" id="images" name="images[]" multiple accept="image/*">
-                    </div>
-                    <div class="image-preview d-flex flex-wrap gap-2 mt-2"></div>
-                </div>
-
-
-
-                
+            <div class="card-body">
                 <!-- Working Hours Section -->
-                <div class="mb-4 mt-5">
-                    <h5 class="mb-3">Business Hours Setup</h5>
+                <div>
                     <div class="row g-3">
                         <div id="business-hours-container"> </div>
                     </div>
                 </div>
                 <input type="hidden" name="working_hours" id="json-output">
-            </form>
+            </div>
         </div>
-    </div>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgEzqtsDF9vccmavcM9nqftFqXSgASHGE&libraries=places&callback=initMap"  defer></script>

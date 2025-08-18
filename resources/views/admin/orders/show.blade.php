@@ -33,12 +33,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($order->lines as $line)
+                            @foreach($lines as $line)
                             <tr>
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center gap-3">
-                                        {{ $line->purchasable->owner_id }}
-
                                         @if($line->purchasable->product->getMedia('thumbnails')->empty())
                                         <img src="{{ $line->purchasable->product->getMedia('thumbnails')->first()->getUrl() }}"
                                             alt="{{ $line->description }}" class="rounded"
@@ -85,6 +83,12 @@
                 <div class="text-muted fs-14 mt-1">
                     {{ $order->created_at->format('F j, Y \a\t g:i A') }}
                 </div>
+                @if($order->notes)
+                <div class="border-top mt-3">
+                    <h6 class="fs-14 mt-3">Notes</h6>
+                    <p class="mb-0">{{ $order->notes ?? 'No notes' }}</p>
+                </div>
+                @endif
             </div>
 
 
@@ -94,19 +98,21 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">Notes</h6>
-                            <p class="mb-0">{{ $order->notes ?? 'No notes' }}</p>
-                        </div>
-
-                        <div class="border-bottom pb-3 mb-3">
                             <h6 class="fs-14 text-muted mb-2">Sub Total</h6>
                             <p class="mb-0">{{ $prices['sub_total']->formatted() }}</p>
 
                         </div>
 
-                        <div>
-                            <h6 class="fs-14 text-muted mb-2">Discount Total</h6>
+                        <div class="border-bottom pb-3 mb-3">
+                            <h6 class="fs-14 text-muted mb-2">Discount</h6>
                             <p class="mb-0">{{ $order->discount_total->formatted() }}</p>
+                        </div>
+                        
+                          <div>
+                            <h6 class="fs-14 text-muted mb-2">Paid</h6>
+                            <p class="mb-0">
+                                {{ ($order->captures && $order->captures->first()) ? $order->captures->first()->amount->formatted() : 'Not paid' }}
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -120,17 +126,15 @@
                             <p class="mb-0">{{ $prices['total']->formatted() }}</p>
                         </div>
 
-                        <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">Paid</h6>
-                            <p class="mb-0">
-                                {{ ($order->captures && $order->captures->first()) ? $order->captures->first()->amount->formatted() : 'Not paid' }}
-
-                            </p>
-                        </div>
+                      
 
                         <div>
                             <h6 class="fs-14 text-muted mb-2">Refund</h6>
+                            @if($order->refund_total)
                             <p class="mb-0">{{ $order->refund_total }}</p>
+                            @else
+                            <p class="mb-0">No refund</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -207,11 +211,13 @@
                     <p class="mb-0">{{ $order->customer_reference ?? '-' }}</p>
                 </div>
 
-                <div class="border-bottom pb-3 mb-3">
-                    <h6 class="fs-14 text-muted mb-2">Store</h6>
-                    <p class="mb-0">{{ $order->channel->name }}</p>
-                    <p class="mb-0">{{ $order->channel->address }}</p>
-                </div>
+                @if($order->channel)
+                    <div class="border-bottom pb-3 mb-3">
+                        <h6 class="fs-14 text-muted mb-2">Store</h6>
+                        <p class="mb-0">{{ $order->channel->name }}</p>
+                        <p class="mb-0">{{ $order->channel->address }}</p>
+                    </div>
+                @endif
 
                 <div>
                     <h6 class="fs-14 text-muted mb-2">Date Placed</h6>

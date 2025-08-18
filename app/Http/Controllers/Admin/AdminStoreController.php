@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Lunar\Models\Language;
 use App\Models\Channel as Channel;
 use App\Http\Requests\ChannelValidator;
+use Illuminate\Support\Facades\DB;
 
 class AdminStoreController extends Controller
 {
     public function index()
     {
-        $stores = Channel::all();
+        $stores = Channel::where('owner_id', auth()->user()->owner_id)->get();
         $languages = Language::all();
 
         return view('admin.stores.index', compact('stores', 'languages'));
@@ -28,10 +29,13 @@ class AdminStoreController extends Controller
     public function store(ChannelValidator $request)
     {   
         $validated = $request->validated();
+        $filteredData = collect($validated + [
+            'name' => 'asd', 'handle' => uniqid(), 'owner_id' => auth()->user()->owner_id
+            ])->except(['attribute_data'])->toArray();
 
-        Channel::create(array_merge($validated,
-            ['attribute_data' => attribute_data($validated['attribute_data'])]
-        ));
+        $channel = Channel::create($filteredData);
+        $channel->attribute_data = attributes_data($validated['attribute_data']);
+        $channel->save();
 
         return redirect()->route('stores.index')
             ->with('success', 'Store created successfully.');
@@ -60,7 +64,12 @@ class AdminStoreController extends Controller
 
     public function destroy(Channel $store)
     {
-        $store->delete();
+        $this->authorize('delete', $store);
+
+        DB::transaction(function () use ($store) {
+            $store->products()->detach();
+            $store->delete();
+        });
 
         return redirect()->route('stores.index')
             ->with('success', 'Store deleted successfully.');

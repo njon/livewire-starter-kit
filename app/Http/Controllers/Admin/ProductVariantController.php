@@ -22,18 +22,10 @@ class ProductVariantController extends Controller
             'stock' => 'nullable|integer|min:0',
         ]);
 
-
-        $variant = $product->variants()->create([
-            'stock' => 555,
-            'tax_class_id' => 1,
-            'attribute_data' => [
-                'name' => new TranslatedText([
-                    'en' => new Text($validated['name']['en']),
-                    'gr' => new Text($validated['name']['gr']),
-                ])
-            ]
-        ]);
-
+        $variant = $product->variants()->create(
+            common_attributes($validated)
+        );
+        
         $variant->prices()->create([
             'price' => $validated['price'] * 100,
             'currency_id' => 1,
@@ -55,24 +47,14 @@ class ProductVariantController extends Controller
     {
         $validated = $request->validate([
             'name.en' => 'required|string',
-            'name.gr' => 'nullable|string',
+            'name.gr' => 'required|string',
             'price' => 'required|numeric|min:0',
             'sku' => 'nullable|string|max:255',
             'stock' => 'nullable|integer|min:0',
         ]);
 
         $variant->update([
-            'stock' => $validated['stock'] ?? $variant->stock,
-            'attribute_data' => [
-                'name' => new TranslatedText([
-                    'en' => new Text($validated['name']['en']),
-                    'gr' => new Text($validated['name']['gr'] ?? $validated['name']['en']),
-                ]),
-                'description' => $variant->attribute_data['description'] ?? new TranslatedText([
-                    'en' => new Text(''),
-                    'gr' => new Text(''),
-                ]),
-            ]
+            'attribute_data' => attributes_data($validated)
         ]);
 
         $variant->prices()->update([

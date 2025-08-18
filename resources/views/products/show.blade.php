@@ -80,7 +80,7 @@
                         </p>
 
                         <div class="d-flex align-items-baseline my-3">
-                            <span class="fs-3 fw-bolder me-2">{{ $product->price }}</span>
+                            <span class="fs-3 fw-bolder me-2" id="cart-price">{{ $product->price }}</span>
                             @if ($product->has_discount)
                             <span
                                 class="text-decoration-line-through text-muted me-2">{{ $product->price_without_discount }}</span>
@@ -161,28 +161,76 @@
                             </div>
 
                         </div>
-
-                        @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
-                        <div class="product-variants mb-4">
-                            <h6 class="text-lg font-medium mb-3">{{ __('Select package') }}</h6>
-
-                            @foreach($product->variants as $variant)
-                            <div class="variant-option mb-3">
-                                <div class="variant-values variant-value-btn d-flex flex-wrap gap-2">
-                                    <input type="radio" class="btn-check" name="variant" id="variant-{{ $variant->id }}"
-                                        autocomplete="off" @if($first) checked @endif>
-                                    <label for="variant-{{ $variant->id }}"
-                                        class="btn btn-outline-secondary px-3 py-2 rounded-pill text-black"
-                                        data-form-link="/cart/{{ $variant->id }}" data-variant-id="{{ $variant->id }}">
-                                        {{ $variant->translateAttribute('name') }}
-                                        {{ $variant->price }}
-                                    </label>
-                                    @php $first = false; @endphp
+@if($product->variants->isNotEmpty() && $product->variants->count() > 1)
+    <div class="product-variants mb-4">
+        <h6 class="text-lg font-medium mb-3">{{ __('Select package') }}</h6>
+        <div class="variant-options">
+            @php $first = true; @endphp
+            @foreach($product->variants as $variant)
+                <div class="variant-option mb-3">
+                    <input type="radio" class="btn-check" name="variant" id="variant-{{ $variant->id }}"
+                           autocomplete="off" @if($first) checked @endif>
+                    <label for="variant-{{ $variant->id }}"
+                           class="variant-card d-flex flex-column p-md-3 rounded-3 border"
+                           data-form-link="/cart/{{ $variant->id }}" 
+                           data-variant-id="{{ $variant->id }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="variant-name h6 mb-0">
+                                
+                            </span>
+                            <div class="text-truncate pe-2">
+                                <div class="variant-title h6 mb-0 text-truncate" title="Adrenaline Rush: Extreme Paintball Combat Experience">
+                                    {{ $product->translateAttribute('name') }}
+                                </div>
+                                <div class="variant-subtitle small text-muted text-truncate">
+                                    {{ $variant->translateAttribute('name') }}
                                 </div>
                             </div>
-                            @endforeach
+                            <span class="variant-price badge bg-primary rounded-pill">
+                                {{ $variant->prices->first()->price->formatted }}
+                            </span>
                         </div>
-                        @endif
+    
+                        @php $first = false; @endphp
+                    </label>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <style>
+        .variant-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .variant-card:hover {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 1px #198754 ;
+        }.bg-primary {
+    background: #198754 !important;
+}
+        
+        .btn-check:checked + .variant-card {
+            border-color: #198754 !important;
+            background-color: rgba(var(--bs-primary-rgb), 0.05);
+            box-shadow: 0 0 0 2px #198754;
+        }
+        
+        .variant-price {
+            font-size: 0.9rem;
+            padding: 0.35rem 0.65rem;
+        }
+        
+        @media (min-width: 768px) {
+            .variant-price {
+                font-size: 1rem;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+    </style>
+@endif
 
                         <div class="row">
                             <div class="col-12">
@@ -234,7 +282,7 @@
             <h3 class="py-4 fs-4 mb-3">{{ __('Similar Experiences you may like') }}</h3>
             <div class="row">
                 @foreach ($relatedProducts as $product)
-                @include('products.product', ['col' => '3'])
+                    @include('products.product', ['col' => '3'])
                 @endforeach
             </div>
         </div>

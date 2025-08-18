@@ -77,39 +77,64 @@ class AdminServiceController extends Controller
             ->groupBy('lunar_products.id')
             ->paginate(25);
 
+        $productTypes = ProductType::all();
+
         // return view('admin.products.only', compact('products'));
-        return view('admin.products.index', compact('products'));
+        return view('admin.products.index', compact('products', 'productTypes'));
+    }
+
+    
+    public function edit(Product $product)
+    {
+        $this->authorize('update', $product);
+
+
+        $product->load(['variants', 'collections', 'channels', 'urls']);
+        dd($product);
+        $productTypes = ProductType::all();
+        $taxClasses = TaxClass::all();
+        $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
+        $languages = Language::all();
+        $filterCategories = FilterCategory::with('options')->get();
+        $channels = Channel::all()->where('owner_id', auth()->user()->owner_id);
+        $variant = $product->variants->first();
+        $variants = $product->variants->slice(1);
+        $sub_category = $product->collections->where('parent_id', '!==', null)->pluck('id')->first();
+        $price = $product->variants->first()->prices->first()->price->value / 100 ?? 0;
+
+        return view('admin.products.edit', compact(
+            'product',
+            'productTypes',
+            'taxClasses',
+            'collections',
+            'languages',
+            'channels',
+            'variant',
+            'filterCategories',
+            'sub_category',
+            'variants',
+            'price'
+        ));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name.gr' => 'required|string|max:255',
             'product_type_id' => 'required|exists:'.ProductType::class.',id',
         ]);
 
-        $commonAttributes = [
-            'tax_class_id' => 1,
-            'owner_id' => auth()->user()->owner_id,
-            'stock' => 5000,
-            'attribute_data' => [
-                'name' => new TranslatedText([
-                    'gr' => new Text($validated['name']),
-                ])
-            ]
-        ];
+        $commonAttributes = common_attributes($validated);
 
         $product = Product::create($commonAttributes + [
             'product_type_id' => $validated['product_type_id'],
             'status' => 'draft',
         ]);
 
-        $productVariant = ProductVariant::create($commonAttributes + [
-            'product_id' => $product->id,
-        ]);
+        $product->variants()->create($commonAttributes);
 
-        $productVariant->prices()->create([
-            'price' => 0, 
+        $product->variants()->first()->prices()->create([
+            'price' => 0,
             'currency_id' => 1, 
         ]);
 
@@ -136,16 +161,15 @@ class AdminServiceController extends Controller
 
         $productAttributes = Arr::only($validated, ['product_type_id', 'status', 'tax_class_id']) + [
             'stock' => 5000,
-            'attribute_data' => product_attribute_data($validated)
+            'attribute_data' => attributes_data($validated)
         ];
         $product->update($productAttributes);
 
-
         $variantAttributes = Arr::except($productAttributes, ['product_type_id', 'status']);
+        
         $defaultVariant = $product->variants()->updateOrCreate(['id' => $product->variants()->first()->id], $variantAttributes );
+        $defaultVariant->prices()->first()->update(['price' => $validated['price'] * 100]);
 
-        $defaultVariant->prices()->first()->update(['price' => $validated['price']]);
-            
         // @todo double check if works allright
         foreach ($validated['urls'] ?? [] as $locale => $url) {
             $product->urls()->updateOrCreate(
@@ -163,36 +187,6 @@ class AdminServiceController extends Controller
 
         return redirect()->route('admin.products.edit', $product->id)
             ->with('success', 'Product updated successfully');
-    }
-
-    public function edit(Product $product)
-    {
-        $this->authorize('update', $product);
-
-        $product->load(['variants', 'collections', 'channels', 'urls']);
-
-        $productTypes = ProductType::all();
-        $taxClasses = TaxClass::all();
-        $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
-        $languages = Language::all();
-        $filterCategories = FilterCategory::with('options')->get();
-        $channels = Channel::all();
-        $variant = $product->variants->first();
-        $variants = $product->variants->slice(1);
-        $sub_category = $product->collections->where('parent_id', '!==', null)->pluck('id')->first();
-
-        return view('admin.products.edit', compact(
-            'product',
-            'productTypes',
-            'taxClasses',
-            'collections',
-            'languages',
-            'channels',
-            'variant',
-            'filterCategories',
-            'sub_category',
-            'variants'
-        ));
     }
 
     public function destroy(Product $product)

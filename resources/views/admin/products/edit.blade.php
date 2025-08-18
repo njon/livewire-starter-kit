@@ -10,14 +10,6 @@
 ])
 @endsection
 
-@php
-$selectedFilterOptionIds = $product->filterOptions->pluck('id')->toArray();
-$productHasFilterOption = function($id) use ($selectedFilterOptionIds) {
-return in_array($id, $selectedFilterOptionIds);
-};
-$price = $product->variants->first()->prices->first()->price->value ?? 0;
-@endphp
-
 @section('content')
 
 <form action="{{ route('admin.products.media.store', $product) }}" method="POST" id="media-dropzone">
@@ -278,7 +270,7 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                     <div class="input-group">
                         <span class="input-group-text">Eur</span>
                         <input type="number" class="form-control @error('price') is-invalid @enderror" name="price"
-                            placeholder="0.00" step="0.01" value="{{ old('price',  $price) }}">
+                            value="{{ old('price',  $price) }}">
                         @error('price')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -348,11 +340,8 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
                                         @foreach($filterCategory->options as $option)
                                         <label class="filter-option">
                                             <input type="checkbox" name="filters[{{ $filterCategory->id }}][]"
-                                                value="{{ $option->id }}" @if($productHasFilterOption($option->id))
-                                            checked
-                                            @endif
-                                            id="filter_{{ $filterCategory->id }}_{{ $option->id }}"
-                                            >
+                                                value="{{ $option->id }}" @if(product_has_filter_options($product)['checker']($option->id)) checked @endif
+                                                id="filter_{{ $filterCategory->id }}_{{ $option->id }}">
                                             <span class="checkmark"></span>
                                             <span class="option-label">{{ $option->name }}</span>
                                         </label>
@@ -372,7 +361,6 @@ $price = $product->variants->first()->prices->first()->price->value ?? 0;
 </form>
 
 @include('admin.products.variant-modal')
-
 
 <script>
 function deleteImage(mediaId) {

@@ -36,7 +36,7 @@ class ProductController extends Controller
         // $user = User::find($us->id);
 
         $counter = end_in_counter($product->discounts);
-        $relatedProducts = Product::limit(5)->get();
+        $relatedProducts = $product->getRelatedProducts();
         $category = $product->collections->first()->id ?? null;
 
         $breadcrums = $product->collections->first();

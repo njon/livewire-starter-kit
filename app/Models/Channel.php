@@ -40,4 +40,9 @@ class Channel extends LunarChannel
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function scopeOwnerx($query)
+    {
+        return $query->where('owner_id', auth()->user()->owner_id);
+    }
+
 }

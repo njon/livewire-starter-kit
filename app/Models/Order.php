@@ -9,9 +9,10 @@ class Order extends \Lunar\Models\Order
 {
     use OwnerScope;
     
-    public function owner()
+
+    public function scopeOwnerx($query)
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $query->where('owner_id', auth()->user()->owner_id);
     }
 
 }

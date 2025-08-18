@@ -134,14 +134,23 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="productTitle" class="form-label">Product Title</label>
-                        <input type="text" class="form-control" id="productTitle" name="name" required>
+                        <input type="text" class="form-control" id="productTitle" name="name[gr]" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productType" class="form-label">Product Type</label>
+                        <select class="form-select" id="productType" name="product_type_id" required>
+                            <option value="">Select Product Type</option>
+                            @foreach($productTypes as $type)
+                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <!-- Minimal required fields for LunarPHP -->
                     <!-- <div class="mb-3">
                         <label for="productSlug" class="form-label">Slug</label>
                         <input type="text" class="form-control" id="productSlug" name="slug" required>
                     </div> -->
-                    <input type="hidden" name="product_type_id" value="1"/>
+                    <input type="hidden" name="product_type_id" value="2"/>
 
                 </div>
                 <div class="modal-footer">

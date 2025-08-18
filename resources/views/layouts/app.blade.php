@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- @todo change ellada experiences to your app name -->
-    <title>@yield('title', 'Ellada Experiences') | Ellada Experiences</title>
+    <title>@yield('title', 'Ellada Experiences') | {{ env('PAGE_TITLE', 'Ellada Experiences') }}</title>
     <!-- @todo change meta description for homepage and other pages -->
     <meta name="description" content="@yield('meta_description', 'Discover unique experiences in Greece with Ellada Experiences. From cultural tours to adventure activities, find the perfect gift or personal adventure.')">
     <script>
-        fetch('wishlist/ajax-items') .then(response => { if (!response.ok) { throw new Error('Network response was not ok'); } return response.json(); }) .then(data => { document.querySelectorAll('.wishlist-add').forEach(btn => { const productId = btn.dataset.productId; const isActive = data.hasOwnProperty(productId); btn.classList.toggle('is-active', isActive); let parent = btn.closest('.btn-wishlist'); if (parent) { parent.classList.toggle('is-active', isActive); } }); }) .catch(error => { console.error('Error fetching wishlist items:', error); });
+        fetch('wishlist/ajax-items') .then(response => { if (!response.ok) { throw new Error('Network response was not ok'); } return response.json(); }) .then(data => { document.querySelectorAll('.wishlist-add').forEach(btn => { const productId = btn.dataset.productId; const isActive = data.hasOwnProperty(productId); btn.classList.toggle('static', isActive); btn.classList.toggle('is-active', isActive); let parent = btn.closest('.btn-wishlist'); if (parent) { parent.classList.toggle('is-active', isActive); } }); }) .catch(error => { console.error('Error fetching wishlist items:', error); });
 const processing = '{{ __("Processing...") }}';
 const submitting = '{{ __("Submitting...") }}';
 const adding = '{{ __("Adding") }}';

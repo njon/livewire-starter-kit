@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Lunar\Models\Order;
+use Lunar\Models\OrderLine;
 use Illuminate\Http\Request;
 
 class AdminOrdersController extends Controller
 {
     public function index()
     {
-        $orderIds = \Lunar\Models\OrderLine::where('owner_id', auth()->user()->id)
+        $orderIds = OrderLine::where('owner_id', auth()->user()->id)
             ->pluck('order_id')
             ->unique();
 
@@ -25,16 +26,28 @@ class AdminOrdersController extends Controller
 
     public function show($id)
     {
-        $orders = Order::all();
         $order = Order::with(['customer', 'transactions', 'addresses', 'lines' => 
             function ($query) {
                 $query->where('owner_id', auth()->user()->id);
             }
         ])->findOrFail($id);
 
+        $lines = $order->lines()->where('owner_id', auth()->user()->id)
+            ->with(['purchasable' => function($query) {
+                $query->withTrashed(); 
+            }])
+        ->get();
+
+        $lines->each(function ($line) {
+            $line->sub_total = formatted_price($line->unit_price->value * $line->quantity);
+            // Calculate new price (unit price + tax per unit)
+            $unitTax = $line->tax_total->value / $line->quantity;
+            $newUnitPrice = $line->unit_price->value + $unitTax;
+        });
+
         $prices = generate_order_prices($order);
 
-        return view('admin.orders.show', compact('order', 'prices'));
+        return view('admin.orders.show', compact('order', 'prices', 'lines'));
     }
 
     public function updateStatus(Request $request, $id)

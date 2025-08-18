@@ -127,21 +127,12 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
         <div class="card mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
                 <h3 class="h5 mb-0 d-flex align-items-center">
-                    <i class="bi bi-card-text me-2 text-primary"></i> Contact Information
+                    <i class="bi bi-card-text me-2 text-primary"></i> Business hours
                 </h3>
             </div>
             <div class="card-body">
-                <!-- Images Section -->
-                <div>
-                    <div class="mb-3">
-                        <label for="images" class="form-label">Upload Images</label>
-                        <input class="form-control" type="file" id="images" name="images[]" multiple accept="image/*">
-                    </div>
-                    <div class="image-preview d-flex flex-wrap gap-2 mt-2"></div>
-                </div>
                 <!-- Working Hours Section -->
-                <div class="mb-4 mt-5">
-                    <h5 class="mb-3">Business Hours Setup</h5>
+                <div>
                     <div class="row g-3">
                         <div id="business-hours-container"> </div>
                     </div>

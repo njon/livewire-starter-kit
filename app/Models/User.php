@@ -95,6 +95,7 @@ class User extends Authenticatable
                 $user->save();
             }
         });
+        
     }
 
 

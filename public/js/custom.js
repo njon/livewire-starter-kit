@@ -434,6 +434,15 @@ $(document).ready(function () {
         });
     });
 
+    $('.variant-card').on('click', function() {
+        const formattedPrice = $(this).find('.variant-price').text();
+            $('#cart-price')
+            .fadeOut(200, function() {
+                $(this).html(formattedPrice)
+                    .fadeIn(200);
+            });
+    });
+    
     $('#add-to-cart').on('submit', function (e) {
         e.preventDefault();
 

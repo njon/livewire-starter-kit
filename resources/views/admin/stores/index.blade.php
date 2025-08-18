@@ -2,7 +2,7 @@
 
 @section('toolbar')
     @include('admin.partials.buttons', ['title' => 'Stores', 'asset' => 'Stores', 'buttons' => [
-        ['new' => true]
+        ['new' => true, 'link' => route('stores.create')]
     ]])
 @endsection
 
@@ -89,9 +89,9 @@
                                     </td>
                                     <td>
                                         @foreach($store->products as $service)
-                                            <span class="badge bg-secondary">
-                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="text-decoration-none text-white">
-                                                    {{ $service->translateAttribute('name') }}
+                                            <span class="badge">
+                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="text-decoration-none text-black">
+                                                    <i class="bi bi-tag me-2 text-black"></i>{{ $service->translateAttribute('name') }}
                                                 </a>
                                             </span>
                                         @endforeach

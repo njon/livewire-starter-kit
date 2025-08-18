@@ -2,7 +2,7 @@
 
 @section('toolbar')
     @include('admin.partials.buttons', ['title' => 'Users', 'asset' => 'Users', 'buttons' => [
-        ['new' => true]
+        ['new' => true, 'link' => route('users.create')]
     ]])
 @endsection
 
