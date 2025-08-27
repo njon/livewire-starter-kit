@@ -76,7 +76,7 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
 
 
     Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
-    Route::get('/order/{id}', [AdminOrdersController::class, 'show'])->name('admin.orders.show');
+    Route::get('/order/{order}', [AdminOrdersController::class, 'show'])->name('admin.orders.show');
     Route::post('/order/{id}/status', [AdminOrdersController::class, 'updateStatus'])->name('admin.orders.update-status');
     Route::post('/order/{id}/refund', [AdminOrdersController::class, 'refund'])->name('admin.orders.refund');
     Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');

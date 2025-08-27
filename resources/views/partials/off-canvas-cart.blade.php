@@ -11,7 +11,7 @@
             @php
                 $product = $line->purchasable->product;
                 $variant = $line->purchasable;
-                $thumbnail = $product->thumbnail?->getUrl('small') ?? '/placeholder-product.jpg';
+                $thumbnail = $product->getThumbImage();
                 $productName = $product->translateAttribute('name');
                 $unitPrice = $line->price ? $line->price->formatted() : 'No price';
                 $totalPrice = $line->total->formatted();

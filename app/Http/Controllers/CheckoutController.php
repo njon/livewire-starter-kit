@@ -11,19 +11,14 @@ use Lunar\Models\OrderAddress;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use App\Events\OrderCompleted;
+use Lunar\Models\Cart;
+
 
 class CheckoutController extends Controller
 {
-    public $cart;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cart = $cartService;
-    }
-
     public function index()
     {
-        $cart = $this->cart->getCart();
+        $cart = CartSession::current();
 
         return view('partials.checkout', compact('cart'));
     }
@@ -153,6 +148,8 @@ class CheckoutController extends Controller
 
     public function checkout(Request $request)
     {
+        $cart = CartSession::current();
+
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -165,7 +162,7 @@ class CheckoutController extends Controller
             'order_notes' => 'nullable|string'
         ]);
 
-        $cart = $this->cart->getCart();
+        // @todo CHanell fix maybe
 
         $order = Order::create([
             'user_id' => auth()->id(),
@@ -177,7 +174,7 @@ class CheckoutController extends Controller
             'total' => $cart->total->value,
             'notes' => $validated['order_notes'] ?? null,
             'currency_code' => $cart->currency->code,
-            'channel_id' => 1,
+            'channel_id' => \Lunar\Models\Channel::where('default', true)->first()->id,
             'discount_total' => $cart->discountTotal->value,
             'tax_total' => $cart->taxTotal->value,
             'shipping_total' => 0,
@@ -205,6 +202,7 @@ class CheckoutController extends Controller
 
         $addressData['type'] = 'billing';
         OrderAddress::create($addressData);
+
 
         foreach ($cart->lines as $line) {
             $order->lines()->create([

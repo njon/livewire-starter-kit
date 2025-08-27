@@ -767,11 +767,16 @@ div#xxz {
 }
 
 h3.card-title {
-    line-height: 29px;
-    font-size: 18px;
+    line-height: 1.7rem;
+    font-size: 1.05rem;
     font-weight: 500;
 }
-
+.very-small {
+    font-size: 1rem;
+}
+.fs-13 {
+    font-size: 12px !important;
+}
 span.sale-price {
     font-size: 20px;
     color: #48663a;

@@ -70,7 +70,7 @@
 
     <div class="row g-3">
        @foreach($categories->slice(6,5) as $collection)
-        <div class="col-lg col-md-6 mb-0 px-2">
+        <div class="col-sm-6 col-md col-lg mb-0 px-2">
             <div class="card border-0 rounded-1 overflow-hidden d-flex flex-column h-100  shadow-up">
                 <a href="{{ $collection->defaultUrl->slug }}" class="category-link text-decoration-none">
                     <div class="position-relative flex-grow-1">

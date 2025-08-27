@@ -67,7 +67,7 @@
                             </span>
                         </td>
                         <td>
-                            {{ $order->price_array['total']->formatted() }}
+                            {{ format_price($order->owner_total)->formatted() }}
                         </td>
                         <td>
                             <span class="text-muted fs-14">

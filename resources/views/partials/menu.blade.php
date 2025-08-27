@@ -54,7 +54,9 @@
                 <div class="text-nowrap d-flex align-items-center gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <div class="input-group">
                     <span class="input-group-text">
-                      <span class="material-symbols-outlined hoverable-icon">search</span> </span>
+                      <i class="fa fa-search" aria-hidden="true"></i>
+ 
+                    </span>
                     <input type="search" class="form-control border-start-0 min-width-400"
                       placeholder="{{ __('Search for experiences') }}" aria-label="{{ __('Search') }}">
                   </div>

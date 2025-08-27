@@ -95,8 +95,21 @@ class User extends Authenticatable
                 $user->save();
             }
         });
-        
     }
 
+    public function customers()
+    {
+        return $this->belongsToMany(Customer::class, 'lunar_customer_user')
+                    ->withTimestamps();
+    }
 
+    public function latestCustomer()
+    {
+        return $this->customers()->latest()->first();
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

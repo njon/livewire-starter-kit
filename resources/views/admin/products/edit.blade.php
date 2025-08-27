@@ -269,8 +269,7 @@
                     <label class="form-label">Base Price</label>
                     <div class="input-group">
                         <span class="input-group-text">Eur</span>
-                        <input type="number" class="form-control @error('price') is-invalid @enderror" name="price"
-                            value="{{ old('price',  $price) }}">
+                        <input type="number" class="form-control @error('price') is-invalid @enderror" name="price" value="{{ old('price',  $price) }}">
                         @error('price')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

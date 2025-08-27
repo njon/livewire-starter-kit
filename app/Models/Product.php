@@ -75,12 +75,12 @@ class Product extends LunarProduct
     {
         $discount = $this->discounts->first() ?? new Discount();
 
-        return (new DiscountService($this->prices->sortBy('price')->first(), $discount))->calculate();
+        return (new DiscountService($this->prices->first(), $discount))->calculate();
     }
 
     public function getDefaultPrice()
     {        
-        return $this->prices->sortBy('price')->first()->price->value;
+        return $this->prices->first()->price->value;
     }
 
     public static function findBySlug(string $slug): ?self
@@ -109,13 +109,15 @@ class Product extends LunarProduct
     public function getRelatedProducts(int $limit = 4): BaseCollection
     {
         return static::with(static::$listingWith)
-            ->whereHas('collections', function($query) {
-                $query->whereIn(
-                    'lunar_collection_product.collection_id', 
-                    $this->collections->pluck('id')
-                );
-            })
+        // @todo uncomment maybe later
+            // ->whereHas('collections', function($query) {
+            //     $query->whereIn(
+            //         'lunar_collection_product.collection_id', 
+            //         $this->collections->pluck('id')
+            //     );
+            // })
             ->where('lunar_products.id', '!=', $this->id)
+            ->where('lunar_products.status', 'published')
             ->limit($limit)
             ->get();
     }
@@ -150,6 +152,11 @@ class Product extends LunarProduct
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published');
     }
 
     /**
@@ -228,6 +235,24 @@ class Product extends LunarProduct
                 ->whereColumn('product_id', 'lunar_products.id'),
             $direction
         );
+    }
+
+    public function getThumbImage(): ?string
+    {
+        // @todo add fallback.jpg to public images folder
+        $thumbnail = $this->getMedia('thumbnails')->first();
+        
+        if (!$thumbnail) {
+            return 'fallback.jpg';
+        }
+        
+        try {
+            return $thumbnail->getUrl('small') ?? $thumbnail->getUrl();
+        } catch (\Exception $e) {
+            // Log error if needed
+            // logger()->error("Thumbnail URL error: " . $e->getMessage());
+            return $thumbnail->getUrl(); // Fallback to original URL
+        }
     }
     
 

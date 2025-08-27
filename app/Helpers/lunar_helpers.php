@@ -175,38 +175,14 @@ if (!function_exists('generate_order_prices')) {
      */
     function generate_order_prices($order)
     {
-        $subTotal = 0;
-        $vatTotal = 0;
-        $totalTotal = 0;
-        $total = 0;
-        $paid = 0;
-        $lines = $order->lines->where('owner_id', auth()->user()->id);
+        $orders->each(function($order) {
+            $order->owner_subtotal = $order->lines->sum('total.value') - $order->lines->sum('tax_total.value');
+            $order->owner_total = $order->lines->sum('total.value');
+            $order->owner_vat = $order->lines->sum('tax_total.value');
+            $order->owner_discount = $order->lines->sum('discount_total.value'); // Fixed typo: discount → discount
+        });
 
-
-        // Calculate totals from order lines
-        foreach ($lines as $line) {
-            if (!$line->owner_id) {
-                continue;  // Skip lines without owner if needed
-            }
-            $vatAmount = $line->tax_total->value;
-            $vatTotal += $vatAmount;
-
-            $lineTotal = $line->unit_price->value * $line->quantity;
-            $subTotal += $lineTotal - $vatAmount;
-
-            $total += $line->total->value * $line->quantity;
-            $fullPrice = $line->unit_price->value + $line->tax_total->value;
-            $line->full_price = formatted_price($fullPrice);
-        }
-        
-        // Return all calculated values
-        return [
-            'sub_total' => formatted_price($subTotal),
-            'vat_total' => formatted_price($vatTotal),
-            'total' => formatted_price($total),
-            'paid' => formatted_price($paid),
-            'balance' => formatted_price($total - $paid),
-        ];
+        return $orders;
     }
 }
     
@@ -422,5 +398,25 @@ if (!function_exists('get_customer')) {
 
         // Return the first customer associated with the user
         return $user->customers()->first();
+    }
+}
+
+
+if (!function_exists('remove_deleted_services_from_carts')) {
+    function remove_deleted_services_from_carts($deleted_ids)
+    {
+        // Get cart IDs that contain the deleted products
+        $cart_ids = \Lunar\Models\CartLine::whereIn('purchasable_id', $deleted_ids)
+            ->get()
+            ->pluck('cart_id')
+            ->unique()
+            ->toArray();
+
+        // Delete the lines from those carts
+        if (!empty($cart_ids)) {
+            \Lunar\Models\CartLine::whereIn('cart_id', $cart_ids)
+                ->whereIn('purchasable_id', $deleted_ids)
+                ->delete();
+        }
     }
 }

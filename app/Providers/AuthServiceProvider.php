@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         \App\Models\Channel::class => \App\Policies\OwnershipPolicy::class,
         \App\Models\Product::class => \App\Policies\OwnershipPolicy::class,
+        \Lunar\Models\OrderLine::class => \App\Policies\OwnershipPolicy::class,
     ];
 
     /**

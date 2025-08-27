@@ -15,22 +15,23 @@ class AdminOrdersController extends Controller
             ->pluck('order_id')
             ->unique();
 
-        $orders = Order::whereIn('id', $orderIds)->orderByDesc('id')->paginate(25);
+        $orders = Order::whereIn('id', $orderIds)
+            ->with(['lines' => function($query) {
+                $query->where('owner_id', auth()->id());
+            }])
+            ->orderByDesc('id')
+            ->paginate(25);
         
-        foreach($orders as $order) {
-            $order->price_array = generate_order_prices($order);
-        }
+        $orders = generate_order_prices($orders);
 
         return view('admin.orders.index', compact('orders'));
     }
 
-    public function show($id)
+    public function show(Order $order)
     {
-        $order = Order::with(['customer', 'transactions', 'addresses', 'lines' => 
-            function ($query) {
-                $query->where('owner_id', auth()->user()->id);
-            }
-        ])->findOrFail($id);
+        $orderLine = $order->lines->where('owner_id', auth()->user()->id)->first();
+
+        $this->authorize('view', $orderLine);
 
         $lines = $order->lines()->where('owner_id', auth()->user()->id)
             ->with(['purchasable' => function($query) {
@@ -38,16 +39,12 @@ class AdminOrdersController extends Controller
             }])
         ->get();
 
-        $lines->each(function ($line) {
-            $line->sub_total = formatted_price($line->unit_price->value * $line->quantity);
-            // Calculate new price (unit price + tax per unit)
-            $unitTax = $line->tax_total->value / $line->quantity;
-            $newUnitPrice = $line->unit_price->value + $unitTax;
-        });
-
-        $prices = generate_order_prices($order);
-
-        return view('admin.orders.show', compact('order', 'prices', 'lines'));
+        $order->owner_subtotal = $lines->sum('total.value') - $lines->sum('tax_total.value');
+        $order->owner_total = $lines->sum('total.value');
+        $order->owner_vat = $lines->sum('tax_total.value');
+        $order->owner_discount = $lines->sum('discount_total.value');
+  
+        return view('admin.orders.show', compact('order', 'lines'));
     }
 
     public function updateStatus(Request $request, $id)

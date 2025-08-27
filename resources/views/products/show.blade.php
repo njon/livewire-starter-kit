@@ -25,11 +25,10 @@
         </div>
     </div>
 
-    @include('products.gallery')
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
-        <div class="col-md-8 product-description">
+        <div class="col-sm-12 col-md-7 col-lg-7 col-xl-8 product-description">
             <h2 class="mb-4 fs-4 sf">{{ __('Service description') }}</h2>
             <article>
                 <p>{!! $product->translateAttribute('description') !!}</p>
@@ -45,10 +44,9 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-sm-12 col-md-5 col-lg-5 ps-lg-4 col-xl-4">
             <div class="sticky-box">
-                <div class="card shadow-lg border-0 rounded-2 overflow-hidden"
-                    style="max-width: 400px; margin: 2rem auto;">
+                <div class="card shadow-lg border-0 rounded-2 overflow-hidden">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="text-muted small">
@@ -90,10 +88,10 @@
                         </div>
 
                         @if($product->has_discount)
-                        <div class="alert alert-success border-0 d-flex align-items-center p-2 px-3 rounded-1 my-0"
+                        <div class="alert alert-success border-0 d-flex align-items-center p-2 px-3 rounded-4 my-3"
                             role="alert">
                             <i class="material-symbols-outlined me-2 fs-5">schedule</i>
-                            <small class="fw-semibold text-info-emphasis">Special offer:&nbsp;</small>
+                            <small class="fw-semibold text-info-emphasis">Special Offer </small>
                             @if(!$end['ended'])
                             <div class="countdown-timer d-flex align-items-center flex-grow-1 ms-1">
                                 <span class="badge bg-warning text-dark me-1" id="countdown-days-container">
@@ -134,33 +132,6 @@
                             </div>
                         </div> -->
 
-                        <div class="row text-center my-3">
-                            <div class="col-4">
-                                <div class="attribute bg-light py-3 rounded-3">
-                                    <i class="material-symbols-outlined product-icon text-muted d-block mb-1">person</i>
-                                    <small class="fw-semibold text-dark">2
-                                        {{ $product->translateAttribute('participants') }}
-                                        {{ __('participants') }}</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="attribute bg-light py-3 rounded-3">
-                                    <i
-                                        class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
-                                    <small class="fw-semibold text-dark">45 {{ $product->translateAttribute('length') }}
-                                        {{ __('minutes') }}</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="attribute bg-light py-3 rounded-3">
-                                    <i
-                                        class="material-symbols-outlined product-icon text-muted d-block mb-1">schedule</i>
-                                    <small class="fw-semibold text-dark">45 {{ $product->translateAttribute('length') }}
-                                        {{ __('minutes') }}</small>
-                                </div>
-                            </div>
-
-                        </div>
 @if($product->variants->isNotEmpty() && $product->variants->count() > 1)
     <div class="product-variants mb-4">
         <h6 class="text-lg font-medium mb-3">{{ __('Select package') }}</h6>
@@ -242,19 +213,19 @@
                                         {{ __('Add to Cart') }}
                                     </button>
                                     <input type="hidden" name="to_cart" value="1">
-                                    <input type="hidden" name="product_id" value="1">
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                 </form>
                             </div>
 
                             <div class="col-12 mt-2">
-                                <form id="add-to-cart" action="/cart/1" data-redirect="true" method="PUT">
+                                <form id="add-to-cart" action="/cart/{{ $product->variants->first()->id }}" data-redirect="true" method="PUT">
                                     <button class="btn btn-dark btn btn-success rounded-2 animate-btn-hover w-100 p-2"
                                         id="btn-add-to-cart">
                                         <i class="fa fa-cart"></i> {{ __('Buy Now') }}
                                     </button>
                                     <input type="hidden" name="to_cart" value="1">
-                                    <input type="hidden" name="product_id" value="1">
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                 </form>
                             </div>

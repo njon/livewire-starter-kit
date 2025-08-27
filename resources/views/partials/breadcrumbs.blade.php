@@ -6,19 +6,16 @@
       <a href="/">{{ __('Home') }}</a>
     </li>
 
-    @if ($breadcrums)
-    <!-- Hand le children recursively -->
-    @if ($breadcrums->parent)
+    @if ($parent_category)
     <li class="breadcrumb-item">
-      <a href="{{ $breadcrums->parent->defaultUrl->slug }}">{{ $breadcrums->parent->translateAttribute('name') }}</a>
+      <a href="{{ $parent_category->defaultUrl->slug }}">{{ $parent_category->translateAttribute('name') }}</a>
     </li>
     @endif
 
-    <!-- Parent category -->
+    @if ($child_category)
     <li class="breadcrumb-item">
-      <a href="{{ $breadcrums->defaultUrl->slug }}">{{ $breadcrums->translateAttribute('name') }}</a>
+      <a href="{{ $child_category->defaultUrl->slug }}">{{ $child_category->translateAttribute('name') }}</a>
     </li>
-
     @endif
 
     <!-- Current page (product name) -->
@@ -37,18 +34,18 @@
         "name": "Home",
         "item": "{{ url('/') }}"
       },
-      @if($breadcrums?->parent) {
+      @if($parent_category) {
         "@type": "ListItem",
         "position": 2,
-        "name": "{{ $breadcrums->parent->translateAttribute('name') }}",
-        "item": "{{ url($breadcrums->parent->defaultUrl->slug) }}"
+        "name": "{{ $parent_category->translateAttribute('name') }}",
+        "item": "{{ url($parent_category->defaultUrl->slug) }}"
       },
       @endif
-      @if($breadcrums) {
+      @if($child_category) {
         "@type": "ListItem",
         "position": 3,
-        "name": "{{ $breadcrums->translateAttribute('name') }}",
-        "item": "{{ url($breadcrums->defaultUrl->slug) }}"
+        "name": "{{ $child_category->translateAttribute('name') }}",
+        "item": "{{ url($child_category->defaultUrl->slug) }}"
       },
       @endif {
         "@type": "ListItem",

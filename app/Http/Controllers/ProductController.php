@@ -39,14 +39,16 @@ class ProductController extends Controller
         $relatedProducts = $product->getRelatedProducts();
         $category = $product->collections->first()->id ?? null;
 
-        $breadcrums = $product->collections->first();
+        $parent_category = $product->collections->where('parent_id', null)->first();
+        $child_category = $product->collections->where('parent_id', '!=', null)->first();
 
         return view('products.show', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
             'title' => $product->translateAttribute('name') . ' | Your Store',
             'end' => $counter,
-            'breadcrums' => $breadcrums,
+            'parent_category' => $parent_category,
+            'child_category' => $child_category,
         ]);
     }
 

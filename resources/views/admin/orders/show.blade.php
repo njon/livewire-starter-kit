@@ -99,13 +99,12 @@
                     <div class="col-md-6">
                         <div class="border-bottom pb-3 mb-3">
                             <h6 class="fs-14 text-muted mb-2">Sub Total</h6>
-                            <p class="mb-0">{{ $prices['sub_total']->formatted() }}</p>
-
+                            <p class="mb-0">{{ format_price($order->owner_subtotal)->formatted() }}</p>
                         </div>
 
                         <div class="border-bottom pb-3 mb-3">
                             <h6 class="fs-14 text-muted mb-2">Discount</h6>
-                            <p class="mb-0">{{ $order->discount_total->formatted() }}</p>
+                            <p class="mb-0">{{ format_price($order->owner_discount)->formatted() }}</p>
                         </div>
                         
                           <div>
@@ -118,12 +117,12 @@
                     <div class="col-md-6">
                         <div class="border-bottom pb-3 mb-3">
                             <h6 class="fs-14 text-muted mb-2">VAT</h6>
-                            <p class="mb-0">{{ $prices['vat_total']->formatted() }}</p>
+                            <p class="mb-0">{{ format_price($order->owner_vat)->formatted() }}</p>
                         </div>
 
                         <div class="border-bottom pb-3 mb-3">
                             <h6 class="fs-14 text-muted mb-2">Total</h6>
-                            <p class="mb-0">{{ $prices['total']->formatted() }}</p>
+                            <p class="mb-0">{{ format_price($order->owner_total)->formatted() }}</p>
                         </div>
 
                       

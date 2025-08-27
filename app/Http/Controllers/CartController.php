@@ -2,79 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Services\CartService;
 use Lunar\Facades\CartSession;
+use Lunar\Models\Cart;
 use Lunar\Models\ProductVariant;
+use Illuminate\Http\Request;
+use Lunar\Base\Purchasable;
+use Lunar\Models\CartLine;
 
 class CartController extends Controller
 {
-    public $cart;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cart = $cartService;
-    }
-
-    /**
-     * Display the cart.
-     */
     public function index()
     {
-        $cart = $this->cart->getCart();
-        // $this->cart->calculateDiscountedPrices($cart);
+        $cart = $this->getOrCreateCart();
 
         return view('partials.cart', ['cart' => $cart]);
     }
 
-    /**
-     * Remove a product from the cart.
-     */
-    public function destroy(ProductVariant $ProductVariant)
-    {
-        $items = $this->cart->removeFromCart($this->cart->getCart(), $ProductVariant->id);
-
-        $cart = $this->cart->getCart();
-
-        $response = array_merge([
-            'success' => true,
-            'message' => 'Quantity updated successfully',
-        ], $prices = $this->cart->priceVariables($cart));
-
-        return response()->json($response, 200);
-    }
-
-    /**
-     * Update the quantity of a product in the cart.
-     */
-    public function update(ProductVariant $ProductVariant, Request $request)
-    {
-        $quantity = $request->validate(['quantity' => 'required|integer|min:1'])['quantity'];
-
-
-        $request->input('to_cart') 
-            ? $this->cart->addToCart($ProductVariant) 
-            : $this->cart->updateQuantity($ProductVariant, $quantity);
-
-        $cart = $this->cart->getCart();
-
-        $response = array_merge([
-            'success' => true,
-            'message' => 'Quantity updated successfully',
-            'total' => $cart->lines->firstWhere('purchasable_id', $ProductVariant->id)->total->formatted(),
-        ], $prices = $this->cart->priceVariables($cart));
-
-        return response()->json($response, 200);
-    }
-
-    /**
-     * Get the cart items for the off-canvas cart.
-     */
     public function canvasItems()
     {
-        $cart = $this->cart->getCart();
-        // $this->cart->calculateDiscountedPrices($cart);
+        $cart = $this->getOrCreateCart();
 
         $html = view('partials.off-canvas-cart', ['cart' => $cart])->render();
 
@@ -84,28 +30,95 @@ class CartController extends Controller
         ]);
     }
 
-    public function removeOrders() {
-
-    }
-
-
-   public function refreshLunarCache()
+    public function update(ProductVariant $ProductVariant , Request $request)
     {
-        $cart = $this->cart->getCart();
-        $this->cart->clearCartx($cart);
+        $purchasable = $ProductVariant;
 
-        return redirect()->back();
-    }
+        $request->validate([
+            'quantity' => 'required|numeric|min:1',
+        ]);
 
-    // @todo remove later
-    public function deleteCollections()
-    {
-        $collections = \Lunar\Models\Collection::all();
-        foreach ($collections as $collection) {
-            $collection->products()->detach();
-            $collection->delete();
+        $quantity = $request['quantity'];
+
+        $cart = $this->getOrCreateCart();
+
+        $existingLine = $cart->lines()
+            ->where('purchasable_type', get_class($purchasable))
+            ->where('purchasable_id', $purchasable->id)
+            ->first();
+
+        if ($existingLine) {
+            $existingLine->update([
+                'quantity' => $existingLine->quantity + $quantity,
+                'meta' => [
+                    'product_name' => $purchasable->product->translateAttribute('name'),
+                    'updated_at' => now(),
+                ]
+            ]);
+        } else {
+            CartLine::create([
+                'cart_id' => $cart->id,
+                'purchasable_type' => get_class($purchasable),
+                'purchasable_id' => $purchasable->id,
+                'quantity' => $quantity,
+                'meta' => [
+                    'product_name' => $purchasable->product->translateAttribute('name'),
+                    'created_at' => now(),
+                ]
+            ]);
         }
-        
-        dd($collections);
+
+        $cart->calculate();
+
+        $response = array_merge([
+            'success' => true,
+            'message' => 'Quantity updated successfully',
+        ]);
+
+        return response()->json($response, 200);
+    }
+
+    public function showCart()
+    {
+        $cart = $this->getOrCreateCart();
+        return view('cart.show', compact('cart'));
+    }
+
+    public function removeFromCart($cartLineId)
+    {
+        $cart = $this->getOrCreateCart();
+        $cart->lines()->where('id', $cartLineId)->delete();
+        $cart->calculate();
+
+        return redirect()->back()->with('success', 'Item removed from cart');
+    }
+
+    protected function getOrCreateCart(): Cart
+    {
+        $cart = CartSession::current() ?? CartSession::createNew();
+
+
+
+        // if(auth()->check()) {
+        //         $cart = CartSession::create([
+        //             'currency_id' => 1,
+        //             'user_id' => auth()->id(),
+        //             'channel_id' => 22,
+        //             'meta' => ['created_at' => now()],
+        //         ]);
+        // }
+
+
+        return $cart;
+    }
+
+    public function refreshLunarCache()
+    {
+        $cart = $this->getOrCreateCart();
+        $cart->lines()->delete();
+        $cart->calculate();
+        CartSession::forget();
+
+        return redirect()->back()->with('success', 'Cart refreshed');
     }
 }

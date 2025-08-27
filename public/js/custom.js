@@ -436,6 +436,9 @@ $(document).ready(function () {
 
     $('.variant-card').on('click', function() {
         const formattedPrice = $(this).find('.variant-price').text();
+        const link = $(this).data('form-link');
+        $('#add-to-cart').attr('action', link);
+        console.log(link);
             $('#cart-price')
             .fadeOut(200, function() {
                 $(this).html(formattedPrice)

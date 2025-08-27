@@ -28,6 +28,8 @@ class AdminServiceController extends Controller
 {
     public function storeMedia(Request $request, Product $product)
     {
+        $this->authorize('update', $product);
+
         $request->validate(['file' => 'required|image|max:2048']);
         $validated = $request->validate(['thumbnail' => 'boolean']);
 
@@ -50,6 +52,8 @@ class AdminServiceController extends Controller
 
     public function destroyMedia(Request $request, Product $product)
     {
+        $this->authorize('update', $product);
+
         $mediaId = $request->input('media_id');
         $media = $product->media()->where('id', $mediaId)->first();
 
@@ -69,6 +73,13 @@ class AdminServiceController extends Controller
 
     public function index()
     {
+        // $trashed = Product::withTrashed()->find(418);
+        // $trashed->restore();
+
+        // $product = Product::find(418);
+        // $product->delete();
+
+        // dd($product);
         // @todo check only sold items
         // @todo add owner_id to other models
         $products = Product::with(['variants'])->where('lunar_products.owner_id', auth()->user()->owner_id)
@@ -88,9 +99,7 @@ class AdminServiceController extends Controller
     {
         $this->authorize('update', $product);
 
-
         $product->load(['variants', 'collections', 'channels', 'urls']);
-        dd($product);
         $productTypes = ProductType::all();
         $taxClasses = TaxClass::all();
         $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
@@ -191,6 +200,13 @@ class AdminServiceController extends Controller
 
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product);
+
+        // delete product variants from active carts ( IMPORATNT, otherwise Errors )
+        $deleted_ids = $product->variants->pluck('id')->all();
+
+        remove_deleted_services_from_carts($deleted_ids);
+
         $product->delete();
 
         return redirect()->route('admin.products.index')
