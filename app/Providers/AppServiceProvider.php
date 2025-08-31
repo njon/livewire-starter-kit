@@ -9,6 +9,8 @@ use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(ShippingModifiers $shippingModifiers): void
     {
+        Builder::macro('ownedByUser', function ($userId = null, $column = 'owner_id') {
+            $userId = $userId ?? auth()->id();
+            
+            if (!$userId) {
+                // Return empty result if no user is authenticated
+                return $this->whereNull($column);
+            }
+            
+            return $this->where($column, $userId);
+        });
+
+        Collection::macro('ownedByUser', function ($userId = null, $column = 'owner_id') {
+            $userId = $userId ?? auth()->id();
+            
+            return $this->filter(function ($item) use ($userId, $column) {
+                return $item->{$column} == $userId;
+            });
+        });
+
         $shippingModifiers->add(
             ShippingModifier::class
         );

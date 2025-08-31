@@ -173,7 +173,7 @@ if (!function_exists('generate_order_prices')) {
     /**
      * Get discounted price for a purchasable item
      */
-    function generate_order_prices($order)
+    function generate_order_prices($orders)
     {
         $orders->each(function($order) {
             $order->owner_subtotal = $order->lines->sum('total.value') - $order->lines->sum('tax_total.value');

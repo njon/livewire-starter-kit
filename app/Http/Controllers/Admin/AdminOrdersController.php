@@ -11,13 +11,14 @@ class AdminOrdersController extends Controller
 {
     public function index()
     {
-        $orderIds = OrderLine::where('owner_id', auth()->user()->id)
+        $orderIds = OrderLine::ownedByUser()
             ->pluck('order_id')
             ->unique();
 
         $orders = Order::whereIn('id', $orderIds)
-            ->with(['lines' => function($query) {
-                $query->where('owner_id', auth()->id());
+            ->with(['lines' => function ($query) {
+                $query->ownedByUser()
+                      ->orderByDesc('id');
             }])
             ->orderByDesc('id')
             ->paginate(25);
@@ -29,11 +30,11 @@ class AdminOrdersController extends Controller
 
     public function show(Order $order)
     {
-        $orderLine = $order->lines->where('owner_id', auth()->user()->id)->first();
+        $orderLine = $order->lines->ownedByUser()->first();
 
         $this->authorize('view', $orderLine);
 
-        $lines = $order->lines()->where('owner_id', auth()->user()->id)
+        $lines = $order->lines()->ownedByUser()
             ->with(['purchasable' => function($query) {
                 $query->withTrashed(); 
             }])

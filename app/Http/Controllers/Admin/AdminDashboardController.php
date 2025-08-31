@@ -16,18 +16,18 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $orders = Order::count();
-        $products = Product::count();
-        $customers = User::count();
+        $orders = Order::ownedByUser()->count();
+        $products = Product::ownedByUser()->count();
+        $customers = User::ownedByUser()->count();
 
-        $totalRevenue = Order::where('status', 'payment-received')->sum('total');
+        $totalRevenue = Order::ownedByUser()->where('status', 'payment-received')->sum('total');
         $totalRevenue = format_price($totalRevenue)->formatted();
 
-        $latestOrders = Order::latest()->take(5)->get();
-        $pendingOrders = Order::where('status', 'pending')->count();
+        $latestOrders = Order::ownedByUser()->latest()->take(5)->get();
+        $pendingOrders = Order::ownedByUser()->where('status', 'pending')->count();
 
         // Average Order Value
-        $averageOrderValue = Order::where('status', 'payment-received')->avg('total') ?? 0;
+        $averageOrderValue = Order::ownedByUser()->where('status', 'payment-received')->avg('total') ?? 0;
         $averageOrderValue = $orders > 0 ? format_price($averageOrderValue)->formatted() : 0;
 
         // Sales Overview (Yearly)
@@ -41,7 +41,7 @@ class AdminDashboardController extends Controller
         }
 
 
-        $bestSellers = OrderLine::with(['purchasable.product.variants'])
+        $bestSellers = OrderLine::ownedByUser()->with(['purchasable.product.variants'])
         ->whereHas('order', function($query) {
             $query->where('created_at', '>=', now()->subMonths(12))
                 ->whereNotIn('status', ['cancelled', 'failed']);

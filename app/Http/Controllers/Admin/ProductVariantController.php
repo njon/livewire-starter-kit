@@ -14,6 +14,8 @@ class ProductVariantController extends Controller
 {
     public function store(Request $request, Product $product)
     {
+        $this->authorize('update', $product);
+
         $validated = $request->validate([
             'name.en' => 'required|string',
             'name.gr' => 'nullable|string',
@@ -45,6 +47,8 @@ class ProductVariantController extends Controller
 
     public function update(Request $request, Product $product, ProductVariant $variant)
     {
+        $this->authorize('update', $product);
+
         $validated = $request->validate([
             'name.en' => 'required|string',
             'name.gr' => 'required|string',
@@ -75,6 +79,8 @@ class ProductVariantController extends Controller
 
     public function destroy(Product $product, ProductVariant $variant)
     {
+        $this->authorize('delete', $product);
+
         $variant->prices()->delete();
         $variant->delete();
 
