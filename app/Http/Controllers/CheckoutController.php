@@ -12,6 +12,7 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use App\Events\OrderCompleted;
 use Lunar\Models\Cart;
+use App\Services\NotificationService;
 
 
 class CheckoutController extends Controller
@@ -113,6 +114,9 @@ class CheckoutController extends Controller
             $order->update([
                 'status' => 'payment-received'
             ]);
+
+            // Create notification for new order
+            NotificationService::newOrder($order);
 
             $order->transactions()->create([
                 'success' => true,

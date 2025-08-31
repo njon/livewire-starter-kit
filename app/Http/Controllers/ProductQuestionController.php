@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductQuestion;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Services\NotificationService;
 
 class ProductQuestionController extends Controller
 {
@@ -31,6 +32,9 @@ class ProductQuestionController extends Controller
         ]);
 
         $product->questions()->save($question);
+
+        // Create notification for new question
+        NotificationService::newQuestion($question, $product);
 
         return response()->json([
             'success' => true,

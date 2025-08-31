@@ -81,6 +81,11 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::post('/order/{id}/refund', [AdminOrdersController::class, 'refund'])->name('admin.orders.refund');
     Route::get('/order/{id}/download', [AdminOrdersController::class, 'downloadPdf'])->name('admin.orders.download');
 
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::get('/notifications/recent', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'recent'])->name('admin.notifications.recent');
+    Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
 
 });
 

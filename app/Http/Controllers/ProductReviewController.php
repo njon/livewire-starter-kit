@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\GuestReviewInvitation;
+use App\Services\NotificationService;
 
 class ProductReviewController extends Controller
 {
@@ -51,6 +52,9 @@ class ProductReviewController extends Controller
                 'rating' => $request->rating,
                 'verified_purchase' => true,
             ]);
+
+            // Create notification for new review
+            NotificationService::newReview($review, $product);
         } else {
             $token = Str::random(60);
 
@@ -62,6 +66,9 @@ class ProductReviewController extends Controller
                 'token' => $token,
                 'token_expires_at' => now()->addDays(7),
             ]);
+
+            // Create notification for new guest review
+            NotificationService::newReview($review, $product);
 
             // Mail::to($request->email)->send(new GuestReviewInvitation($review));
         }

@@ -617,6 +617,20 @@
     "Add Variant": "Προσθήκη Παραλλαγής",
     "Title (English)": "Τίτλος (Αγγλικά)",
     "Title (Greek)": "Τίτλος (Ελληνικά)",
-    "Price (€)": "Τιμή (€)"
+    "Price (€)": "Τιμή (€)",
+    "Product created successfully. Please complete the details.": "Το προϊόν δημιουργήθηκε επιτυχώς. Παρακαλώ συμπληρώστε τις λεπτομέρειες.",
+    "New Order Received": "Νέα Παραγγελία Ελήφθη",
+    "New order #:order_id has been placed": "Νέα παραγγελία #:order_id τοποθετήθηκε",
+    "New Product Review": "Νέα Κριτική Προϊόντος",
+    "New review for \":product_name\"": "Νέα κριτική για \":product_name\"",
+    "New Product Question": "Νέα Ερώτηση Προϊόντος",
+    "New question for \":product_name\"": "Νέα ερώτηση για \":product_name\"",
+    "No notifications": "Δεν υπάρχουν ειδοποιήσεις",
+    "Mark All as Read": "Επισήμανση όλων ως αναγνωσμένων",
+    "Mark as Read": "Επισήμανση ως αναγνωσμένη",
+    "You'll see notifications here when orders, reviews, or questions come in.": "Θα δείτε εδώ ειδοποιήσεις όταν έρθουν παραγγελίες, κριτικές ή ερωτήσεις.",
+    "View Order": "Προβολή Παραγγελίας",
+    "View Product": "Προβολή Προϊόντος",
+    "New": "Νέο"
 
 }

@@ -44,7 +44,12 @@
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="bi bi-bell"></i>
-                    <span class="badge bg-danger">3</span>
+                    @php
+                        $unreadCount = \App\Services\NotificationService::getUnreadCount();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <span class="badge bg-danger">{{ $unreadCount }}</span>
+                    @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-notifications p-0" style="">
                     <div class="dropdown-header d-flex justify-content-between align-items-center p-3">
