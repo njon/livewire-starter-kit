@@ -10,13 +10,13 @@ class NotificationService
     /**
      * Create a new notification
      */
-    public static function create(string $type, string $title, string $message, array $data = [])
+    public static function create(string $type, string $titleKey, string $messageKey, array $data = [])
     {
         return AdminNotification::create([
             'owner_id' => Auth::user()->owner_id ?? 1, // Use current user's owner_id or default to 1
             'type' => $type,
-            'title' => $title,
-            'message' => $message,
+            'title' => $titleKey,
+            'message' => $messageKey,
             'data' => $data,
         ]);
     }
@@ -28,8 +28,8 @@ class NotificationService
     {
         return self::create(
             'new_order',
-            __('New Order Received'),
-            __('New order #:order_id has been placed', ['order_id' => $order->reference]),
+            'New Order Received',
+            'New order #:order_id has been placed',
             [
                 'order_id' => $order->id,
                 'order_reference' => $order->reference,
@@ -45,12 +45,15 @@ class NotificationService
     {
         return self::create(
             'new_review',
-            __('New Product Review'),
-            __('New review for ":product_name"', ['product_name' => $product->translateAttribute('name')]),
+            'New Product Review',
+            'New review for ":product_name"',
             [
                 'review_id' => $review->id,
                 'product_id' => $product->id,
-                'product_name' => $product->translateAttribute('name'),
+                'product_name_data' => [
+                    'en' => $product->translateAttribute('name', 'en'),
+                    'gr' => $product->translateAttribute('name', 'gr'),
+                ],
                 'rating' => $review->rating,
             ]
         );
@@ -63,12 +66,15 @@ class NotificationService
     {
         return self::create(
             'new_question',
-            __('New Product Question'),
-            __('New question for ":product_name"', ['product_name' => $product->translateAttribute('name')]),
+            'New Product Question',
+            'New question for ":product_name"',
             [
                 'question_id' => $question->id,
                 'product_id' => $product->id,
-                'product_name' => $product->translateAttribute('name'),
+                'product_name_data' => [
+                    'en' => $product->translateAttribute('name', 'en'),
+                    'gr' => $product->translateAttribute('name', 'gr'),
+                ],
             ]
         );
     }

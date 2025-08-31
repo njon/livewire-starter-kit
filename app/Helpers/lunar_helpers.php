@@ -420,3 +420,25 @@ if (!function_exists('remove_deleted_services_from_carts')) {
         }
     }
 }
+
+if (!function_exists('delete_all_reviews_and_questions')) {
+    /**
+     * Delete all product reviews and questions
+     *
+     * @return array Status messages for both operations
+     */
+    function delete_all_reviews_and_questions(): array
+    {
+        $reviewCount = \App\Models\ProductReview::count();
+        $questionCount = \App\Models\ProductQuestion::count();
+        
+        \App\Models\ProductReview::truncate();
+        \App\Models\ProductQuestion::truncate();
+        
+        return [
+            'reviews' => "Deleted {$reviewCount} product reviews.",
+            'questions' => "Deleted {$questionCount} product questions.",
+            'total' => "Total deleted: {$reviewCount} reviews and {$questionCount} questions."
+        ];
+    }
+}

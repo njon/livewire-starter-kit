@@ -33,7 +33,7 @@
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <h6 class="mb-1">{{ $notification->title }}</h6>
-                                            <p class="mb-1 text-muted">{{ $notification->message }}</p>
+                                            <p class="mb-1 text-muted">{{ $notification->translated_message }}</p>
                                             <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                                             @if(!$notification->is_read)
                                                 <span class="badge bg-primary ms-2">{{ __('New') }}</span>
@@ -68,11 +68,7 @@
                         </div>
                     @endforelse
                 </div>
-                @if($notifications->hasPages())
-                    <div class="card-footer">
-                        {{ $notifications->links() }}
-                    </div>
-                @endif
+  
             </div>
         </div>
     </div>

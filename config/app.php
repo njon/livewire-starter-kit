@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'gr',
+    'locale' => 'en',
     
 
     /*

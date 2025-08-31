@@ -19,7 +19,7 @@ $notifications = \App\Services\NotificationService::getRecent(5);
                 </div>
                 <div class="activity-content">
                     <div class="activity-time">{{ $notification->created_at->diffForHumans() }}</div>
-                    <p class="activity-text">{{ $notification->message }}</p>
+                    <p class="activity-text">{{ $notification->translated_message }}</p>
                     @if(!$notification->is_read)
                         <span class="badge bg-primary badge-sm">{{ __('New') }}</span>
                     @endif
