@@ -5,8 +5,7 @@
                     <div class="text-center text-muted content mt-4">
                         <i class="bi bi-image" style="font-size: 2rem;"></i><br>
                         <span class="text-muted small d-block">
-                            <a href="#">Click here</a> to
-                            upload images
+                            <a href="#">{{ __('Click here') }}</a> {{ __('to upload images') }}
                         </span>
                     </div>
                 </div>
@@ -15,9 +14,9 @@
             @foreach($product->getMedia('thumbnails') as $media)
             <div class="image-preview-container col-md-4 col-lg-3">
                 <div class="position-relative h-100  rounded-2">
-                    <img src="{{ $media->getUrl('small') }}" class="img-fluid rounded-3 object-fit-cover w-100 h-100" alt="Product image">
+                    <img src="{{ $media->getUrl('small') }}" class="img-fluid rounded-3 object-fit-cover w-100 h-100" alt="{{ __('Product image') }}">
                     <button type="button" onclick="deleteImage({{ $media->id }})" class="remove-button-d position-absolute top-0 right-0 bg-white-500 text-dark p-1 rounded-full">
-                    Remove
+                    {{ __('Remove') }}
                     </button>
                 </div>
             </div>

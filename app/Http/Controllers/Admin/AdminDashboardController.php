@@ -30,13 +30,15 @@ class AdminDashboardController extends Controller
         $averageOrderValue = Order::ownedByUser()->where('status', 'payment-received')->avg('total') ?? 0;
         $averageOrderValue = $orders > 0 ? format_price($averageOrderValue)->formatted() : 0;
 
-        // Sales Overview (Yearly)
+        // Sales Overview (Yearly) - Fixed to include owner scoping
         $salesYear = date('Y');
         $salesMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         $salesPerMonth = [];
         foreach (range(1, 12) as $month) {
-            $salesPerMonth[] = (float) Order::whereYear('created_at', $salesYear)
+            $salesPerMonth[] = (float) Order::ownedByUser()
+                ->whereYear('created_at', $salesYear)
                 ->whereMonth('created_at', $month)
+                ->where('status', 'payment-received')
                 ->sum('total');
         }
 

@@ -39,10 +39,11 @@ class AdminServiceController extends Controller
             $product->clearMediaCollection('thumbnails');
         }
 
-        $media = $product->addMediaFromRequest('file')
-        ->usingName($product->translateAttribute('name'))
-        ->usingFileName($product->translateAttribute('name') . '.jpg')
-        ->toMediaCollection($collection);
+        $media = $product
+            ->addMediaFromRequest('file')
+            ->usingName($product->translateAttribute('name'))
+            ->usingFileName($product->translateAttribute('name') . '.jpg')
+            ->toMediaCollection($collection);
         
         return response()->json([
             'id' => $media->id, // Return media ID
@@ -68,20 +69,11 @@ class AdminServiceController extends Controller
         // }
         // return response()->json(['success' => true]);
 
-        return response()->json(['success' => false, 'message' => 'Media not found'], 404);
+        return response()->json(['success' => false, 'message' => __('Media not found')], 404);
     }
 
     public function index()
     {
-        // $trashed = Product::withTrashed()->find(418);
-        // $trashed->restore();
-
-        // $product = Product::find(418);
-        // $product->delete();
-
-        // dd($product);
-        // @todo check only sold items
-        // @todo add owner_id to other models
         $products = Product::with(['variants'])->where('lunar_products.owner_id', auth()->user()->owner_id)
             ->leftJoin('lunar_order_lines', 'lunar_order_lines.id', '=', 'lunar_products.id')
             ->select('lunar_products.*', DB::raw('SUM(lunar_order_lines.quantity) as total_sales'))
@@ -90,7 +82,6 @@ class AdminServiceController extends Controller
 
         $productTypes = ProductType::all();
 
-        // return view('admin.products.only', compact('products'));
         return view('admin.products.index', compact('products', 'productTypes'));
     }
 
@@ -99,17 +90,25 @@ class AdminServiceController extends Controller
     {
         $this->authorize('update', $product);
 
-        $product->load(['variants', 'collections', 'channels', 'urls']);
+        $product->load([
+            'variants.prices.currency', 
+            'collections.defaultUrl', 
+            'channels', 
+            'urls.language',
+            'media'
+        ]);
+        
         $productTypes = ProductType::all();
         $taxClasses = TaxClass::all();
         $collections = Collection::with(['defaultUrl', 'children.defaultUrl'])->get();
         $languages = Language::all();
         $filterCategories = FilterCategory::with('options')->get();
-        $channels = Channel::all()->where('owner_id', auth()->user()->owner_id);
+        $channels = Channel::where('owner_id', auth()->user()->owner_id)->get();
+        
         $variant = $product->variants->first();
         $variants = $product->variants->slice(1);
         $sub_category = $product->collections->where('parent_id', '!==', null)->pluck('id')->first();
-        $price = $product->variants->first()->prices->first()->price->value / 100 ?? 0;
+        $price = $variant?->prices?->first()?->price?->value / 100 ?? 0;
 
         return view('admin.products.edit', compact(
             'product',
@@ -129,7 +128,7 @@ class AdminServiceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name.gr' => 'required|string|max:255',
+            'name.gr' => 'nullable|string|max:255',
             'product_type_id' => 'required|exists:'.ProductType::class.',id',
         ]);
 
@@ -138,17 +137,18 @@ class AdminServiceController extends Controller
         $product = Product::create($commonAttributes + [
             'product_type_id' => $validated['product_type_id'],
             'status' => 'draft',
+            'owner_id' => auth()->user()->owner_id
         ]);
 
-        $product->variants()->create($commonAttributes);
+        $variant = $product->variants()->create($commonAttributes);
 
-        $product->variants()->first()->prices()->create([
+        $variant->prices()->create([
             'price' => 0,
-            'currency_id' => 1, 
+            'currency_id' => Currency::first()->id ?? 1, 
         ]);
 
         return redirect()->route('admin.products.edit', $product->id)
-            ->with('success', 'Product created successfully. Please complete the details.');
+            ->with('success', __('Product created successfully. Please complete the details.'));
     }
 
     public function update(ServiceValidator $request, Product $product)
@@ -195,7 +195,7 @@ class AdminServiceController extends Controller
         );
 
         return redirect()->route('admin.products.edit', $product->id)
-            ->with('success', 'Product updated successfully');
+            ->with('success', __('Product updated successfully'));
     }
 
     public function destroy(Product $product)
@@ -210,6 +210,6 @@ class AdminServiceController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product deleted successfully');
+            ->with('success', __('Product deleted successfully'));
     }
 }

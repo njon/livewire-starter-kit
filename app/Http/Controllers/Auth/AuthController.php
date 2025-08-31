@@ -24,11 +24,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/admin/products')->with('success', 'Login successful!');
+            return redirect()->intended('/admin/products')->with('success', __('Login successful!'));
         }
 
         return back()->withErrors([
-            'email' => 'Invalid credentials',
+            'email' => __('Invalid credentials'),
         ]);
     }
 
@@ -39,11 +39,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/admin/products')->with('success', 'Login successful!');
+            return redirect()->intended('/admin/products')->with('success', __('Login successful!'));
         }
 
         return back()->withErrors([
-            'email' => 'Invalid credentials',
+            'email' => __('Invalid credentials'),
         ]);
     }
 
@@ -54,11 +54,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Login successful!');
+            return redirect()->intended('/')->with('success', __('Login successful!'));
         }
 
         return back()->withErrors([
-            'email' => 'Invalid credentials',
+            'email' => __('Invalid credentials'),
         ]);
     }
 
@@ -72,11 +72,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Login successful!');
+            return redirect()->intended('/')->with('success', __('Login successful!'));
         }
 
         return back()->withErrors([
-            'email' => 'Invalid credentials',
+            'email' => __('Invalid credentials'),
         ]);
     }
 
@@ -134,7 +134,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             return redirect('/login')->withErrors([
-                'social' => 'Failed to authenticate with '.ucfirst($provider),
+                'social' => __('Failed to authenticate with :provider', ['provider' => ucfirst($provider)]),
             ]);
         }
     }

@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <span class="badge bg-primary bg-opacity-10 text-white me-2">
-                SKU: {{ $variant->sku ?? 'N/A' }}</span>
+                {{ __('SKU') }}: {{ $variant->sku ?? __('N/A') }}</span>
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-sm edit-variant-btn" 

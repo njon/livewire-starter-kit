@@ -60,7 +60,7 @@ class PayPalController extends Controller
             // Clear cart
             CartSession::forget();
             
-            return redirect()->route('checkout.success')->with('success', 'Payment successful!');
+            return redirect()->route('checkout.success')->with('success', __('Payment successful!'));
             
         } catch (\Exception $e) {
             return redirect()->route('checkout')->with('error', $e->getMessage());
@@ -69,6 +69,6 @@ class PayPalController extends Controller
 
     public function cancel()
     {
-        return redirect()->route('checkout')->with('error', 'Payment was cancelled');
+        return redirect()->route('checkout')->with('error', __('Payment was cancelled'));
     }
 }

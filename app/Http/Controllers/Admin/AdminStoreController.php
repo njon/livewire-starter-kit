@@ -38,7 +38,7 @@ class AdminStoreController extends Controller
         $channel->save();
 
         return redirect()->route('stores.index')
-            ->with('success', 'Store created successfully.');
+            ->with('success', __('Store created successfully.'));
     }
 
     public function edit(Channel $store)
@@ -59,7 +59,7 @@ class AdminStoreController extends Controller
         ));
 
         return redirect()->route('stores.edit', $store->id)
-            ->with('success', 'Store updated successfully.');
+            ->with('success', __('Store updated successfully.'));
     }
 
     public function destroy(Channel $store)
@@ -72,6 +72,6 @@ class AdminStoreController extends Controller
         });
 
         return redirect()->route('stores.index')
-            ->with('success', 'Store deleted successfully.');
+            ->with('success', __('Store deleted successfully.'));
     }
 }

@@ -39,7 +39,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return back()->with('success', 'Profile updated successfully!');
+        return back()->with('success', __('Profile updated successfully!'));
     }
 
     /**
@@ -64,14 +64,14 @@ class UserController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+            return back()->withErrors(['current_password' => __('The provided password does not match your current password.')]);
         }
 
         $user->update([
             'password' => Hash::make($request->password)
         ]);
 
-        return back()->with('success', 'Password updated successfully!');
+        return back()->with('success', __('Password updated successfully!'));
     }
 
     /**
@@ -108,7 +108,7 @@ class UserController extends Controller
 
         $status = $request->newsletter_subscribe ? 'subscribed to' : 'unsubscribed from';
         
-        return back()->with('success', "Successfully $status our newsletter!");
+        return back()->with('success', __('Successfully :status our newsletter!', ['status' => $status]));
     }
 
     /**
@@ -141,7 +141,7 @@ class UserController extends Controller
             }
         }
 
-        return back()->with('success', 'Invitations sent successfully!');
+        return back()->with('success', __('Invitations sent successfully!'));
     }
 
     /**
@@ -170,6 +170,6 @@ class UserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Your account has been deleted successfully.');
+        return redirect('/')->with('success', __('Your account has been deleted successfully.'));
     }
 }

@@ -26,12 +26,12 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-transparent border-bottom py-3">
             <h3 class="h5 mb-0 d-flex align-items-center">
-                <i class="bi bi-card-text me-2 text-primary"></i> Edit Store details
+                <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Edit Store details') }}
             </h3>
         </div>
         <div class="card-body">
             <ul id="languageTabs" role="tablist">
-                <p>Please select a language to edit the store details:</p>
+                <p>{{ __('Please select a language to edit the store details:') }}</p>
                 @foreach($languages as $language)
                 <li>
                     <button class="m-0 nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
@@ -50,7 +50,7 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
                         id="{{ $language->code }}-content" role="tabpanel">
                         <div class="row g-4">
                             <div class="col-lg-6">
-                                <label for="channel_title_{{ $language->code }}" class="form-label">Store title {!! lang_icon($language->code) !!}</label>
+                                <label for="channel_title_{{ $language->code }}" class="form-label">{{ __('Store title') }} {!! lang_icon($language->code) !!}</label>
                                 <input type="text" data-slug="true"
                                     class="form-control @error('name.'.$language->code) is-invalid @enderror"
                                     id="channel_title_{{ $language->code }}" name="attribute_data[name][{{ $language->code }}]"
@@ -78,7 +78,7 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <label class="form-label mb-1">Store Description {!! lang_icon($language->code) !!}</label>
+                                <label class="form-label mb-1">{{ __('Store Description') }} {!! lang_icon($language->code) !!}</label>
                                 <textarea id="channelDescription_{{ $language->code }}"
                                     name="attribute_data[description][{{ $language->code }}]"
                                     class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
@@ -86,8 +86,7 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
                                 @error('description.'.$language->code)
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Describe your channel in detail (supports rich text
-                                    formatting)</div>
+                                <div class="form-text">{{ __('Describe your channel in detail (supports rich text formatting)') }}</div>
                             </div>
                         </div>
                     </div>
@@ -96,26 +95,26 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
                 <div class="col-6">
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="phone" class="form-label">Phone</label>
+                            <label for="phone" class="form-label">{{ __('Phone') }}</label>
                             <input type="text" class="form-control" id="phone" name="phone" value="{{ $store->phone }}">
                         </div>
                         <div class="col-md-6">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">{{ __('Email') }}</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{ $store->email }}">
                         </div>
                         <div class="col-md-6 mt-3">
-                            <label for="website" class="form-label">Website</label>
+                            <label for="website" class="form-label">{{ __('Website') }}</label>
                             <input type="text" class="form-control" id="website" name="website" value="{{ $store->website }}">
                         </div>
                         <div class="col-md-6 mt-3">
-                            <label for="address" class="form-label">Address</label>
-                            <input type="text" class="form-control" id="address" name="address" value="{{ $store->address }}" placeholder="Start typing address...">
+                            <label for="address" class="form-label">{{ __('Address') }}</label>
+                            <input type="text" class="form-control" id="address" name="address" value="{{ $store->address }}" placeholder="{{ __('Start typing address...') }}">
                         </div>
                         <div class="col-md-12 mt-3">
                             <div class="mb-3">
                                 <div id="map" style="height: 300px; width: 100%; background-color: #eee;"></div>
                                 <input type="hidden" id="map_location" name="map_location" value="{{ $store->map_location }}">
-                                <div class="mt-2 text-muted small">Drag the marker to adjust the exact location</div>
+                                <div class="mt-2 text-muted small">{{ __('Drag the marker to adjust the exact location') }}</div>
                             </div>
                         </div>
                     </div>
@@ -127,7 +126,7 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
         <div class="card mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
                 <h3 class="h5 mb-0 d-flex align-items-center">
-                    <i class="bi bi-card-text me-2 text-primary"></i> Business hours
+                    <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Business hours') }}
                 </h3>
             </div>
             <div class="card-body">

@@ -42,7 +42,7 @@ class ProductReviewController extends Controller
 
         if (auth()->check()) {
             if (!$this->checkPurchase(auth()->user(), $product)) {
-                return back()->with('error', 'You must purchase this product before reviewing');
+                return back()->with('error', __('You must purchase this product before reviewing'));
             }
 
             $review = $product->reviews()->create([
@@ -68,8 +68,8 @@ class ProductReviewController extends Controller
         
         return response()->json([
             'message' => auth()->check() 
-            ? 'Thank you for your review!' 
-            : 'Please check your email to verify your review',
+            ? __('Thank you for your review!') 
+            : __('Please check your email to verify your review'),
             'product' => $product,
         ]);
     }
@@ -85,7 +85,7 @@ class ProductReviewController extends Controller
         ]);
 
         return redirect()->route('products.show', $review->product)
-            ->with('success', 'Your review has been published!');
+            ->with('success', __('Your review has been published!'));
     }
 
     public function helpful(Request $request, ProductReview $review)

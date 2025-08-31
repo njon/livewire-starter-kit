@@ -140,7 +140,7 @@ div#dashboard {
         class="toast position-fixed top-0 end-0 bg-white show border-0 m-3 alert-li" style="z-index:99;"
         data-bs-autohide="false">
         <div class="toast-header">
-            <strong class="me-auto">Notification</strong>
+            <strong class="me-auto">{{ __('Notification') }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
@@ -154,7 +154,7 @@ div#dashboard {
         class="toast position-fixed top-0 end-0 bg-white show border-0 m-3 alert-li" style="z-index:99;"
         data-bs-autohide="false">
         <div class="toast-header">
-            <strong class="me-auto">Notification</strong>
+            <strong class="me-auto">{{ __('Notification') }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">

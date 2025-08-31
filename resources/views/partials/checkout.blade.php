@@ -289,8 +289,8 @@ $tax = $cart->taxTotal->formatted();
                     <!-- Coupon Code -->
                     <div class="py-3 border-top">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Coupon code">
-                            <button class="btn btn-outline-primary" type="button">Apply</button>
+                            <input type="text" class="form-control" placeholder="{{ __('Coupon code') }}">
+                            <button class="btn btn-outline-primary" type="button">{{ __('Apply') }}</button>
                         </div>
                     </div>
 

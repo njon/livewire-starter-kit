@@ -72,7 +72,7 @@ class CartController extends Controller
 
         $response = array_merge([
             'success' => true,
-            'message' => 'Quantity updated successfully',
+            'message' => __('Quantity updated successfully'),
         ]);
 
         return response()->json($response, 200);
@@ -90,7 +90,7 @@ class CartController extends Controller
         $cart->lines()->where('id', $cartLineId)->delete();
         $cart->calculate();
 
-        return redirect()->back()->with('success', 'Item removed from cart');
+        return redirect()->back()->with('success', __('Item removed from cart'));
     }
 
     protected function getOrCreateCart(): Cart
@@ -119,6 +119,6 @@ class CartController extends Controller
         $cart->calculate();
         CartSession::forget();
 
-        return redirect()->back()->with('success', 'Cart refreshed');
+        return redirect()->back()->with('success', __('Cart refreshed'));
     }
 }

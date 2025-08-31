@@ -2,8 +2,8 @@
 
 @section('toolbar')
     @include('admin.partials.buttons', [
-        'title' => 'Orders', 
-        'asset' => 'Order', 
+        'title' => __('Orders'), 
+        'asset' => __('Order'), 
         'buttons' => [
             ['export' => true]
         ]
@@ -16,7 +16,7 @@
         <div class="card-header bg-transparent border-bottom py-3">
             <h3 class="h5 mb-0 d-flex align-items-center">
                 <input type="checkbox" id="selectAll" class="form-check-input"> 
-                <label for="selectAll" class="form-check-label ms-3 fs-14">Select all items</label>
+                <label for="selectAll" class="form-check-label ms-3 fs-14">{{ __('Select all items') }}</label>
             </h3>
         </div>
         <div class="table-responsive">
@@ -24,13 +24,13 @@
                 <thead class="table-light">
                     <tr>
                         <th width="40" class="ps-4"></th>
-                        <th>Status</th>
-                        <th>Reference</th>
-                        <th>Customer</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Total</th>
-                        <th>Date</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Reference') }}</th>
+                        <th>{{ __('Customer') }}</th>
+                        <th>{{ __('Email') }}</th>
+                        <th>{{ __('Phone') }}</th>
+                        <th>{{ __('Total') }}</th>
+                        <th>{{ __('Date') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,7 +52,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-2">
                                 <div>
-                                    {{ $order->customer->name ?? 'Guest' }}
+                                    {{ $order->customer->name ?? __('Guest') }}
                                 </div>
                             </div>
                         </td>
@@ -79,7 +79,7 @@
                     @empty
                     <tr>
                         <td colspan="11" class="text-center py-5 text-muted">
-                            <i class="bi bi-cart me-2"></i> No orders found
+                            <i class="bi bi-cart me-2"></i> {{ __('No orders found') }}
                         </td>
                     </tr>
                     @endforelse

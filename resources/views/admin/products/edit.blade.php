@@ -2,8 +2,8 @@
 
 @section('toolbar')
 @include('admin.partials.buttons', [
-'title' => 'Save service',
-'asset' => 'Service',
+'title' => __('Save service'),
+'asset' => __('Service'),
 'buttons' => [
 ['save' => true]
 ]
@@ -13,13 +13,13 @@
 @section('content')
 
 <form action="{{ route('admin.products.media.store', $product) }}" method="POST" id="media-dropzone">
-    <small class="text-black small">Files being uploaded...</small>
+    <small class="text-black small">{{ __('Files being uploaded...') }}</small>
     @csrf
     @method('PUT')
 </form>
 
 <form action="{{ route('admin.products.media.store', $product) }}" method="POST" id="thumbnail-dropzone">
-    <small class="text-black small">Files being uploaded...</small>
+    <small class="text-black small">{{ __('Files being uploaded...') }}</small>
     @csrf
     @method('PUT')
     <input type="hidden" name="thumbnail" value="1">
@@ -38,12 +38,12 @@
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-card-text me-2 text-primary"></i> Service Details
+                        <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Service Details') }}
                     </h3>
                 </div>
                 <div class="card-body">
                     <!-- Language Tabs -->
-                    <div class="mb-2 small">Click to change language translations</div>
+                    <div class="mb-2 small">{{ __('Click to change language translations') }}</div>
                     <ul id="languageTabs" role="tablist">
                         
                         @foreach($languages as $language)
@@ -67,8 +67,7 @@
                             <div class="row g-4">
                                 <div class="col-lg-12">
 
-                                    <label for="product_title_{{ $language->code }}" class="form-label">Service
-                                        title</label>
+                                    <label for="product_title_{{ $language->code }}" class="form-label">{{ __('Service title') }}</label>
                                     <input type="text" data-slug="true"
                                         class="form-control @error('name.'.$language->code) is-invalid @enderror"
                                         id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
@@ -97,7 +96,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
-                                    <label class="form-label mb-1">Service Description</label>
+                                    <label class="form-label mb-1">{{ __('Service Description') }}</label>
                                     <textarea id="productDescription_{{ $language->code }}"
                                         name="description[{{ $language->code }}]"
                                         class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
@@ -105,8 +104,7 @@
                                     @error('description.'.$language->code)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <div class="form-text">Describe your product in detail (supports rich text
-                                        formatting)</div>
+                                    <div class="form-text">{{ __('Describe your product in detail (supports rich text formatting)') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +116,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Thumbnail Image
+                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Thumbnail Image') }}
                     </h3>
                 </div>
                 <div class="card-body">
@@ -129,7 +127,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Service Images
+                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service Images') }}
                     </h3>
                 </div>
                 <div class="card-body">
@@ -143,9 +141,9 @@
             <div class="card border-0 mb-3">
                 <div class="card-header bg-transparent py-3">
                     <h3 class="fs-5 d-flex align-items-center">
-                        <i class="bi bi-shop me-2 text-primary"></i> Store Availability
+                        <i class="bi bi-shop me-2 text-primary"></i> {{ __('Store Availability') }}
                     </h3>
-                    <small class="text-muted">Stores where this service is available</small>
+                    <small class="text-muted">{{ __('Stores where this service is available') }}</small>
                 </div>
             </div>
             <div>
@@ -162,7 +160,7 @@
                             <div class="store-image-container">
                                 @if($channel->image_url)
                                 <img class="card-img-top object-fit-cover h-100" src="{{ $channel->image_url }}"
-                                    alt="Cover Image">
+                                    alt="{{ __('Cover Image') }}">
                                 @else
                                 <div class="d-flex align-items-center justify-content-center text-muted bg-light h-100">
                                     <i class="bi bi-shop store-icon fs-3"></i>
@@ -181,7 +179,7 @@
                             </div>
                             <div class="p-2 border-top">
                                 <a href="{{ route('stores.edit', $channel->id) }}" target="_blank"
-                                    class="card-btn text-decoration-none fs-14">View store</a>
+                                    class="card-btn text-decoration-none fs-14">{{ __('View store') }}</a>
                             </div>
                         </div>
                     </div>
@@ -197,15 +195,14 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Service status
+                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service status') }}
                     </h3>
                 </div>
                 <div class="card-body">
                     <div class="input-group">
                         <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
-                            <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>Published
-                            </option>
+                            <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
+                            <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>{{ __('Published') }}</option>
                         </select>
                     </div>
                 </div>
@@ -215,15 +212,15 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Categories
+                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Categories') }}
                     </h3>
                 </div>
                 <div class="card-body">
                     <div class="category-list-container mb-3">
                         <div class="category-list">
-                            <label class="form-label" for="category">Category</label>
+                            <label class="form-label" for="category">{{ __('Category') }}</label>
                             <select class="form-select subcategory mb-3" name="category">
-                                <option>Select Category</option>
+                                <option>{{ __('Select Category') }}</option>
                                 @foreach($collections as $mainCategory)
                                 @if($mainCategory->parent_id == null)
                                 <option value="{{ $mainCategory->id }}"
@@ -240,10 +237,10 @@
                             @if($mainCategory->parent_id == null)
                             <div class="subcategory-list mb-3 no-d" data-target="{{ $loop->iteration }}">
 
-                                <label class="form-label">Subcategory</label>
+                                <label class="form-label">{{ __('Subcategory') }}</label>
                                 <select class="form-select subcategory-select mb-3" name="collection_id"
                                     data-target="{{ $loop->iteration }}">
-                                    <option value="0">Select subcategory</option>
+                                    <option value="0">{{ __('Select subcategory') }}</option>
                                     @foreach($mainCategory->children as $subCategory)
                                     <option value="{{ $subCategory->id }}">
                                         {{ $subCategory->translateAttribute('name') }}
@@ -266,7 +263,7 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <label class="form-label">Base Price</label>
+                    <label class="form-label">{{ __('Base Price') }}</label>
                     <div class="input-group">
                         <span class="input-group-text">Eur</span>
                         <input type="number" class="form-control @error('price') is-invalid @enderror" name="price" value="{{ old('price',  $price) }}">
@@ -274,7 +271,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <label class="form-label mt-3" for="taxClass">Tax Class</label>
+                    <label class="form-label mt-3" for="taxClass">{{ __('Tax Class') }}</label>
                     <div class="input-group">
                         <select class="form-select @error('tax_class_id') is-invalid @enderror" id="taxClass"
                             name="tax_class_id">
@@ -294,9 +291,9 @@
             <!-- Add this to your product edit view -->
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="h6 mb-0 py-2">Product variants</h3>
+                    <h3 class="h6 mb-0 py-2">{{ __('Product variants') }}</h3>
                     <button type="button" class="btn btn-sm btn-light add-variant-btn m-0">
-                        <i class="bi bi-plus me-1"></i> Add variant
+                        <i class="bi bi-plus me-1"></i> {{ __('Add variant') }}
                     </button>
                 </div>
                 <div class="card-body p-0">
@@ -316,7 +313,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Service Filters
+                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service Filters') }}
                     </h3>
                 </div>
                 <div class="card-body p-0">

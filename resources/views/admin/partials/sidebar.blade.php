@@ -4,7 +4,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('admin') ? 'active' : '' }}" href="/admin/">
                     <i class="bi bi-speedometer2"></i>
-                    <span>Dashboard</span>
+                    <span>{{ __('Dashboard') }}</span>
                 </a>
             </li>
 
@@ -13,7 +13,7 @@
                 <h2 class="accordion-header">
                     <button class="nav-link accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#catalogCollapse">
-                        <span>Catalog</span>
+                        <span>{{ __('Catalog') }}</span>
                         <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor" aria-hidden="true" data-slot="icon">
                             <path fill-rule="evenodd"
@@ -29,14 +29,14 @@
                                 <a class="nav-link {{ Request::is('admin/products*') ? 'active' : '' }}"
                                     href="/admin/products">
                                     <i class="bi bi-tag"></i>
-                                    <span>Services</span>
+                                    <span>{{ __('Services') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/stores*') ? 'active' : '' }}"
                                     href="/admin/stores">
                                     <i class="bi bi-shop"></i>
-                                    <span>Stores</span>
+                                    <span>{{ __('Stores') }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -49,7 +49,7 @@
                 <h2 class="accordion-header">
                     <button class="nav-link accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#salesCollapse">
-                        <span>Sales</span>
+                        <span>{{ __('Sales') }}</span>
                         <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor" aria-hidden="true" data-slot="icon">
                             <path fill-rule="evenodd"
@@ -65,14 +65,14 @@
                                 <a class="nav-link {{ Request::is('admin/orders*') ? 'active' : '' }}"
                                     href="/admin/orders">
                                     <i class="bi bi-cart3"></i>
-                                    <span>Orders</span>
+                                    <span>{{ __('Orders') }}</span>
                                 </a>
                             </li>
                              <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}"
                                     href="/admin/users">
                                     <i class="bi bi-people"></i>
-                                    <span>Staff</span>
+                                    <span>{{ __('Staff') }}</span>
                                 </a>
                             </li>
                    
@@ -84,7 +84,7 @@
             <h2 class="accordion-header">
                 <button class="nav-link accordion-button" type="button" data-bs-toggle="collapse"
                     data-bs-target="#helpCollapse">
-                    <span>Help</span>
+                    <span>{{ __('Help') }}</span>
                     <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                         fill="currentColor" aria-hidden="true" data-slot="icon">
                         <path fill-rule="evenodd"
@@ -100,13 +100,13 @@
                             <a class="nav-link {{ Request::is('admin/support*') ? 'active' : '' }}"
                                 href="/admin/support">
                                 <i class="bi bi-question-circle"></i>
-                                <span>Support</span>
+                                <span>{{ __('Support') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('admin/docs*') ? 'active' : '' }}" href="/admin/docs">
                                 <i class="bi bi-journal-text"></i>
-                                <span>Docs</span>
+                                <span>{{ __('Docs') }}</span>
                             </a>
                         </li>
                     </ul>

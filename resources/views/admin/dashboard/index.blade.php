@@ -5,11 +5,11 @@
             <!-- Page Header -->
             <div class="page-header">
                 <div class="page-title">
-                    <h1>Dashboard</h1>
+                    <h1>{{ __('Dashboard') }}</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                            <li class="breadcrumb-item"><a href="#">{{ __('Home') }}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ __('Dashboard') }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card primary">
-                    <div class="stat-title">Total Revenue</div>
+                    <div class="stat-title">{{ __('Total Revenue') }}</div>
                     <div class="stat-value">{{ $totalRevenue }}</div>
                     <div class="stat-change positive">
                         <i class="bi bi-arrow-up me-1"></i>
@@ -32,7 +32,7 @@
                 </div>
                 
                 <div class="stat-card success">
-                    <div class="stat-title">Total Orders</div>
+                    <div class="stat-title">{{ __('Total Orders') }}</div>
                     <div class="stat-value">{{ $orders }}</div>
                     <div class="stat-change positive">
                         <i class="bi bi-arrow-up me-1"></i>
@@ -44,7 +44,7 @@
 
                 
                 <div class="stat-card warning">
-                    <div class="stat-title">Active Customers</div>
+                    <div class="stat-title">{{ __('Active Customers') }}</div>
                     <div class="stat-value">{{ $customers }}</div>
                     <div class="stat-change negative">
                         <i class="bi bi-arrow-down me-1"></i>
@@ -55,7 +55,7 @@
                 </div>
                 
                 <div class="stat-card danger">
-                    <div class="stat-title">Pending Orders</div>
+                    <div class="stat-title">{{ __('Pending Orders') }}</div>
                     <div class="stat-value">{{ $pendingOrders }}</div>
                     <div class="stat-change positive">
                         <i class="bi bi-arrow-up me-1"></i>
@@ -87,8 +87,8 @@
                 <div class="col-lg-4">
                     <div class="activity-container">
                         <div class="chart-header mb-3">
-                            <h3>Recent Activity</h3>
-                            <a href="#" class="btn btn-sm btn-outline-secondary">View All</a>
+                            <h3>{{ __('Recent Activity') }}</h3>
+                            <a href="#" class="btn btn-sm btn-outline-secondary">{{ __('View All') }}</a>
                         </div>
                         
                         <div class="activity-item">
@@ -107,7 +107,7 @@
                             </div>
                             <div class="activity-content">
                                 <div class="activity-time">1 hour ago</div>
-                                <p class="activity-text">New customer registered</p>
+                                <p class="activity-text">{{ __('New customer registered') }}</p>
                             </div>
                         </div>
                         
@@ -117,7 +117,7 @@
                             </div>
                             <div class="activity-content">
                                 <div class="activity-time">3 hours ago</div>
-                                <p class="activity-text">New store location added</p>
+                                <p class="activity-text">{{ __('New store location added') }}</p>
                             </div>
                         </div>
                         
@@ -127,7 +127,7 @@
                             </div>
                             <div class="activity-content">
                                 <div class="activity-time">5 hours ago</div>
-                                <p class="activity-text">New customer message received</p>
+                                <p class="activity-text">{{ __('New customer message received') }}</p>
                             </div>
                         </div>
                         
@@ -136,7 +136,7 @@
                                 <i class="bi bi-truck"></i>
                             </div>
                             <div class="activity-content">
-                                <div class="activity-time">Yesterday</div>
+                                <div class="activity-time">{{ __('Yesterday') }}</div>
                                 <p class="activity-text">Order #12340 shipped</p>
                             </div>
                         </div>
@@ -147,15 +147,15 @@
             <!-- Best Sellers Table -->
             <div class="orders-container mt-4">
                 <div class="orders-header">
-                    <h3>Best Sellers </h3><span class="text-secondary">last 12 months</span>
+                    <h3>{{ __('Best Sellers') }} </h3><span class="text-secondary">{{ __('last 12 months') }}</span>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Service</th>
+                                <th>{{ __('Service') }}</th>
                                 <!-- <th>Identifier</th> -->
-                                <th>Sales</th>
+                                <th>{{ __('Sales') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,20 +180,20 @@
             <!-- Recent Orders -->
             <div class="orders-container mt-4">
                 <div class="orders-header">
-                    <h3>Recent Orders</h3>
-                    <a href="#" class="btn btn-sm btn-primary">View All</a>
+                    <h3>{{ __('Recent Orders') }}</h3>
+                    <a href="#" class="btn btn-sm btn-primary">{{ __('View All') }}</a>
                 </div>
                 
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ __('Order ID') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Amount') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>

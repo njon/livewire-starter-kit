@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Stores', 'asset' => 'Stores', 'buttons' => [
+    @include('admin.partials.buttons', ['title' => __('Stores'), 'asset' => __('Stores'), 'buttons' => [
         ['new' => true, 'link' => route('stores.create')]
     ]])
 @endsection
@@ -11,19 +11,19 @@
   <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="card-header bg-transparent border-bottom py-3">
-                        <h3 class="h5 mb-0">Store Locations</h3>
+                        <h3 class="h5 mb-0">{{ __('Store Locations') }}</h3>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0" id="storesTable">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="80">Image</th>
-                                    <th>Title</th>
-                                    <th>Address</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Services</th>
-                                    <th>Hours</th>
+                                    <th width="80">{{ __('Image') }}</th>
+                                    <th>{{ __('Title') }}</th>
+                                    <th>{{ __('Address') }}</th>
+                                    <th>{{ __('Email') }}</th>
+                                    <th>{{ __('Phone') }}</th>
+                                    <th>{{ __('Services') }}</th>
+                                    <th>{{ __('Hours') }}</th>
                                     <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>

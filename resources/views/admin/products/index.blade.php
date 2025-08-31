@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Services', 'asset' => 'Services', 'custom_button' => '<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create New </a>', 'buttons' => [
+    @include('admin.partials.buttons', ['title' => __('Services'), 'asset' => __('Services'), 'custom_button' => '<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> ' . __('Create New') . ' </a>', 'buttons' => [
         []
     ]])
 
@@ -13,7 +13,7 @@
     <div class="card-body p-0">
         <div class="card-header bg-transparent border-bottom py-3">
             <h3 class="h5 mb-0 d-flex align-items-center">
-                <input type="checkbox" id="selectAll" class="form-check-input"> <label for="selectAll" class="form-check-label ms-3 fs-14">Select all items</label>
+                <input type="checkbox" id="selectAll" class="form-check-input"> <label for="selectAll" class="form-check-label ms-3 fs-14">{{ __('Select all items') }}</label>
             </h3>
         </div>
         <div class="table-responsive">
@@ -22,12 +22,12 @@
                     <tr>
                         <th width="40" class="ps-4">
                         </th>
-                        <th>Status</th>
-                        <th>Title</th>
-                        <th>Discount</th>
-                        <th>Sales</th>
-                        <th>Price</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Title') }}</th>
+                        <th>{{ __('Discount') }}</th>
+                        <th>{{ __('Sales') }}</th>
+                        <th>{{ __('Price') }}</th>
+                        <th class="text-end pe-4">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,7 +61,7 @@
                                         <a class="text-muted text-decoration-none" href="{{ route('admin.products.edit', $product->id) }}">{{ $product->translateAttribute('name') }}</a>
                                     </h6>
                                     @if($product->variants->count() > 1)
-                                        <small class="text-muted">{{ $product->variants->count() }} variants</small>
+                                        <small class="text-muted">{{ $product->variants->count() }} {{ __('variants') }}</small>
                                     @endif
                                 </div>
                             </div>
@@ -69,15 +69,15 @@
                         <td>
                             <!-- @todo add discount -->
                             <span class="badge bg-warning bg-opacity-10 text-warning">
-                                {{ $product->discount ? $product->discount . '%' : 'No discount' }}
+                                {{ $product->discount ? $product->discount . '%' : __('No discount') }}
                             </span>
                         </td>
                         <td>
                             {{-- Sales count would need to be implemented based on your orders --}}
                             @if($product->total_sales)
-                                {{ $product->total_sales . ' sales' }}
+                                {{ $product->total_sales . ' ' . __('sales') }}
                             @else
-                                <span class="small grey text-grey">No sales</span>
+                                <span class="small grey text-grey">{{ __('No sales') }}</span>
                             @endif
                         </td>
                         <td>
@@ -92,7 +92,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('admin.products.edit', $product->id) }}">
-                                            <i class="bi bi-pencil me-2"></i> Edit
+                                            <i class="bi bi-pencil me-2"></i> {{ __('Edit') }}
                                         </a>
                                     </li>
                                     <li>
@@ -100,8 +100,8 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="dropdown-item text-danger"
-                                                onclick="return confirm('Are you sure?')">
-                                                <i class="bi bi-trash me-2"></i> Delete
+                                                onclick="return confirm('{{ __('Are you sure?') }}')">
+                                                <i class="bi bi-trash me-2"></i> {{ __('Delete') }}
                                             </button>
                                         </form>
                                     </li>
@@ -112,7 +112,7 @@
                     @empty
                     <tr>
                         <td colspan="7" class="text-center py-5 text-muted">
-                            <i class="bi bi-box-seam me-2"></i> No products found
+                            <i class="bi bi-box-seam me-2"></i> {{ __('No products found') }}
                         </td>
                     </tr>
                     @endforelse
@@ -126,20 +126,20 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
+                <h5 class="modal-title" id="createProductModalLabel">{{ __('Create New Product') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('admin.products.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="productTitle" class="form-label">Product Title</label>
+                        <label for="productTitle" class="form-label">{{ __('Product Title') }}</label>
                         <input type="text" class="form-control" id="productTitle" name="name[gr]" required>
                     </div>
                     <div class="mb-3">
-                        <label for="productType" class="form-label">Product Type</label>
+                        <label for="productType" class="form-label">{{ __('Product Type') }}</label>
                         <select class="form-select" id="productType" name="product_type_id" required>
-                            <option value="">Select Product Type</option>
+                            <option value="">{{ __('Select Product Type') }}</option>
                             @foreach($productTypes as $type)
                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
                             @endforeach
@@ -154,8 +154,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Product</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Create Product') }}</button>
                 </div>
             </form>
         </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LunarPHP Admin Dashboard</title>
+    <title>{{ __('LunarPHP Admin Dashboard') }}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,8 +48,8 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-notifications p-0" style="">
                     <div class="dropdown-header d-flex justify-content-between align-items-center p-3">
-                        <h6 class="m-0">Notifications</h6>
-                        <a href="#" class="text-muted small">Clear All</a>
+                        <h6 class="m-0">{{ __('Notifications') }}</h6>
+                        <a href="#" class="text-muted small">{{ __('Clear All') }}</a>
                     </div>
                     <div class="dropdown-notifications-container" style="max-height: 400px; overflow-y: auto;">
                         @include('admin.partials.notifications')
@@ -64,7 +64,7 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <span class="d-none d-lg-inline">Admin User</span>
+                    <span class="d-none d-lg-inline">{{ __('Admin User') }}</span>
                     <img src="https://ui-avatars.com/api/?name=Admin+User&amp;background=6366f1&amp;color=fff"
                         alt="User" class="user-avatar">
                 </a>
@@ -127,8 +127,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="text-center text-md-end">
-                        <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
-                        <a href="#" class="text-decoration-none">Terms of Service</a>
+                        <a href="#" class="text-decoration-none me-3">{{ __('Privacy Policy') }}</a>
+                        <a href="#" class="text-decoration-none">{{ __('Terms of Service') }}</a>
                     </div>
                 </div>
             </div>

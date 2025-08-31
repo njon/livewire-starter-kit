@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Users', 'asset' => 'Users', 'buttons' => [
+    @include('admin.partials.buttons', ['title' => __('Users'), 'asset' => __('Users'), 'buttons' => [
         ['new' => true, 'link' => route('users.create')]
     ]])
 @endsection
@@ -10,14 +10,14 @@
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="card-header bg-transparent border-bottom py-3">
-            <h3 class="h5 mb-0">Users</h3>
+            <h3 class="h5 mb-0">{{ __('Users') }}</h3>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Email') }}</th>
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>

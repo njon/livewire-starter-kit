@@ -4,8 +4,8 @@
             <i class="bi bi-cart-check"></i>
         </div>
         <div class="activity-content">
-            <div class="activity-time">10 minutes ago</div>
-            <p class="activity-text">New order #12345 placed</p>
+            <div class="activity-time">{{ __('10 minutes ago') }}</div>
+            <p class="activity-text">{{ __('New order #12345 placed') }}</p>
         </div>
     </div>
 </div>
@@ -15,8 +15,8 @@
             <i class="bi bi-person-plus"></i>
         </div>
         <div class="activity-content">
-            <div class="activity-time">1 hour ago</div>
-            <p class="activity-text">New customer registered</p>
+            <div class="activity-time">{{ __('1 hour ago') }}</div>
+            <p class="activity-text">{{ __('New customer registered') }}</p>
         </div>
     </div>
 </div>
@@ -26,12 +26,12 @@
             <i class="bi bi-shop"></i>
         </div>
         <div class="activity-content">
-            <div class="activity-time">3 hours ago</div>
-            <p class="activity-text">New store location added</p>
+            <div class="activity-time">{{ __('3 hours ago') }}</div>
+            <p class="activity-text">{{ __('New store location added') }}</p>
         </div>
     </div>
 </div>
 <div class="dropdown-divider m-0"></div>
 <div class="dropdown-footer text-center py-3 d-block">
-    <a href="#" class="text-primary small  d-block">View All Notifications</a>
+    <a href="#" class="text-primary small  d-block">{{ __('View All Notifications') }}</a>
 </div>

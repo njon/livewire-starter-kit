@@ -3,7 +3,7 @@
 @section('toolbar')
 @include('admin.partials.buttons', [
 'title' => 'Order #' . $order->reference,
-'asset' => 'Order',
+'asset' => __('Order'),
 'buttons' => [
 ['refund' => true, 'url' => route('admin.orders.refund', $order->id)],
 ['status' => true],
@@ -18,18 +18,18 @@
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Ordered Services</h3>
+                <h3 class="h5 mb-0">{{ __('Ordered Services') }}</h3>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Product</th>
-                                <th>SKU</th>
-                                <th class="text-end">Price</th>
-                                <th class="text-end">Qty</th>
-                                <th class="text-end pe-4">Total</th>
+                                <th class="ps-4">{{ __('Product') }}</th>
+                                <th>{{ __('SKU') }}</th>
+                                <th class="text-end">{{ __('Price') }}</th>
+                                <th class="text-end">{{ __('Qty') }}</th>
+                                <th class="text-end pe-4">{{ __('Total') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,8 +85,8 @@
                 </div>
                 @if($order->notes)
                 <div class="border-top mt-3">
-                    <h6 class="fs-14 mt-3">Notes</h6>
-                    <p class="mb-0">{{ $order->notes ?? 'No notes' }}</p>
+                    <h6 class="fs-14 mt-3">{{ __('Notes') }}</h6>
+                    <p class="mb-0">{{ $order->notes ?? __('No notes') }}</p>
                 </div>
                 @endif
             </div>
@@ -98,41 +98,41 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">Sub Total</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('Sub Total') }}</h6>
                             <p class="mb-0">{{ format_price($order->owner_subtotal)->formatted() }}</p>
                         </div>
 
                         <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">Discount</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('Discount') }}</h6>
                             <p class="mb-0">{{ format_price($order->owner_discount)->formatted() }}</p>
                         </div>
                         
                           <div>
-                            <h6 class="fs-14 text-muted mb-2">Paid</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('Paid') }}</h6>
                             <p class="mb-0">
-                                {{ ($order->captures && $order->captures->first()) ? $order->captures->first()->amount->formatted() : 'Not paid' }}
+                                {{ ($order->captures && $order->captures->first()) ? $order->captures->first()->amount->formatted() : __('Not paid') }}
                             </p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">VAT</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('VAT') }}</h6>
                             <p class="mb-0">{{ format_price($order->owner_vat)->formatted() }}</p>
                         </div>
 
                         <div class="border-bottom pb-3 mb-3">
-                            <h6 class="fs-14 text-muted mb-2">Total</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('Total') }}</h6>
                             <p class="mb-0">{{ format_price($order->owner_total)->formatted() }}</p>
                         </div>
 
                       
 
                         <div>
-                            <h6 class="fs-14 text-muted mb-2">Refund</h6>
+                            <h6 class="fs-14 text-muted mb-2">{{ __('Refund') }}</h6>
                             @if($order->refund_total)
                             <p class="mb-0">{{ $order->refund_total }}</p>
                             @else
-                            <p class="mb-0">No refund</p>
+                            <p class="mb-0">{{ __('No refund') }}</p>
                             @endif
                         </div>
                     </div>
@@ -143,23 +143,23 @@
         <!-- Transactions Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Transactions</h3>
+                <h3 class="h5 mb-0">{{ __('Transactions') }}</h3>
             </div>
             <div class="card-body">
                 @if($order->transactions->isEmpty())
-                <p class="mb-0 text-muted">No transactions found.</p>
+                <p class="mb-0 text-muted">{{ __('No transactions found.') }}</p>
                 @else
                 @foreach($order->transactions as $transaction)
                 <div class="border-bottom pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0">Payment successful - {{ $transaction->amount }}</h6>
-                        <span class="badge bg-success bg-opacity-10 text-success">Completed</span>
+                        <h6 class="mb-0">{{ __('Payment successful') }} - {{ $transaction->amount }}</h6>
+                        <span class="badge bg-success bg-opacity-10 text-success">{{ __('Completed') }}</span>
                     </div>
                     <div class="text-muted fs-14 mb-1">
                         {{ $transaction->created_at->format('F j, Y \a\t g:i A') }}
                     </div>
                     <p class="mb-0 text-muted fs-14">
-                        Payment received via {{ $transaction->provider }} | Payment intent:
+                        {{ __('Payment received via') }} {{ $transaction->provider }} | {{ __('Payment intent') }}:
                         {{ $transaction->reference }}
                     </p>
                 </div>
@@ -177,7 +177,7 @@
                 <form method="POST" action="#">
                     @csrf
                     <div class="mb-3">
-                        <textarea class="form-control" name="comment" rows="3" placeholder="Add a comment"></textarea>
+                        <textarea class="form-control" name="comment" rows="3" placeholder="{{ __('Add a comment') }}"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm">Add Comment</button>
                 </form>
@@ -192,34 +192,34 @@
         <!-- Customer Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Customer</h3>
+                <h3 class="h5 mb-0">{{ __('Customer') }}</h3>
             </div>
             <div class="card-body">
                 <div class="border-bottom pb-3 mb-3">
-                    <h6 class="fs-14 text-muted mb-2">New / Returning</h6>
-                    <p class="mb-0">{{ $order->customer ? 'Returning' : 'New' }}</p>
+                    <h6 class="fs-14 text-muted mb-2">{{ __('New / Returning') }}</h6>
+                    <p class="mb-0">{{ $order->customer ? __('Returning') : __('New') }}</p>
                 </div>
 
                 <div class="border-bottom pb-3 mb-3">
-                    <h6 class="fs-14 text-muted mb-2">Reference</h6>
+                    <h6 class="fs-14 text-muted mb-2">{{ __('Reference') }}</h6>
                     <p class="mb-0">{{ $order->reference }}</p>
                 </div>
 
                 <div class="border-bottom pb-3 mb-3">
-                    <h6 class="fs-14 text-muted mb-2">Customer Reference</h6>
+                    <h6 class="fs-14 text-muted mb-2">{{ __('Customer Reference') }}</h6>
                     <p class="mb-0">{{ $order->customer_reference ?? '-' }}</p>
                 </div>
 
                 @if($order->channel)
                     <div class="border-bottom pb-3 mb-3">
-                        <h6 class="fs-14 text-muted mb-2">Store</h6>
+                        <h6 class="fs-14 text-muted mb-2">{{ __('Store') }}</h6>
                         <p class="mb-0">{{ $order->channel->name }}</p>
                         <p class="mb-0">{{ $order->channel->address }}</p>
                     </div>
                 @endif
 
                 <div>
-                    <h6 class="fs-14 text-muted mb-2">Date Placed</h6>
+                    <h6 class="fs-14 text-muted mb-2">{{ __('Date Placed') }}</h6>
                     <p class="mb-0">{{ $order->created_at->format('F j, Y \a\t g:i A') }}</p>
                 </div>
             </div>
@@ -228,7 +228,7 @@
         <!-- Shipping Address Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Shipping Address</h3>
+                <h3 class="h5 mb-0">{{ __('Shipping Address') }}</h3>
             </div>
             <div class="card-body">
                 @if($order->shippingAddress)
@@ -242,7 +242,7 @@
                     <div>{{ $order->shippingAddress->country->name }}</div>
                 </div>
                 @else
-                <p class="mb-0 text-muted fs-14">No address set</p>
+                <p class="mb-0 text-muted fs-14">{{ __('No address set') }}</p>
                 @endif
             </div>
         </div>
@@ -250,7 +250,7 @@
         <!-- Billing Address Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Billing Address</h3>
+                <h3 class="h5 mb-0">{{ __('Billing Address') }}</h3>
             </div>
             <div class="card-body">
                 @if($order->billingAddress)
@@ -264,7 +264,7 @@
                     <div>{{ $order->billingAddress->country->name }}</div>
                 </div>
                 @else
-                <p class="mb-0 text-muted fs-14">No address set</p>
+                <p class="mb-0 text-muted fs-14">{{ __('No address set') }}</p>
                 @endif
             </div>
         </div>
@@ -272,10 +272,10 @@
         <!-- Additional Information Card -->
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0">Additional Information</h3>
+                <h3 class="h5 mb-0">{{ __('Additional Information') }}</h3>
             </div>
             <div class="card-body">
-                <p class="mb-0 text-muted fs-14">{{ $order->additional_information ?? 'No additional information' }}</p>
+                <p class="mb-0 text-muted fs-14">{{ $order->additional_information ?? __('No additional information') }}</p>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Gift Experiences')
+@section('title', __('Gift Experiences'))
 
 @section('top-content')
 
@@ -14,18 +14,16 @@
             <div class="col-lg-6 mb-5 mt-5 mb-lg-0" id="xxz">
                 <!-- Badges for gifting occasions -->
                 <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill">Birthdays</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill">{{ __('Birthdays') }}</span>
                     <span
-                        class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill">Anniversaries</span>
+                        class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill">{{ __('Anniversaries') }}</span>
                     <span class="badge bg-warning bg-opacity-10 text-warning py-2 px-3 rounded-pill">Corporate
                         Gifts</span>
                 </div>
 
                 <!-- Headline -->
-                <h1 class="display-4 fw-bold mb-3">The Perfect <span class="text-primary">Gift</span> Isn’t a Thing—It’s
-                    an <span class="text-primary">Experience</span></h1>
-                <p class="lead mb-4">Surprise them with unforgettable moments—from adrenaline rushes to luxury escapes.
-                    No wrapping paper needed.</p>
+                <h1 class="display-4 fw-bold mb-3">{{ __('The Perfect') }} <span class="text-primary">{{ __('Gift') }}</span> {{ __('Isn\'t a Thing—It\'s an') }} <span class="text-primary">{{ __('Experience') }}</span></h1>
+                <p class="lead mb-4">{{ __('Surprise them with unforgettable moments—from adrenaline rushes to luxury escapes. No wrapping paper needed.') }}</p>
 
                 <!-- Dual CTAs -->
                 <div class="d-flex flex-wrap gap-3">
@@ -43,11 +41,11 @@
                 <div class="mt-4 d-flex align-items-center gap-3">
                     <div class="d-flex gap-2 small text-muted align-items-center">
                         <i class="fa fa-lock text-success" aria-hidden="true"></i>
-                        <span>Secure Booking</span>
+                        <span>{{ __('Secure Booking') }}</span>
                     </div>
                     <div class="d-flex gap-2 small text-muted align-items-center">
                         <i class="fa fa-bolt text-warning" aria-hidden="true"></i>
-                        <span>Instant Delivery</span>
+                        <span>{{ __('Instant Delivery') }}</span>
                     </div>
                 </div>
 
@@ -64,7 +62,7 @@
         <i class="fa fa-tags fs-1 classic-color"></i>
         <div>
             <h2 class="fs-30 fw-600 ls-1">{{ __('Browse categories') }}</h2>
-            <p class="text-muted mb-0 fs-18 ls-1">Lots of new products and product collections</p>
+            <p class="text-muted mb-0 fs-18 ls-1">{{ __('Lots of new products and product collections') }}</p>
         </div>
     </div>
 
@@ -81,7 +79,7 @@
                                 loading="lazy">
                         </div>
                         <div class="position-absolute bottom-0 start-0 end-0 p-3">
-                            <h5 class="category-explore">Explore</h5>
+                            <h5 class="category-explore">{{ __('Explore') }}</h5>
                             <div class="category-name">
                                 {{ $collection->translateAttribute('name') }}
                             </div>
@@ -111,7 +109,7 @@
                                 loading="lazy">
                         </div>
                         <div class="position-absolute bottom-0 start-0 end-0 p-3">
-                            <h5 class="category-explore">Explore</h5>
+                            <h5 class="category-explore">{{ __('Explore') }}</h5>
                             <div class="category-name">
                                 {{ $collection->translateAttribute('name') }}
                             </div>
@@ -134,8 +132,8 @@
     <div class="d-flex align-items-center mb-5 mt-5 gap-3">
         <i class="fa fa-tags fs-1 classic-color"></i>
         <div>
-            <h2 class="fs-30 fw-600 ls-1">Browse categories</h2>
-            <p class="text-muted mb-0 fs-18 ls-1">Lots of new products and product collections</p>
+            <h2 class="fs-30 fw-600 ls-1">{{ __('Browse categories') }}</h2>
+            <p class="text-muted mb-0 fs-18 ls-1">{{ __('Lots of new products and product collections') }}</p>
         </div>
     </div>
     <div class="items">
@@ -158,8 +156,8 @@
         <div class="d-flex align-items-center mb-5 mt-5 gap-3">
         <i class="fa fa-tags fs-1 classic-color"></i>
         <div>
-            <h2 class="fs-30 fw-600 ls-1">Browse categories</h2>
-            <p class="text-muted mb-0 fs-18 ls-1">Lots of new products and product collections</p>
+            <h2 class="fs-30 fw-600 ls-1">{{ __('Browse categories') }}</h2>
+            <p class="text-muted mb-0 fs-18 ls-1">{{ __('Lots of new products and product collections') }}</p>
         </div>
     </div>
     <div class="row">
@@ -172,10 +170,10 @@
 ">
                     <div class="row">
                         <div class="col-lg-6 mb-4 pe-0 p-5">
-                            <h5 class="mb-3 fw-600">Special Picks</h5>
-                            <h1 class="mb-3 fs-1 fw-900">Picks for date <br>Special Night </h1>
+                            <h5 class="mb-3 fw-600">{{ __('Special Picks') }}</h5>
+                            <h1 class="mb-3 fs-1 fw-900">{{ __('Picks for date') }} <br>{{ __('Special Night') }} </h1>
 <div class="d-flex flex-wrap gap-2 mb-4">
-                    <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill">Birthdays</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill">{{ __('Birthdays') }}</span>
                     <span class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill">Anniversaries</span>
                     
                 </div>

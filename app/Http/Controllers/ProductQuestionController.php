@@ -34,7 +34,7 @@ class ProductQuestionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your question has been submitted!',
+            'message' => __('Your question has been submitted!'),
         ]);
     }
 
@@ -52,7 +52,7 @@ class ProductQuestionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your question has been submitted!',
+            'message' => __('Your answer has been submitted!'),
         ]);
     }
 
@@ -61,6 +61,6 @@ class ProductQuestionController extends Controller
         $question->delete();
 
         return redirect()->back()
-            ->with('success', 'Question deleted successfully!');
+            ->with('success', __('Question deleted successfully!'));
     }
 }

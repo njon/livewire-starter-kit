@@ -91,7 +91,7 @@
                         <div class="alert alert-success border-0 d-flex align-items-center p-2 px-3 rounded-4 my-3"
                             role="alert">
                             <i class="material-symbols-outlined me-2 fs-5">schedule</i>
-                            <small class="fw-semibold text-info-emphasis">Special Offer </small>
+                            <small class="fw-semibold text-info-emphasis">{{ __('Special Offer') }} </small>
                             @if(!$end['ended'])
                             <div class="countdown-timer d-flex align-items-center flex-grow-1 ms-1">
                                 <span class="badge bg-warning text-dark me-1" id="countdown-days-container">
