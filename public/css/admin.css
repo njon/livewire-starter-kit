@@ -1034,7 +1034,8 @@ a.card-btn.text-decoration-none.fs-14 {
     
     .activity-item {
         display: flex;
-        gap: 12px;
+        gap: 5px;
+        width: 100%;
     }
     
     .activity-icon {
@@ -1060,7 +1061,8 @@ a.card-btn.text-decoration-none.fs-14 {
     .activity-text {
         margin-bottom: 0;
         font-size: 0.875rem;
-    }
+            width: 240px;
+}
     
     .dropdown-notifications-container::-webkit-scrollbar {
         width: 6px;

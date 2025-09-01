@@ -74,7 +74,7 @@ class AdminServiceController extends Controller
 
     public function index()
     {
-        $products = Product::with(['variants'])->where('lunar_products.owner_id', auth()->user()->owner_id)
+        $products = Product::with(['variants'])->ownedByUser('lunar_products')
             ->leftJoin('lunar_order_lines', 'lunar_order_lines.id', '=', 'lunar_products.id')
             ->select('lunar_products.*', DB::raw('SUM(lunar_order_lines.quantity) as total_sales'))
             ->groupBy('lunar_products.id')

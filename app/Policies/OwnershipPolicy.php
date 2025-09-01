@@ -25,9 +25,10 @@ class OwnershipPolicy
     protected function checkOwnership(User $user, Model $model)
     {
         // Super admins bypass all checks
-        if ($user->is_super_admin) {
-            // return true;
+        if (auth()->user()->role == 'super_admin') {
+            return true;
         }
+
 
         // Check if model has owner_id property
         if (!isset($model->owner_id)) {

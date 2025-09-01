@@ -25,6 +25,7 @@
         </div>
     </div>
 
+    @include('products.gallery')
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
@@ -138,6 +139,14 @@
         <div class="variant-options">
             @php $first = true; @endphp
             @foreach($product->variants as $variant)
+
+            @php 
+
+            $discount = \Lunar\Models\Discount::first() ?? new \Lunar\Models\Discount();
+            $discountPrice = new App\Services\DiscountService($variant->prices->first(), $discount);
+            $price = $discountPrice->calculate();
+            $priced = format_price($price);
+            @endphp
                 <div class="variant-option mb-3">
                     <input type="radio" class="btn-check" name="variant" id="variant-{{ $variant->id }}"
                            autocomplete="off" @if($first) checked @endif>
@@ -160,6 +169,11 @@
                             <span class="variant-price badge bg-primary rounded-pill">
                                 {{ $variant->prices->first()->price->formatted }}
                             </span>
+                            @if ($variant->prices->first()->price->formatted != $priced)
+                                <span class="text-muted small badge d-block">
+                                        {{ $priced->formatted }}
+                                </span>
+                            @endif
                         </div>
     
                         @php $first = false; @endphp
@@ -168,39 +182,6 @@
             @endforeach
         </div>
     </div>
-
-    <style>
-        .variant-card {
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: white;
-        }
-        
-        .variant-card:hover {
-            border-color: #198754 !important;
-            box-shadow: 0 0 0 1px #198754 ;
-        }.bg-primary {
-    background: #198754 !important;
-}
-        
-        .btn-check:checked + .variant-card {
-            border-color: #198754 !important;
-            background-color: rgba(var(--bs-primary-rgb), 0.05);
-            box-shadow: 0 0 0 2px #198754;
-        }
-        
-        .variant-price {
-            font-size: 0.9rem;
-            padding: 0.35rem 0.65rem;
-        }
-        
-        @media (min-width: 768px) {
-            .variant-price {
-                font-size: 1rem;
-                padding: 0.5rem 0.75rem;
-            }
-        }
-    </style>
 @endif
 
                         <div class="row">

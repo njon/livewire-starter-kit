@@ -18,6 +18,9 @@
                     <tr>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
+                        @if(auth()->user()->super_admin)
+                            <th>{{ __('Owner ID') }}</th>
+                        @endif
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
@@ -32,6 +35,17 @@
                             </h6>
                         </td>
                         <td>{{ $user->email }}</td>
+                        @if(auth()->user()->super_admin)
+                            <td>
+                                @if($user->owner_id)
+                                    <a href="{{ route('users.edit', $user->owner_id) }}" class="text-decoration-none">
+                                        {{ $user->owner_id }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endif
                         <td class="text-end pe-4">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">

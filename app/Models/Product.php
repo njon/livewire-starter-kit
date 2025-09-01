@@ -122,18 +122,6 @@ class Product extends LunarProduct
             ->get();
     }
 
-    // @todo Probably remove this
-    // public function tax()
-    // {
-    //     // THIS WILL BE CORRECT-> ADD TAX CLASS ID
-    //     $tax_class_id = $this->variants->first()->tax_class_id ?? null;
-    //     $taxRateAmount = TaxRateAmount::whereHas('taxRate', function($query) use ($tax_class_id) {
-    //         $query->where('id', $tax_class_id);
-    //     })->get(); 
-
-    //     return $taxRateAmount;
-    // }
-
     public function answeredQuestions()
     {
         return $this->questions()->whereNotNull('answered_at');

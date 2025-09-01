@@ -27,6 +27,9 @@
                         <th>{{ __('Discount') }}</th>
                         <th>{{ __('Sales') }}</th>
                         <th>{{ __('Price') }}</th>
+                        @if(auth()->user()->super_admin)
+                            <th>{{ __('Owner ID') }}</th>
+                        @endif
                         <th class="text-end pe-4">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -84,6 +87,17 @@
 
                             {{ $product->variants->first()->prices->first()->price->formatted() ?? '-' }} {!! $product->variants->count() > 1 ? '' : '' !!} 
                         </td>
+                        @if(auth()->user()->super_admin)
+                            <td>
+                                @if($product->owner_id)
+                                    <a href="{{ route('users.edit', $product->owner_id) }}" class="text-decoration-none">
+                                        {{ $product->owner_id }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endif
                         <td class="text-end pe-4">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -111,7 +125,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
+                        <td colspan="{{ auth()->user()->super_admin ? '8' : '7' }}" class="text-center py-5 text-muted">
                             <i class="bi bi-box-seam me-2"></i> {{ __('No products found') }}
                         </td>
                     </tr>

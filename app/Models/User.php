@@ -168,6 +168,11 @@ class User extends Authenticatable
         return $this->hasStaffAccess() || $this->isStaffViewer();
     }
 
+    public function getSuperAdminAttribute(): bool
+    {
+        return $this->isSuperAdmin();
+    }
+
 
     public function wishlistItems()
     {

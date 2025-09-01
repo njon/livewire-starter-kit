@@ -34,14 +34,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(ShippingModifiers $shippingModifiers): void
     {
-        Builder::macro('ownedByUser', function ($userId = null, $column = 'owner_id') {
+        Builder::macro('ownedByUser', function ($name = '', $column = 'owner_id') {
+            $role = auth()->user()->role == 'super_admin' ?? false;
             $userId = $userId ?? auth()->id();
-            
+            $column = $name ? $name . '.' . $column : $column;
+
             if (!$userId) {
                 // Return empty result if no user is authenticated
                 return $this->whereNull($column);
             }
-            
+
+            if($role) {
+                return $this->where($column, '!=', 0);
+            }
+
             return $this->where($column, $userId);
         });
 

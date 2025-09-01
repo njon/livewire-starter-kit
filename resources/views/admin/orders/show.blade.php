@@ -75,10 +75,15 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="h5 mb-0">Order #{{ $order->reference }}</h3>
-                    <span class="badge bg-{{ $order->status_color }} bg-opacity-10 text-{{ $order->status_color }}">
-                        {{ $order->status }}
-                    </span>
+                                <h3 class="h5 mb-0">Order #{{ $order->reference }}</h3>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-{{ $order->status_color }} bg-opacity-10 text-{{ $order->status_color }}">
+                                        {{ $order->status }}
+                                    </span>
+                                    <button class="btn btn-sm btn-outline-secondary update-status-btn" data-order-id="{{ $order->id }}" data-current-status="{{ $order->status }}">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
                 </div>
                 <div class="text-muted fs-14 mt-1">
                     {{ $order->created_at->format('F j, Y \a\t g:i A') }}
@@ -280,4 +285,180 @@
         </div>
     </div>
 </div>
+
+<!-- Status Update Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">Update Order Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="statusForm">
+                <div class="modal-body">
+                    <p>Current status: <span id="currentStatus" class="fw-bold"></span></p>
+                    
+                    <div class="mb-3">
+                        <label for="newStatus" class="form-label">New Status</label>
+                        <select class="form-select" id="newStatus" name="status" required>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="payment-received">Payment Received</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Order status update functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+    let currentOrderId = null;
+    let currentStatusElement = null;
+
+    // Handle update status button clicks
+    document.querySelectorAll('.update-status-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            const currentStatus = this.dataset.currentStatus;
+            
+            currentOrderId = orderId;
+            
+            // Find the status badge element
+            currentStatusElement = this.previousElementSibling;
+            
+            // Set current status in modal
+            document.getElementById('currentStatus').textContent = 
+                currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1).replace('-', ' ');
+            
+            // Set selected option
+            const select = document.getElementById('newStatus');
+            select.value = currentStatus;
+            
+            statusModal.show();
+        });
+    });
+
+    // Handle status form submission
+    document.getElementById('statusForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const newStatus = document.getElementById('newStatus').value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        // Show loading state
+        const submitBtn = document.querySelector('#statusForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+        submitBtn.disabled = true;
+        
+        // Make AJAX request
+        fetch(`/admin/order/${currentOrderId}/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the status badge
+                const statusText = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('-', ' ');
+                
+                // Update badge classes based on status
+                let bgClass = 'secondary';
+                let textClass = 'secondary';
+                
+                if (newStatus === 'payment-received' || newStatus === 'delivered') {
+                    bgClass = 'success';
+                    textClass = 'success';
+                } else if (newStatus === 'processing' || newStatus === 'shipped') {
+                    bgClass = 'primary';
+                    textClass = 'primary';
+                } else if (newStatus === 'cancelled' || newStatus === 'refunded') {
+                    bgClass = 'danger';
+                    textClass = 'danger';
+                }
+                
+                currentStatusElement.className = `badge bg-${bgClass} bg-opacity-10 text-${textClass}`;
+                currentStatusElement.textContent = statusText;
+                
+                // Update button data attribute
+                const updateBtn = document.querySelector(`.update-status-btn[data-order-id="${currentOrderId}"]`);
+                updateBtn.dataset.currentStatus = newStatus;
+                
+                // Show success message
+                showToast('Status updated successfully!', 'success');
+            } else {
+                showToast('Error updating status: ' + (data.message || 'Unknown error'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error updating status. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Restore button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            statusModal.hide();
+        });
+    });
+});
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Add to container
+    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+    toastContainer.appendChild(toast);
+    
+    // Show toast
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove toast after it hides
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+    return container;
+}
+</script>
 @endsection

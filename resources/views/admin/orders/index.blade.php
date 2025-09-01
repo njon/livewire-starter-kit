@@ -30,6 +30,9 @@
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Phone') }}</th>
                         <th>{{ __('Total') }}</th>
+                        @if(auth()->user()->super_admin)
+                            <th>{{ __('Owner ID') }}</th>
+                        @endif
                         <th>{{ __('Date') }}</th>
                     </tr>
                 </thead>
@@ -69,6 +72,17 @@
                         <td>
                             {{ format_price($order->owner_total)->formatted() }}
                         </td>
+                        @if(auth()->user()->super_admin)
+                            <td>
+                                @if($order->owner_id)
+                                    <a href="{{ route('users.edit', $order->owner_id) }}" class="text-decoration-none">
+                                        {{ $order->owner_id }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endif
                         <td>
                             <span class="text-muted fs-14">
                                 {{ $order->created_at->format('d/m/Y H:i') }}
@@ -78,7 +92,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="11" class="text-center py-5 text-muted">
+                        <td colspan="{{ auth()->user()->super_admin ? '9' : '8' }}" class="text-center py-5 text-muted">
                             <i class="bi bi-cart me-2"></i> {{ __('No orders found') }}
                         </td>
                     </tr>

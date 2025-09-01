@@ -16,7 +16,24 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $orders = Order::ownedByUser()->count();
+        $ownerOrderIds = OrderLine::ownedByUser()
+            ->pluck('order_id')
+            ->unique();
+
+        $orders = Order::whereIn('id', $ownerOrderIds)
+            ->where('status', 'payment-received')
+            ->with(['lines' => function ($query) {
+                $query->ownedByUser()
+                      ->orderByDesc('id');
+                }])
+            ->orderByDesc('id')
+            ->get();
+
+        
+        $ordersCount = $orders->count();
+        $products = Product::ownedByUser()->count();
+        $customers = User::ownedByUser()->count();
+
         $products = Product::ownedByUser()->count();
         $customers = User::ownedByUser()->count();
 
@@ -27,8 +44,8 @@ class AdminDashboardController extends Controller
         $pendingOrders = Order::ownedByUser()->where('status', 'pending')->count();
 
         // Average Order Value
-        $averageOrderValue = Order::ownedByUser()->where('status', 'payment-received')->avg('total') ?? 0;
-        $averageOrderValue = $orders > 0 ? format_price($averageOrderValue)->formatted() : 0;
+        $averageOrderValue = $orders->avg('total.value') ?? 0;
+        $averageOrderValue = $orders->count() > 0 ? format_price($averageOrderValue)->formatted() : 0;
 
         // Sales Overview (Yearly) - Fixed to include owner scoping
         $salesYear = date('Y');
@@ -68,6 +85,7 @@ class AdminDashboardController extends Controller
         ->filter();
 
         return view('admin.dashboard.index', compact(
+            'ordersCount',
             'orders',
             'products',
             'customers',

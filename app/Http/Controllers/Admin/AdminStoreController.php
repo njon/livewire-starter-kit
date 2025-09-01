@@ -13,7 +13,7 @@ class AdminStoreController extends Controller
 {
     public function index()
     {
-        $stores = Channel::where('owner_id', auth()->user()->owner_id)->get();
+        $stores = Channel::ownedByUser()->get();
         $languages = Language::all();
 
         return view('admin.stores.index', compact('stores', 'languages'));

@@ -51,7 +51,7 @@ class AdminOrdersController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled,refunded'
+            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled,refunded,payment-received'
         ]);
 
         $order = Order::findOrFail($id);
@@ -61,6 +61,15 @@ class AdminOrdersController extends Controller
         $this->authorize('update', $orderLine);
         
         $order->update(['status' => $request->status]);
+        
+        // Return JSON response for AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Order status updated successfully'),
+                'status' => $request->status
+            ]);
+        }
         
         return back()->with('success', __('Order status updated successfully'));
     }

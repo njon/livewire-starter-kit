@@ -23,6 +23,9 @@
                                     <th>{{ __('Email') }}</th>
                                     <th>{{ __('Phone') }}</th>
                                     <th>{{ __('Services') }}</th>
+                                    @if(auth()->user()->super_admin)
+                                        <th>{{ __('Owner ID') }}</th>
+                                    @endif
                                     <th>{{ __('Hours') }}</th>
                                     <th class="text-end pe-4">Actions</th>
                                 </tr>
@@ -90,12 +93,23 @@
                                     <td>
                                         @foreach($store->products as $service)
                                             <span class="badge">
-                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="text-decoration-none text-black">
+                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="d-block text-truncate text-decoration-none text-black" style="width:150px;">
                                                     <i class="bi bi-tag me-2 text-black"></i>{{ $service->translateAttribute('name') }}
                                                 </a>
                                             </span>
                                         @endforeach
                                     </td>
+                                    @if(auth()->user()->super_admin)
+                                        <td>
+                                            @if($store->owner_id)
+                                                <a href="{{ route('users.edit', $store->owner_id) }}" class="text-decoration-none">
+                                                    {{ $store->owner_id }}
+                                                </a>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    @endif
                                     <td>
                                         <button class="btn btn-sm btn-success btn-floating shadow-sm rounded-circle m-0" data-bs-toggle="modal" data-bs-target="#hoursModal-{{ $store->id }}" title="View Hours">
                                             <i class="bi bi-clock"></i>

@@ -30,6 +30,15 @@
                 <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
             </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">{{ __('Role') }}</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="">{{ __('Select a role') }}</option>
+                    @foreach($availableRoles as $role)
+                        <option value="{{ $role }}">{{ __(ucwords(str_replace('_', ' ', $role))) }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">{{ __('Save User') }}</button>
