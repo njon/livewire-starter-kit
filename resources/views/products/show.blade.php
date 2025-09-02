@@ -82,7 +82,7 @@
                             <span class="fs-3 fw-bolder me-2" id="cart-price">{{ $product->price }}</span>
                             @if ($product->has_discount)
                             <span
-                                class="text-decoration-line-through text-muted me-2">{{ $product->price_without_discount }}</span>
+                                class="text-decoration-line-through text-muted me-2" id="cart-discount">{{ $product->price_without_discount }}</span>
                             <span
                                 class="badge bg-success-subtle text-success fw-bold">-{{ $product->discount_percentage }}%</span>
                             @endif
@@ -139,14 +139,6 @@
         <div class="variant-options">
             @php $first = true; @endphp
             @foreach($product->variants as $variant)
-
-            @php 
-
-            $discount = \Lunar\Models\Discount::first() ?? new \Lunar\Models\Discount();
-            $discountPrice = new App\Services\DiscountService($variant->prices->first(), $discount);
-            $price = $discountPrice->calculate();
-            $priced = format_price($price);
-            @endphp
                 <div class="variant-option mb-3">
                     <input type="radio" class="btn-check" name="variant" id="variant-{{ $variant->id }}"
                            autocomplete="off" @if($first) checked @endif>
@@ -167,12 +159,10 @@
                                 </div>
                             </div>
                             <span class="variant-price badge bg-primary rounded-pill">
-                                {{ $variant->prices->first()->price->formatted }}
+                                {{ $variant->price }}
                             </span>
-                            @if ($variant->prices->first()->price->formatted != $priced)
-                                <span class="text-muted small badge d-block">
-                                        {{ $priced->formatted }}
-                                </span>
+                            @if($variant->has_discount)
+                                <span class="variant-discount badge bg-light rounded-pill text-decoration-line-through text-muted">{{ $variant->price_without_discount }}</span>
                             @endif
                         </div>
     

@@ -11,7 +11,7 @@ use Lunar\Models\Product as LunarProduct;
 use Lunar\Models\Collection;
 use Lunar\Models\Discount;
 use Lunar\Models\TaxRateAmount;
-use Lunar\Models\ProductVariant;
+use App\Models\ProductVariant;
 use App\Services\DiscountService;
 use Lunar\Models\Currency;
 use App\Models\ProductQuestion;

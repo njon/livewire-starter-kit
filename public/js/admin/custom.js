@@ -280,16 +280,6 @@ $(document).ready(function () {
         $('#variantModal .modal-title').text('Add Variant');
         $('#saveVariantBtn').text('Add Variant').data('edit-mode', false).removeData('variant-id');
     });
-
-    $('.variant-card').on('click', function() {
-        const formattedPrice = $(this).find('.variant-price').text();
-        $('#cart-price')
-            .fadeOut(200, function() {
-                $(this).html(formattedPrice)
-                    .fadeIn(200);
-            });
-    });
-
 });
 
 document.addEventListener('DOMContentLoaded', function() {

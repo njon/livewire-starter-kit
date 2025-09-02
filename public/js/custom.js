@@ -436,15 +436,22 @@ $(document).ready(function () {
 
     $('.variant-card').on('click', function() {
         const formattedPrice = $(this).find('.variant-price').text();
+        const formattedDiscount = $(this).find('.variant-discount').text();
         const link = $(this).data('form-link');
         $('#add-to-cart').attr('action', link);
-        console.log(link);
-            $('#cart-price')
+        $('#cart-price')
             .fadeOut(200, function() {
                 $(this).html(formattedPrice)
                     .fadeIn(200);
             });
+            
+        $('#cart-discount')
+            .fadeOut(200, function() {
+                $(this).html(formattedDiscount)
+                    .fadeIn(200);
+            });
     });
+
     
     $('#add-to-cart').on('submit', function (e) {
         e.preventDefault();
