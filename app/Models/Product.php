@@ -85,9 +85,9 @@ class Product extends LunarProduct
 
     public static function findBySlug(string $slug): ?self
     {
-        // return static::where('status', 'published')->first();
         return static::with(static::$detailWith)
             ->whereHas('defaultUrl', fn($q) => $q->where('slug', $slug))
+            ->where('status', 'published')
             ->first();
     }
 

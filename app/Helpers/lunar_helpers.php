@@ -14,6 +14,7 @@ use Lunar\Models\OrderLine;
 use Lunar\Models\Transaction;
 use Lunar\Models\Customer;
 use Lunar\Models\Address;
+use Lunar\Models\Channel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -87,6 +88,35 @@ if (!function_exists('remove_orders')) {
             // Finally delete the order
             $order->delete();
         });
+    }
+}
+
+if (!function_exists('store_name')) {
+    /**
+     * Format discounted price
+     */
+    function store_name($store)
+    {
+        $locale = app()->getLocale();
+
+        if(is_array($store->attribute_data)) {
+            $arrayData = $store->attribute_data;
+        } else {
+            $arrayData = json_decode($store->attribute_data, true);
+        }
+
+        // Safely access the attribute_data array
+        return $arrayData['name'][$locale] ?? $arrayData['name']['gr'];
+    }
+}
+
+if (!function_exists('format_price')) {
+    /**
+     * Format discounted price
+     */
+    function format_price(int $value): Price
+    {
+        return new Price($value, Currency::where('code', 'EUR')->first());
     }
 }
 
@@ -492,5 +522,45 @@ if (!function_exists('delete_all_reviews_and_questions')) {
             'questions' => "Deleted {$questionCount} product questions.",
             'total' => "Total deleted: {$reviewCount} reviews and {$questionCount} questions."
         ];
+    }
+}
+
+if (!function_exists('unattach_all_products_from_channels')) {
+    /**
+     * Unattach all products from all channels
+     *
+     * @return string
+     */
+    function unattach_all_products_from_channels(): string
+    {
+        $detachedCount = 0;
+        
+        Product::chunk(100, function ($products) use (&$detachedCount) {
+            foreach ($products as $product) {
+                $channelCount = $product->channels()->count();
+                $product->channels()->detach();
+                $detachedCount += $channelCount;
+            }
+        });
+        
+        return "Unattached {$detachedCount} product-channel relationships.";
+    }
+}
+
+if (!function_exists('from_channels')) {
+    /**
+     * Unattach all products from all channels
+     *
+     * @return string
+     */
+    function from_channels()
+    {
+        $detachedCount = 0;
+        
+        Channel::chunk(100, function ($channels) {
+            foreach ($channels as $channel) {
+                $channel->products()->detach();
+            }
+        });
     }
 }

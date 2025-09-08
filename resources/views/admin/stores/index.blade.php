@@ -20,7 +20,6 @@
                                     <th width="80">{{ __('Image') }}</th>
                                     <th>{{ __('Title') }}</th>
                                     <th>{{ __('Address') }}</th>
-                                    <th>{{ __('Email') }}</th>
                                     <th>{{ __('Phone') }}</th>
                                     <th>{{ __('Services') }}</th>
                                     @if(auth()->user()->super_admin)
@@ -58,12 +57,7 @@
                                     <td>
                                         <h6 class="mb-0">
                                             <a href="{{ route('stores.edit', $store->id) }}" class="text-decoration-none">
-                                                @dd($store->attribute_data)
-                                                @php
-                                                    $locale = app()->getLocale();
-                                                    $storeName = $store->attribute_data['name'][$locale] ?? $store->attribute_data['name']['gr'];
-                                                @endphp
-                                                {{ $storeName }}
+                                                {{ store_name($store) }}
                                             </a>
                                         </h6>
                                         <!-- <small class="text-muted">{{ $store->handle }}</small> -->
@@ -82,13 +76,6 @@
                                         @endforeach
                                     </td> -->
                                     <td>
-                                        @if($store->email)
-                                            {{ $store->email }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
                                         @if($store->phone)
                                             {{ $store->phone }}
                                         @else
@@ -98,7 +85,7 @@
                                     <td>
                                         @foreach($store->products as $service)
                                             <span class="badge">
-                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="d-block text-truncate text-decoration-none text-black" style="width:150px;">
+                                                <a href="{{ route('admin.products.edit', $service->id) }}" target="_blank" class="text-start d-block text-truncate text-decoration-none text-black" style="width:150px;">
                                                     <i class="bi bi-tag me-2 text-black"></i>{{ $service->translateAttribute('name') }}
                                                 </a>
                                             </span>

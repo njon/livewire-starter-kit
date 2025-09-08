@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 
-
 /**
  * Display column names of the lunar_products table
  * 

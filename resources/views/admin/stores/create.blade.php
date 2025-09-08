@@ -102,17 +102,13 @@ const exampleData = {
                                 <label for="email" class="form-label">{{ __('Email') }}</label>
                                 <input type="email" class="form-control" id="email" name="email">
                             </div>
-                            <div class="col-md-6 mt-3">
-                                <label for="website" class="form-label">{{ __('Website') }}</label>
-                                <input type="text" class="form-control" id="website" name="website">
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                    <label for="address" class="form-label">{{ __('Address') }}</label>
-                                    <input type="text" class="form-control" id="address" name="address" placeholder="{{ __('Start typing address...') }}">
-                                </div>
-                            
+
                             <div class="col-md-12 mt-3">
-                                
+                                <label for="address" class="form-label">{{ __('Address') }}</label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="{{ __('Start typing address...') }}">
+                            </div>
+ 
+                            <div class="col-md-12 mt-3">
                                 <div class="mb-3">
                                     <div id="map" style="height: 300px; width: 100%; background-color: #eee;"></div>
                                     <input type="hidden" id="map_location" name="map_location">

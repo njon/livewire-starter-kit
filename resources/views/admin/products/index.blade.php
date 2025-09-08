@@ -156,7 +156,7 @@
                         <label for="productTitle" class="form-label">{{ __('Product Title') }}</label>
                         <input type="text" class="form-control" id="productTitle" name="name[gr]" required>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="productType" class="form-label">{{ __('Product Type') }}</label>
                         <select class="form-select" id="productType" name="product_type_id" required>
                             <option value="">{{ __('Select Product Type') }}</option>
@@ -164,7 +164,8 @@
                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> -->
+                        <input type="hidden" name="product_type_id" value="1"/>
                     <!-- Minimal required fields for LunarPHP -->
                     <!-- <div class="mb-3">
                         <label for="productSlug" class="form-label">Slug</label>

@@ -171,7 +171,7 @@
                             <div class="card-body p-2 py-3">
                                 <h3 class="m-0 mb-1 fs-6">
                                     <a class="card-btn text-decoration-none" target="_blank"
-                                        href="{{ route('stores.edit', $channel->id) }}">{{ $channel->name }}</a>
+                                        href="{{ route('stores.edit', $channel->id) }}">{{ store_name($channel) }}</a>
                                 </h3>
                                 <div class="mt-2">
                                     <p class="text-secondary m-0 small">{{ $channel->address ?? '' }}</p>

@@ -102,11 +102,11 @@ const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : 
                             <label for="email" class="form-label">{{ __('Email') }}</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{ $store->email }}">
                         </div>
-                        <div class="col-md-6 mt-3">
+                        <!-- <div class="col-md-6 mt-3">
                             <label for="website" class="form-label">{{ __('Website') }}</label>
                             <input type="text" class="form-control" id="website" name="website" value="{{ $store->website }}">
-                        </div>
-                        <div class="col-md-6 mt-3">
+                        </div> -->
+                        <div class="col-md-12 mt-3">
                             <label for="address" class="form-label">{{ __('Address') }}</label>
                             <input type="text" class="form-control" id="address" name="address" value="{{ $store->address }}" placeholder="{{ __('Start typing address...') }}">
                         </div>
