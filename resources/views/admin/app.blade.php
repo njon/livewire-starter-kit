@@ -81,9 +81,9 @@
     @include('admin.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content pe-sm-4 pe-md-0">
         <div class="row">
-            <div class="col-9 offset-lg-1 mt-4">
+            <div class="col-md-12 col-sm-11 col-lg-11 col-xxl-9 offset-lg-1 mt-4 pe-4">
 
                 @yield('toolbar')
 

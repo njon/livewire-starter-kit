@@ -30,7 +30,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($stores as $store)
+                                @forelse($stores as $store)
                                 @php
                                     $workingHours = $store->working_hours ? json_decode($store->working_hours, true) : [
                                         "monday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
@@ -131,7 +131,13 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="{{ auth()->user()->super_admin ? '8' : '7' }}" class="text-center py-5 text-muted">
+                                        <i class="bi bi-shop me-2"></i> {{ __('No stores found') }}
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

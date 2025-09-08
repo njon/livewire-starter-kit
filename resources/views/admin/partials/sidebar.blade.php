@@ -82,7 +82,13 @@
                                     <span>{{ __('Staff') }}</span>
                                 </a>
                             </li>
-                   
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/profile*') ? 'active' : '' }}"
+                                    href="/admin/profile/business">
+                                    <i class="bi bi-person"></i>
+                                    <span>{{ __('Profile') }}</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

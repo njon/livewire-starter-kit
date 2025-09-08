@@ -90,7 +90,15 @@ body {
     bottom: 0;
     width: 100%;
 }
-
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 85px !important;
+    }
+    .image-preview-container {
+        width: 50%;
+        height: 200px !important;
+    }
+}
 /* Main Content Styles */
 .main-content {
     margin-left: var(--sidebar-width);
@@ -509,10 +517,6 @@ Don't show: 1px solid #e1e1e1 !important;';
 
 /* Responsive Adjustments */
 @media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
     .sidebar.show {
         transform: translateX(0);
     }
@@ -1090,4 +1094,14 @@ button.btn {
 }
 .menu-image img {
     height: 100%;
+}
+.success-card h3 span i:before {
+    content: "\f26e" !important;
+}
+.success-card .business-next, .success-card .next-btn {
+    display: none !important;
+}
+.btn-primary {
+    background-color: #198754;
+    border-color: #198754;
 }

@@ -530,3 +530,23 @@ $(document).ready(function() {
         showToast('danger', errorMessages.join('\n'));
     }
 });
+
+// Sidebar responsive class management
+function manageSidebarResponsive() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+    
+    if (window.innerWidth <= 992) {
+        sidebar.classList.add('smalled');
+    } else {
+        sidebar.classList.remove('smalled');
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    manageSidebarResponsive();
+});
+
+// Listen for window resize events
+window.addEventListener('resize', manageSidebarResponsive);

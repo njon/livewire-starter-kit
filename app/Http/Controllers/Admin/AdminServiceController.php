@@ -194,7 +194,7 @@ class AdminServiceController extends Controller
         );
 
         return redirect()->route('admin.products.edit', $product->id)
-            ->with('success', __('Product updated successfully'));
+            ->with('success', __('Service updated successfully'));
     }
 
     public function destroy(Product $product)

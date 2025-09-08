@@ -18,41 +18,11 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminDiscountController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\AdminProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
-
-/**
- * Display column names of the lunar_products table
- * 
- * @return \Illuminate\Http\JsonResponse|array
- */
-// function showLunarProductColumns()
-// {
-//     try {
-//         // Check if the table exists
-//         if (!Schema::hasTable('lunar_products')) {
-//             return response()->json([
-//                 'error' => 'lunar_products table does not exist'
-//             ], 404);
-//         }
-
-//         // Get the column names
-//         $columns = Schema::getColumnListing('lunar_products');
-
-
-//         return $columns;
-        
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'error' => 'An error occurred: ' . $e->getMessage()
-//         ], 500);
-//     }
-// }
-
-
-
 
 Route::post('/refresh-lunar-cache', [CartController::class, 'refreshLunarCache'])->name('lunar.cache.refresh');
 Route::post('/remove-orders', [CartController::class, 'removeOrders'])->name('lunar.orders.remove');
@@ -88,6 +58,10 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::get('/notifications/recent', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'recent'])->name('admin.notifications.recent');
     Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.mark-read');
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
+
+    // Business Profile
+    Route::get('/profile/business', [AdminProfileController::class, 'business'])->name('admin.profile.business');
+    Route::post('/profile/business', [AdminProfileController::class, 'updateBusiness'])->name('admin.profile.business.update');
 
 });
 

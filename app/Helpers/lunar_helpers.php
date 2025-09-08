@@ -564,3 +564,28 @@ if (!function_exists('from_channels')) {
         });
     }
 }
+
+if (!function_exists('send_test_email')) {
+    /**
+     * Send test email function
+     *
+     * @param string $subject
+     * @param string $message
+     * @return bool
+     */
+    function send_test_email($subject = 'Test Email', $message = 'This is a test email from Laravel.')
+    {
+        try {
+            $recipient = 'jonasjov2@gmail.com';
+            
+            \Illuminate\Support\Facades\Mail::raw($message, function ($mail) use ($recipient, $subject) {
+                $mail->to($recipient)
+                     ->subject($subject);
+            });
+            return true;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Test email failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+}

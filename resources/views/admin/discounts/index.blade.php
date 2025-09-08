@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($discounts as $discount)
+                    @forelse($discounts as $discount)
                     <tr>
                         <td>
                             <h6 class="mb-0">
@@ -96,7 +96,13 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-percent me-2"></i> {{ __('No discounts found') }}
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
