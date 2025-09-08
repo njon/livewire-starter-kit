@@ -3,7 +3,7 @@
 @section('toolbar')
     @include('admin.partials.buttons', ['title' => 'Edit Store', 'asset' => 'Store', 'buttons' => [
         ['save' => true]
-    ]])
+    ], 'custom_button' => '<button type="button" class="btn btn-danger" onclick="confirmDelete(\'Are you sure you want to delete this store?\', function() { document.getElementById(\'delete-store-form\').submit(); })"><i class="bi bi-trash me-1"></i> Delete Store</button>'])
 @endsection
 
 @section('content')
@@ -250,4 +250,10 @@ document.getElementById('address').addEventListener('keydown', function(e) {
     }
 });
 </script>
+
+<!-- Hidden Delete Form -->
+<form id="delete-store-form" action="{{ route('stores.destroy', $store->id) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection

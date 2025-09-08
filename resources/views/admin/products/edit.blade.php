@@ -6,7 +6,8 @@
 'asset' => __('Service'),
 'buttons' => [
 ['save' => true]
-]
+],
+'custom_button' => '<button type="button" class="btn btn-danger" onclick="confirmDelete(\'Are you sure you want to delete this product?\', function() { document.getElementById(\'delete-product-form\').submit(); })"><i class="bi bi-trash me-1"></i> Delete Product</button>'
 ])
 @endsection
 
@@ -430,4 +431,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Hidden Delete Form -->
+<form id="delete-product-form" action="{{ route('admin.products.destroy', $product) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection

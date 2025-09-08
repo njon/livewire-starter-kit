@@ -3,7 +3,7 @@
 @section('toolbar')
     @include('admin.partials.buttons', ['title' => 'Edit Discount', 'asset' => 'Discount', 'buttons' => [
         ['save' => true]
-    ]])
+    ], 'custom_button' => '<button type="button" class="btn btn-danger" onclick="confirmDelete(\'Are you sure you want to delete this discount?\', function() { document.getElementById(\'delete-discount-form\').submit(); })"><i class="bi bi-trash me-1"></i> Delete Discount</button>'])
 @endsection
 
 @section('content')
@@ -290,4 +290,10 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<!-- Hidden Delete Form -->
+<form id="delete-discount-form" action="{{ route('admin.discounts.destroy', $discount) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection
