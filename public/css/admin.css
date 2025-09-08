@@ -1105,3 +1105,7 @@ button.btn {
     background-color: #198754;
     border-color: #198754;
 }
+.btn:hover {
+    background: #15794b;
+    border-color: #15794b;
+}

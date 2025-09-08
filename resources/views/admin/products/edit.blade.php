@@ -137,62 +137,11 @@
             </div>
 
 
-            <!-- STORE -->
-
-            <div class="card border-0 mb-3">
-                <div class="card-header bg-transparent py-3">
-                    <h3 class="fs-5 d-flex align-items-center">
-                        <i class="bi bi-shop me-2 text-primary"></i> {{ __('Store Availability') }}
-                    </h3>
-                    <small class="text-muted">{{ __('Stores where this service is available') }}</small>
-                </div>
-            </div>
-            <div>
-                <div class="row">
-                    @foreach($channels as $channel)
-                    <div class="col-md-6 col-lg-4 mt-3">
-                        <div class="card text-center relative border-1">
-                            <div class="form-check form-switch position-absolute">
-                                <input class="form-check-input" name="channels[{{ $channel->id }}][enabled]"
-                                    type="checkbox" value="1"
-                                    {{ $product->channels->contains($channel->id) ? 'checked' : '' }} role="switch">
-                            </div>
-
-                            <div class="store-image-container">
-                                @if($channel->image_url)
-                                <img class="card-img-top object-fit-cover h-100" src="{{ $channel->image_url }}"
-                                    alt="{{ __('Cover Image') }}">
-                                @else
-                                <div class="d-flex align-items-center justify-content-center text-muted bg-light h-100">
-                                    <i class="bi bi-shop store-icon fs-3"></i>
-                                </div>
-                                @endif
-                            </div>
-
-                            <div class="card-body p-2 py-3">
-                                <h3 class="m-0 mb-1 fs-6">
-                                    <a class="card-btn text-decoration-none" target="_blank"
-                                        href="{{ route('stores.edit', $channel->id) }}">{{ store_name($channel) }}</a>
-                                </h3>
-                                <div class="mt-2">
-                                    <p class="text-secondary m-0 small">{{ $channel->address ?? '' }}</p>
-                                </div>
-                            </div>
-                            <div class="p-2 border-top">
-                                <a href="{{ route('stores.edit', $channel->id) }}" target="_blank"
-                                    class="card-btn text-decoration-none fs-14">{{ __('View store') }}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="channels[{{ $channel->id }}][]" value="{{ $channel->id }}">
-                    @endforeach
-                </div>
-            </div>
+           
         </div>
 
         <div class="col-lg-5">
 
-            <!-- Pricing -->
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom py-3">
                     <h3 class="h5 mb-0 d-flex align-items-center">
@@ -205,6 +154,53 @@
                             <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
                             <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>{{ __('Published') }}</option>
                         </select>
+                    </div>
+                </div>
+            </div>
+
+             <!-- STORE -->
+
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fs-5 mb-1">
+                                <i class="bi bi-shop me-2 text-primary"></i> {{ __('Store Availability') }}
+                            </h3>
+                            <p class="text-muted small mb-0">{{ __('Stores where this service is available') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @foreach($channels as $channel)
+                        <div class="list-group-item p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        @if($channel->image_url)
+                                        <img src="{{ $channel->image_url }}" alt="{{ __('Store Image') }}" class="rounded" width="40" height="40">
+                                        @else
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-shop text-muted"></i>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ store_name($channel) }}</h6>
+                                        <small class="text-muted">{{ $channel->address ?? '' }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check form-switch me-3">
+                                        <input class="form-check-input" name="channels[{{ $channel->id }}][enabled]" type="checkbox" value="1" {{ $product->channels->contains($channel->id) ? 'checked' : '' }} role="switch">
+                                    </div>
+                                    <a href="{{ route('stores.edit', $channel->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="channels[{{ $channel->id }}][]" value="{{ $channel->id }}">
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -289,6 +285,9 @@
                     @enderror
                 </div>
             </div>
+
+
+            
             <!-- Add this to your product edit view -->
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
