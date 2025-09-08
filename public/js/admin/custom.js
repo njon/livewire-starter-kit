@@ -419,6 +419,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+// Reusable confirmation alert function
+function confirmDelete(message, callback) {
+    if (confirm(message || 'Are you sure you want to delete this item?')) {
+        callback();
+    }
+}
+
 $(document).ready(function() {
     const modal = $('#variantModal');
     const form = $('#variantForm');
