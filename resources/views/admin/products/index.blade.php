@@ -70,10 +70,16 @@
                             </div>
                         </td>
                         <td>
-                            <!-- @todo add discount -->
-                            <span class="badge bg-warning bg-opacity-10 text-warning">
-                                {{ $product->discount ? $product->discount . '%' : __('No discount') }}
-                            </span>
+                            @if($product->discounts()->exists())
+                                <span class="badge bg-success bg-opacity-10 text-success">
+                                    {{ $product->discounts()->first()->data['fixed_value'] === true ? $product->discounts()->first()->data['fixed_values']['Eur'] . '€' : $product->discounts()->first()->data['percentage'] . '%' }} {{ __('Discount') }}
+                                </span>
+                            @else
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                    {{ __('No discount') }}
+                                </span>
+                            @endif
+
                         </td>
                         <td>
                             {{-- Sales count would need to be implemented based on your orders --}}

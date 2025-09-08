@@ -6,8 +6,8 @@
     ]])
 @endsection
 
-@section('content')
 
+@section('content')
   <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="card-header bg-transparent border-bottom py-3">
@@ -58,7 +58,12 @@
                                     <td>
                                         <h6 class="mb-0">
                                             <a href="{{ route('stores.edit', $store->id) }}" class="text-decoration-none">
-                                                {{ $store->name }}
+                                                @dd($store->attribute_data)
+                                                @php
+                                                    $locale = app()->getLocale();
+                                                    $storeName = $store->attribute_data['name'][$locale] ?? $store->attribute_data['name']['gr'];
+                                                @endphp
+                                                {{ $storeName }}
                                             </a>
                                         </h6>
                                         <!-- <small class="text-muted">{{ $store->handle }}</small> -->

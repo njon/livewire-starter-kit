@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Lunar\Facades\CartSession;
+use Lunar\Facades\Discounts;
 use Lunar\Models\Cart;
 use Lunar\Models\ProductVariant;
 use Illuminate\Http\Request;
@@ -67,7 +68,7 @@ class CartController extends Controller
                 ]
             ]);
         }
-
+        
         $cart->calculate();
 
         $response = array_merge([
@@ -120,5 +121,52 @@ class CartController extends Controller
         CartSession::forget();
 
         return redirect()->back()->with('success', __('Cart refreshed'));
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'coupon_code' => 'required|string',
+        ]);
+
+        $couponCode = $request->input('coupon_code');
+        
+        if (!Discounts::validateCoupon($couponCode)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Invalid or expired coupon code'),
+            ], 422);
+        }
+
+        $cart = $this->getOrCreateCart();
+        $cart->coupon_code = $couponCode;
+        
+        // Apply discounts with the new coupon
+        Discounts::apply($cart);
+        $cart->calculate();
+        $cart->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('Coupon applied successfully'),
+            'cart_total' => $cart->total->formatted,
+        ]);
+    }
+
+    public function removeCoupon()
+    {
+        $cart = $this->getOrCreateCart();
+        $cart->coupon_code = null;
+        
+        // Recalculate without coupon
+        Discounts::apply($cart);
+        $cart->calculate();
+        $cart->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('Coupon removed successfully'),
+            'cart_total' => $cart->total->formatted,
+        ]);
     }
 }

@@ -39,6 +39,13 @@
                                     <span>{{ __('Stores') }}</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/discounts*') ? 'active' : '' }}"
+                                    href="/admin/discounts">
+                                    <i class="bi bi-percent"></i>
+                                    <span>{{ __('Discounts') }}</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

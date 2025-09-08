@@ -866,3 +866,11 @@ background: #198754 !important;
         padding: 0.5rem 0.75rem;
     }
 }
+body .bg-primary {
+    background-color: #198754 !important;
+}
+.offcanvas-header .btn-close.text-reset {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+}

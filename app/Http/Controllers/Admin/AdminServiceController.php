@@ -78,14 +78,13 @@ class AdminServiceController extends Controller
             ->leftJoin('lunar_order_lines', 'lunar_order_lines.id', '=', 'lunar_products.id')
             ->select('lunar_products.*', DB::raw('SUM(lunar_order_lines.quantity) as total_sales'))
             ->groupBy('lunar_products.id')
-            ->paginate(25);
+            ->get();
 
         $productTypes = ProductType::all();
 
         return view('admin.products.index', compact('products', 'productTypes'));
     }
 
-    
     public function edit(Product $product)
     {
         $this->authorize('update', $product);

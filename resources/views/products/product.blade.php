@@ -4,7 +4,7 @@
         <div class="position-relative overflow-hidden">
             @php
                 $badges = [
-                    '<span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 small m-2 rounded-2">New Tour</span>',
+                    '<span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 small m-2 rounded-2">New</span>',
                     '<span class="position-absolute top-0 start-0 bg-primary text-white px-2 py-1 small m-2 rounded-2">Popular</span>',
                     '<span class="position-absolute top-0 start-0 bg-warning text-dark px-2 py-1 small m-2 rounded-2">Limited Offer</span>',
                     '<span class="position-absolute top-0 start-0 bg-info text-white px-2 py-1 small m-2 rounded-2">Featured</span>',
@@ -12,7 +12,11 @@
                 ];
                 $randomBadge = $badges[array_rand($badges)];
             @endphp
-            {!! $randomBadge !!}
+            @if($product->created_at >= now()->subDays(3))
+                {!! $badges[0] !!}
+            @elseif($product->has_discount)
+                {!! $badges[2] !!}
+            @endif
             <div class="btn-wishlist position-absolute top-0 end-0 m-2">
                 <button class="button-animated like wishlist-add p-2 py-1" data-product-id="{{ $product->id }}">
                     <i class="fa fa-heart"></i>

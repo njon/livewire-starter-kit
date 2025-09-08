@@ -22,7 +22,7 @@ class AdminOrdersController extends Controller
             }])
             ->orderByDesc('id')
             ->paginate(25);
-        
+
         $orders = generate_order_prices($orders);
 
         return view('admin.orders.index', compact('orders'));

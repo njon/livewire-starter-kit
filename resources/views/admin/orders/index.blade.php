@@ -26,7 +26,6 @@
                         <th width="40" class="ps-4"></th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Reference') }}</th>
-                        <th>{{ __('Customer') }}</th>
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Phone') }}</th>
                         <th>{{ __('Total') }}</th>
@@ -53,13 +52,6 @@
                             </a>
                         </td>
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div>
-                                    {{ $order->customer->name ?? __('Guest') }}
-                                </div>
-                            </div>
-                        </td>
-                        <td>
                             <span class="text-muted fs-14">
                                 {{ $order->addresses->first()->contact_email ?? '-' }}
                             </span>
@@ -74,13 +66,11 @@
                         </td>
                         @if(auth()->user()->super_admin)
                             <td>
-                                @if($order->owner_id)
-                                    <a href="{{ route('users.edit', $order->owner_id) }}" class="text-decoration-none">
-                                        {{ $order->owner_id }}
+                                @foreach($order->lines->unique('owner_id') as $line)
+                                    <a href="{{ route('users.edit', $line->owner_id) }}" class="text-decoration-none">
+                                        {{ $line->owner_id }}
                                     </a>
-                                @else
-                                    -
-                                @endif
+                                @endforeach
                             </td>
                         @endif
                         <td>

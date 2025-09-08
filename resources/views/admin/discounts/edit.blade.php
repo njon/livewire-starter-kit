@@ -11,8 +11,11 @@
     @csrf
     @method('PUT')
     <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-transparent border-bottom py-3">
+        <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
             <h3 class="h5 mb-0">{{ __('Edit Discount') }}</h3>
+            <button type="button" id="advanced-settings-btn" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-cog me-1"></i> Advanced Settings
+            </button>
         </div>
         <div class="card-body">
             <div class="row">
@@ -27,150 +30,72 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="handle" class="form-label">{{ __('Handle') }}</label>
-                        <input type="text" class="form-control @error('handle') is-invalid @enderror" id="handle" name="handle" value="{{ old('handle', $discount->handle) }}" required>
-                        @error('handle')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Unique identifier for this discount</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="type" class="form-label">{{ __('Discount Type') }}</label>
-                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
-                            <option value="">{{ __('Select discount type') }}</option>
-                            @foreach($discountTypes as $value => $label)
-                                <option value="{{ $value }}" {{ old('type', $discount->type) == $value ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
+                        <label for="discount_type" class="form-label">{{ __('Discount Percentage') }}</label>
+                        @php
+                            $currentPercentage = $discount->data['percentage'] ?? 0;
+                            $isCustom = !in_array($currentPercentage, [5, 10, 15, 20, 25, 30, 35, 40, 50]);
+                            $selectedType = $isCustom ? 'custom' : $currentPercentage;
+                        @endphp
+                        <select class="form-select @error('discount_type') is-invalid @enderror" id="discount_type" name="discount_type" required>
+                            <option value="">{{ __('Select discount percentage') }}</option>
+                            <option value="5" {{ old('discount_type', $selectedType) == '5' ? 'selected' : '' }}>5%</option>
+                            <option value="10" {{ old('discount_type', $selectedType) == '10' ? 'selected' : '' }}>10%</option>
+                            <option value="15" {{ old('discount_type', $selectedType) == '15' ? 'selected' : '' }}>15%</option>
+                            <option value="20" {{ old('discount_type', $selectedType) == '20' ? 'selected' : '' }}>20%</option>
+                            <option value="25" {{ old('discount_type', $selectedType) == '25' ? 'selected' : '' }}>25%</option>
+                            <option value="30" {{ old('discount_type', $selectedType) == '30' ? 'selected' : '' }}>30%</option>
+                            <option value="35" {{ old('discount_type', $selectedType) == '35' ? 'selected' : '' }}>35%</option>
+                            <option value="40" {{ old('discount_type', $selectedType) == '40' ? 'selected' : '' }}>40%</option>
+                            <option value="50" {{ old('discount_type', $selectedType) == '50' ? 'selected' : '' }}>50%</option>
+                            <option value="custom" {{ old('discount_type', $selectedType) == 'custom' ? 'selected' : '' }}>Custom</option>
                         </select>
-                        @error('type')
+                        @error('discount_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        @error('percentage')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="coupon" class="form-label">{{ __('Coupon Code') }}</label>
-                        <input type="text" class="form-control @error('coupon') is-invalid @enderror" id="coupon" name="coupon" value="{{ old('coupon', $discount->coupon) }}">
-                        @error('coupon')
+
+                    <div class="mb-3" id="custom-percentage-field" style="display: {{ old('discount_type', $selectedType) == 'custom' ? 'block' : 'none' }};">
+                        <label for="custom_percentage" class="form-label">{{ __('Custom Percentage') }}</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control @error('custom_percentage') is-invalid @enderror" id="custom_percentage" name="custom_percentage" value="{{ old('custom_percentage', $isCustom ? $currentPercentage : '') }}" min="5" max="100">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        @error('custom_percentage')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <div class="form-text">Optional coupon code for this discount</div>
                     </div>
                 </div>
             </div>
 
+            <!-- Date Range Picker -->
             <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="starts_at" class="form-label">{{ __('Start Date') }}</label>
-                        <input type="datetime-local" class="form-control @error('starts_at') is-invalid @enderror" id="starts_at" name="starts_at" value="{{ old('starts_at', $discount->starts_at?->format('Y-m-d\TH:i')) }}" required>
+                <div class="col-md-3">
+                    <div class="mb-3 date-input-group">
+                        <label for="starts_at" class="form-label">Select Date</label>
+                        <button type="button" class="btn btn-light w-100 text-start" id="date_range_btn">
+                            <i class="bi bi-calendar-range text-muted pe-1"></i>
+                            <span id="date_range_text" class="small">Click to add date range</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                        <label for="starts_at" class="form-label">Start Date</label>
+
+                    <div class="mb-3 input-group">
+                        <input type="text" class="form-control datetime-field @error('starts_at') is-invalid @enderror" id="starts_at" name="starts_at" value="{{ old('starts_at', $discount->starts_at ? $discount->starts_at->format('Y-m-d H:i') : '') }}" required>
                         @error('starts_at')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="ends_at" class="form-label">{{ __('End Date') }}</label>
-                        <input type="datetime-local" class="form-control @error('ends_at') is-invalid @enderror" id="ends_at" name="ends_at" value="{{ old('ends_at', $discount->ends_at?->format('Y-m-d\TH:i')) }}">
+                <div class="col">
+                    <div class="mb-3 date-input-group">
+                        <label for="ends_at" class="form-label">End Date</label>
+                        <input type="text" class="form-control datetime-field @error('ends_at') is-invalid @enderror" id="ends_at" name="ends_at" value="{{ old('ends_at', $discount->ends_at ? $discount->ends_at->format('Y-m-d H:i') : '') }}">
                         @error('ends_at')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Leave blank for no end date</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="uses" class="form-label">{{ __('Current Uses') }}</label>
-                        <input type="number" class="form-control" id="uses" value="{{ $discount->uses }}" readonly>
-                        <div class="form-text">Read-only field</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="max_uses" class="form-label">{{ __('Maximum Uses') }}</label>
-                        <input type="number" class="form-control @error('max_uses') is-invalid @enderror" id="max_uses" name="max_uses" value="{{ old('max_uses', $discount->max_uses) }}" min="1">
-                        @error('max_uses')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Leave blank for unlimited uses</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="priority" class="form-label">{{ __('Priority') }}</label>
-                        <input type="number" class="form-control @error('priority') is-invalid @enderror" id="priority" name="priority" value="{{ old('priority', $discount->priority) }}" min="0" required>
-                        @error('priority')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Higher numbers = higher priority</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <div class="form-check mt-4">
-                            <input class="form-check-input" type="checkbox" id="stop" name="stop" {{ old('stop', $discount->stop) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="stop">
-                                {{ __('Stop after this discount') }}
-                            </label>
-                            <div class="form-text">Prevents other discounts from applying after this one</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="amount-off-fields" style="display: none;">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="discount_type" class="form-label">{{ __('Discount Value Type') }}</label>
-                        @php
-                            $currentDiscountType = 'percentage';
-                            if (isset($discount->data['fixed_value']) && $discount->data['fixed_value']) {
-                                $currentDiscountType = 'fixed_value';
-                            }
-                        @endphp
-                        <select class="form-select @error('discount_type') is-invalid @enderror" id="discount_type" name="discount_type">
-                            <option value="percentage" {{ old('discount_type', $currentDiscountType) == 'percentage' ? 'selected' : '' }}>{{ __('Percentage') }}</option>
-                            <option value="fixed_value" {{ old('discount_type', $currentDiscountType) == 'fixed_value' ? 'selected' : '' }}>{{ __('Fixed Amount') }}</option>
-                        </select>
-                        @error('discount_type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3" id="percentage-field">
-                        <label for="percentage" class="form-label">{{ __('Percentage') }}</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control @error('percentage') is-invalid @enderror" id="percentage" name="percentage" value="{{ old('percentage', $discount->data['percentage'] ?? '') }}" min="0" max="100" step="0.01">
-                            <span class="input-group-text">%</span>
-                        </div>
-                        @error('percentage')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3" id="fixed-amount-field" style="display: none;">
-                        <label for="fixed_amount" class="form-label">{{ __('Fixed Amount') }}</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            @php
-                                $fixedAmount = '';
-                                if (isset($discount->data['fixed_values']) && is_array($discount->data['fixed_values'])) {
-                                    // Get the first currency value or USD
-                                    $fixedAmount = $discount->data['fixed_values']['USD'] ?? array_values($discount->data['fixed_values'])[0] ?? '';
-                                }
-                            @endphp
-                            <input type="number" class="form-control @error('fixed_amount') is-invalid @enderror" id="fixed_amount" name="fixed_amount" value="{{ old('fixed_amount', $fixedAmount) }}" min="0" step="0.01">
-                        </div>
-                        @error('fixed_amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -179,26 +104,80 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="alert alert-info">
-                        <strong>Status:</strong> 
-                        @php
-                            $status = $discount->status;
-                            $badgeClass = match($status) {
-                                'active' => 'bg-success',
-                                'expired' => 'bg-danger',
-                                'scheduled' => 'bg-warning',
-                                default => 'bg-secondary'
-                            };
-                        @endphp
-                        <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
-                        
-                        @if($discount->created_at)
-                            <br><small class="text-muted">Created: {{ $discount->created_at->format('M j, Y g:i A') }}</small>
-                        @endif
-                        
-                        @if($discount->updated_at && $discount->updated_at != $discount->created_at)
-                            <br><small class="text-muted">Last updated: {{ $discount->updated_at->format('M j, Y g:i A') }}</small>
-                        @endif
+                    <div class="mb-3">
+                        <label for="product_ids" class="form-label">{{ __('Products') }}</label>
+                        <select class="form-select @error('product_ids') is-invalid @enderror" id="product_ids" name="product_ids[]" multiple>
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}" {{ in_array($product->id, old('product_ids', [])) ? 'selected' : '' }} {{ in_array($product->id, $selectedProducts) ? 'selected' : '' }}>
+                                    {{ $product->translateAttribute('name') ?? "Product {$product->id}" }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('product_ids')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Select products for this discount. Leave empty for all products.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Settings Section (Initially Hidden) -->
+            <div id="advanced-settings" style="display: none;">
+                <div class="border-top pt-3 mt-3">
+                    <h5 class="mb-3 text-muted">Advanced Settings</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="coupon" class="form-label">{{ __('Coupon Code') }}</label>
+                                <input type="text" class="form-control @error('coupon') is-invalid @enderror" id="coupon" name="coupon" value="{{ old('coupon', $discount->coupon) }}">
+                                @error('coupon')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Optional coupon code for this discount</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="uses" class="form-label">{{ __('Current Uses') }}</label>
+                                <input type="number" class="form-control" id="uses" value="{{ $discount->uses }}" readonly>
+                                <div class="form-text">Read-only field</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="max_uses" class="form-label">{{ __('Maximum Uses') }}</label>
+                                <input type="number" class="form-control @error('max_uses') is-invalid @enderror" id="max_uses" name="max_uses" value="{{ old('max_uses', $discount->max_uses) }}" min="1">
+                                @error('max_uses')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Leave blank for unlimited uses</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="priority" class="form-label">{{ __('Priority') }}</label>
+                                <input type="number" class="form-control @error('priority') is-invalid @enderror" id="priority" name="priority" value="{{ old('priority', $discount->priority) }}" min="0" required>
+                                @error('priority')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Higher numbers = higher priority</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="stop" name="stop" {{ old('stop', $discount->stop) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="stop">
+                                        {{ __('Stop after this discount') }}
+                                    </label>
+                                    <div class="form-text">Prevents other discounts from applying after this one</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -207,41 +186,108 @@
     <button type="submit" class="btn btn-primary">{{ __('Update Discount') }}</button>
 </form>
 
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const typeSelect = document.getElementById('type');
-    const amountOffFields = document.getElementById('amount-off-fields');
+$(document).ready(function() {
+
+    $('#product_ids').select2({
+        width: '100%',
+        placeholder: 'Select products',
+        allowClear: true
+    });
+
+    // Initialize date range picker
+    $('#date_range_btn').daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 5,
+        singleDatePicker: false,
+        autoUpdateInput: false,
+        locale: {
+            format: 'YYYY-MM-DD HH:mm',
+            cancelLabel: 'Clear'
+        }
+    });
+
+    // Set up event handlers for the date range picker
+    $('#date_range_btn').on('apply.daterangepicker', function(ev, picker) {
+        $('#starts_at').val(picker.startDate.format('YYYY-MM-DD HH:mm'));
+        $('#ends_at').val(picker.endDate.format('YYYY-MM-DD HH:mm'));
+    });
+
+    $('#date_range_btn').on('cancel.daterangepicker', function(ev, picker) {
+        $('#starts_at').val('');
+        $('#ends_at').val('');
+    });
+
+    // Toggle custom percentage field
     const discountTypeSelect = document.getElementById('discount_type');
-    const percentageField = document.getElementById('percentage-field');
-    const fixedAmountField = document.getElementById('fixed-amount-field');
+    const customPercentageField = document.getElementById('custom-percentage-field');
     
-    function toggleDiscountFields() {
-        const selectedType = typeSelect.value;
-        if (selectedType === 'Lunar\\DiscountTypes\\AmountOff') {
-            amountOffFields.style.display = 'block';
+    function toggleCustomPercentage() {
+        const selectedType = discountTypeSelect.value;
+        if (selectedType === 'custom') {
+            customPercentageField.style.display = 'block';
         } else {
-            amountOffFields.style.display = 'none';
+            customPercentageField.style.display = 'none';
         }
     }
     
-    function toggleValueFields() {
-        const selectedDiscountType = discountTypeSelect.value;
-        if (selectedDiscountType === 'percentage') {
-            percentageField.style.display = 'block';
-            fixedAmountField.style.display = 'none';
+    // Toggle advanced settings
+    const advancedSettingsBtn = document.getElementById('advanced-settings-btn');
+    const advancedSettings = document.getElementById('advanced-settings');
+    let advancedSettingsVisible = false;
+    
+    function toggleAdvancedSettings() {
+        advancedSettingsVisible = !advancedSettingsVisible;
+        if (advancedSettingsVisible) {
+            advancedSettings.style.display = 'block';
+            advancedSettingsBtn.innerHTML = '<i class="fas fa-times me-1"></i> Hide Advanced Settings';
+            advancedSettingsBtn.classList.add('btn-secondary');
+            advancedSettingsBtn.classList.remove('btn-outline-secondary');
         } else {
-            percentageField.style.display = 'none';
-            fixedAmountField.style.display = 'block';
+            advancedSettings.style.display = 'none';
+            advancedSettingsBtn.innerHTML = '<i class="fas fa-cog me-1"></i> Advanced Settings';
+            advancedSettingsBtn.classList.remove('btn-secondary');
+            advancedSettingsBtn.classList.add('btn-outline-secondary');
         }
     }
     
     // Initial state
-    toggleDiscountFields();
-    toggleValueFields();
+    toggleCustomPercentage();
     
     // Event listeners
-    typeSelect.addEventListener('change', toggleDiscountFields);
-    discountTypeSelect.addEventListener('change', toggleValueFields);
+    discountTypeSelect.addEventListener('change', toggleCustomPercentage);
+    advancedSettingsBtn.addEventListener('click', toggleAdvancedSettings);
+
+    // Open date picker when clicking on the icon
+    $('.input-icon').click(function() {
+        $(this).siblings('.datetime-field').focus();
+    });
+
+    // Initialize individual date fields
+    $('#starts_at, #ends_at').daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 5,
+        singleDatePicker: true,
+        autoUpdateInput: false,
+        locale: {
+            format: 'YYYY-MM-DD HH:mm',
+            cancelLabel: 'Clear'
+        }
+    });
+
+    $('#starts_at, #ends_at').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD HH:mm'));
+    });
 });
 </script>
 @endsection

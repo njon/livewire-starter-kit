@@ -9,9 +9,61 @@ use Lunar\Models\Order;
 use Lunar\Models\Product;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\FieldTypes\Text;
+use Lunar\Models\CartLine;
 use Lunar\Models\OrderLine;
 use Lunar\Models\Transaction;
 use Lunar\Models\Customer;
+use Lunar\Models\Address;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+function forceDeleteAllData()
+{
+    try {
+        DB::beginTransaction();
+
+        // ⚠️ DANGER: Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        // Delete all data from all tables (in safe order)
+        $tables = [
+            'lunar_transactions',
+            'lunar_order_discount',
+            'lunar_order_user', 
+            'lunar_order_customer',
+            'lunar_order_lines',
+            'lunar_orders',
+            'lunar_cart_line_discount',
+            'lunar_cart_lines',
+            'lunar_cart_discount',
+            'lunar_carts',
+            'lunar_addresses',
+            'lunar_customer_user',
+            'lunar_customers',
+        ];
+
+        foreach ($tables as $table) {
+            if (DB::getSchemaBuilder()->hasTable($table)) {
+                $deleted = DB::table($table)->delete();
+                echo "Deleted {$deleted} records from {$table}\n";
+            }
+        }
+
+        // ⚠️ Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        DB::commit();
+
+        echo "Force deleted all data successfully!\n";
+
+    } catch (\Exception $e) {
+        // Ensure foreign key checks are re-enabled even on error
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        DB::rollBack();
+        echo "Error: " . $e->getMessage() . "\n";
+        throw $e;
+    }
+}
 
 
 
@@ -131,7 +183,7 @@ if (!function_exists('end_in_counter')) {
 
         $endDate = Carbon::parse($endDate->ends_at); // Your end date
         $now = Carbon::now();
-        
+
         return [
             'days' => floor($now->diffInDays($endDate)),
             'hours' => $now->diffInHours($endDate) % 24,

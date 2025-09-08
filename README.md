@@ -33,3 +33,10 @@ The demo store will be available to `http://localhost` in your browser.
 Once the project is prepared, the Lunar panel will start and available to `http://localhost/lunar`. 
 
 Default admin user is username `admin@lunarphp.io` and password `password`
+
+@todo check if product discount will be showed if no discount available
+
+//  Discounts
+Remove column AmountOff also in edit/create Discount Type is always AmountOff. put inside controller to save directly without user input
+STATUS should be based on start and end date. If between these dates always should be displayed as active.
+Also for now remove discount based on amount and leave only percentage. Replace text with select type: 5%, 10%, 15%, 20%, 25%, 30%, 35%, 40%, 50% or select custom discount, if yes, show field to enter number.

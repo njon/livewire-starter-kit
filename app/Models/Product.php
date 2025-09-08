@@ -38,7 +38,7 @@ class Product extends LunarProduct
     public static array $detailWith = [
         'variants.basePrices.currency',
         'reviews',
-        'variants'
+        'variants',
     ];
 
     public function getAttribute($key)
@@ -73,7 +73,7 @@ class Product extends LunarProduct
 
     public function getDiscountedPrice()
     {
-        $discount = $this->discounts->first() ?? new Discount();
+        $discount = $this->discounts()->orderBy('priority', 'desc')->first() ?? new Discount();
 
         return (new DiscountService($this->prices->first(), $discount))->calculate();
     }

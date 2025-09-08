@@ -1,3 +1,4 @@
+
 @if($cart->lines->count() === 0)
     <div class="text-center py-4">
         <span class="material-symbols-outlined" style="font-size: 2rem;">shopping_cart</span>
@@ -13,7 +14,7 @@
                 $variant = $line->purchasable;
                 $thumbnail = $product->getThumbImage();
                 $productName = $product->translateAttribute('name');
-                $unitPrice = $line->price ? $line->price->formatted() : 'No price';
+                $unitPrice =  format_price($line->total->value / $line->quantity)->formatted();
                 $totalPrice = $line->total->formatted();
                 $productUrl = $product->urls->first()?->slug ?? '#';
                 $variantName = $line->meta->variant_name ?? null;

@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('lunar_order_lines', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('partner_id');
+            $table->dropConstrainedForeignId('owner_id');
         });
     }
 };

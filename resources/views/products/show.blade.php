@@ -25,7 +25,6 @@
         </div>
     </div>
 
-    @include('products.gallery')
 
     <!-- Description + Sticky Box Row -->
     <div class="row">
@@ -95,10 +94,10 @@
                             <small class="fw-semibold text-info-emphasis">{{ __('Special Offer') }} </small>
                             @if(!$end['ended'])
                             <div class="countdown-timer d-flex align-items-center flex-grow-1 ms-1">
-                                <span class="badge bg-warning text-dark me-1" id="countdown-days-container">
+                                <span class="badge bg-warning text-dark me-1 @if($end['days'] == 0) d-none @endif" id="countdown-days-container">
                                     <span id="countdown-days">{{ $end['days'] }}</span> days
                                 </span>
-                                <span class="text-info-emphasis fw-bold" id="countdown-time">
+                                <span class="text-info-emphasis fw-bold @if($end['days'] == 0) badge bg-warning @endif" id="countdown-time">
                                     {{ str_pad($end['hours'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['minutes'], 2, '0', STR_PAD_LEFT) }}:{{ str_pad($end['seconds'], 2, '0', STR_PAD_LEFT) }}
                                 </span>
                             </div>
@@ -147,9 +146,6 @@
                            data-form-link="/cart/{{ $variant->id }}" 
                            data-variant-id="{{ $variant->id }}">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="variant-name h6 mb-0">
-                                
-                            </span>
                             <div class="text-truncate pe-2">
                                 <div class="variant-title h6 mb-0 text-truncate" title="Adrenaline Rush: Extreme Paintball Combat Experience">
                                     {{ $product->translateAttribute('name') }}
@@ -158,12 +154,14 @@
                                     {{ $variant->translateAttribute('name') }}
                                 </div>
                             </div>
-                            <span class="variant-price badge bg-primary rounded-pill">
-                                {{ $variant->price }}
-                            </span>
-                            @if($variant->has_discount)
-                                <span class="variant-discount badge bg-light rounded-pill text-decoration-line-through text-muted">{{ $variant->price_without_discount }}</span>
-                            @endif
+                            <div class="product-variant-price">
+                                <span class="variant-price badge bg-primary rounded-pill">
+                                    {{ $variant->price }}
+                                </span>
+                                @if($variant->has_discount)
+                                    <span class="variant-discount badge bg-light rounded-pill text-decoration-line-through text-muted">{{ $variant->price_without_discount }}</span>
+                                @endif
+                            </div>
                         </div>
     
                         @php $first = false; @endphp

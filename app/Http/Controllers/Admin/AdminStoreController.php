@@ -30,7 +30,7 @@ class AdminStoreController extends Controller
     {   
         $validated = $request->validated();
         $filteredData = collect($validated + [
-            'name' => 'asd', 'handle' => uniqid(), 'owner_id' => auth()->user()->owner_id
+            'name' => 'Store', 'handle' => uniqid(), 'owner_id' => auth()->user()->owner_id
             ])->except(['attribute_data'])->toArray();
 
         $channel = Channel::create($filteredData);

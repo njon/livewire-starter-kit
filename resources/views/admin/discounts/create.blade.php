@@ -24,33 +24,9 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="handle" class="form-label">{{ __('Handle') }}</label>
-                        <input type="text" class="form-control @error('handle') is-invalid @enderror" id="handle" name="handle" value="{{ old('handle') }}" required>
-                        @error('handle')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Unique identifier for this discount</div>
-                    </div>
-                </div>
             </div>
             
             <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="type" class="form-label">{{ __('Discount Type') }}</label>
-                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
-                            <option value="">{{ __('Select discount type') }}</option>
-                            @foreach($discountTypes as $value => $label)
-                                <option value="{{ $value }}" {{ old('type') == $value ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="coupon" class="form-label">{{ __('Coupon Code') }}</label>
@@ -59,6 +35,49 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <div class="form-text">Optional coupon code for this discount</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="discount_type" class="form-label">{{ __('Discount Percentage') }}</label>
+                        <select class="form-select @error('discount_type') is-invalid @enderror" id="discount_type" name="discount_type" required>
+                            <option value="">{{ __('Select discount percentage') }}</option>
+                            <option value="5" {{ old('discount_type') == '5' ? 'selected' : '' }}>5%</option>
+                            <option value="10" {{ old('discount_type') == '10' ? 'selected' : '' }}>10%</option>
+                            <option value="15" {{ old('discount_type') == '15' ? 'selected' : '' }}>15%</option>
+                            <option value="20" {{ old('discount_type') == '20' ? 'selected' : '' }}>20%</option>
+                            <option value="25" {{ old('discount_type') == '25' ? 'selected' : '' }}>25%</option>
+                            <option value="30" {{ old('discount_type') == '30' ? 'selected' : '' }}>30%</option>
+                            <option value="35" {{ old('discount_type') == '35' ? 'selected' : '' }}>35%</option>
+                            <option value="40" {{ old('discount_type') == '40' ? 'selected' : '' }}>40%</option>
+                            <option value="50" {{ old('discount_type') == '50' ? 'selected' : '' }}>50%</option>
+                            <option value="custom" {{ old('discount_type') == 'custom' ? 'selected' : '' }}>Custom</option>
+                        </select>
+                        @error('discount_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        @error('percentage')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label for="product_ids" class="form-label">{{ __('Products') }}</label>
+                        <select class="form-select @error('product_ids') is-invalid @enderror" id="product_ids" name="product_ids[]" multiple>
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}" {{ in_array($product->id, old('product_ids', [])) ? 'selected' : '' }}>
+                                    {{ $product->translateAttribute('name') ?? "Product {$product->id}" }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('product_ids')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Select products for this discount. Leave empty for all products.</div>
                     </div>
                 </div>
             </div>
@@ -119,37 +138,15 @@
                 </div>
             </div>
 
-            <div class="row" id="amount-off-fields" style="display: none;">
+            <div class="row" id="custom-percentage-field" style="display: none;">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="discount_type" class="form-label">{{ __('Discount Value Type') }}</label>
-                        <select class="form-select @error('discount_type') is-invalid @enderror" id="discount_type" name="discount_type">
-                            <option value="percentage" {{ old('discount_type', 'percentage') == 'percentage' ? 'selected' : '' }}>{{ __('Percentage') }}</option>
-                            <option value="fixed_value" {{ old('discount_type') == 'fixed_value' ? 'selected' : '' }}>{{ __('Fixed Amount') }}</option>
-                        </select>
-                        @error('discount_type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3" id="percentage-field">
-                        <label for="percentage" class="form-label">{{ __('Percentage') }}</label>
+                        <label for="custom_percentage" class="form-label">{{ __('Custom Percentage') }}</label>
                         <div class="input-group">
-                            <input type="number" class="form-control @error('percentage') is-invalid @enderror" id="percentage" name="percentage" value="{{ old('percentage') }}" min="0" max="100" step="0.01">
+                            <input type="number" class="form-control @error('custom_percentage') is-invalid @enderror" id="custom_percentage" name="custom_percentage" value="{{ old('custom_percentage') }}" min="0" max="100" step="0.01">
                             <span class="input-group-text">%</span>
                         </div>
-                        @error('percentage')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3" id="fixed-amount-field" style="display: none;">
-                        <label for="fixed_amount" class="form-label">{{ __('Fixed Amount') }}</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control @error('fixed_amount') is-invalid @enderror" id="fixed_amount" name="fixed_amount" value="{{ old('fixed_amount') }}" min="0" step="0.01">
-                        </div>
-                        @error('fixed_amount')
+                        @error('custom_percentage')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -159,42 +156,36 @@
     </div>
     <button type="submit" class="btn btn-primary">{{ __('Save Discount') }}</button>
 </form>
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const typeSelect = document.getElementById('type');
-    const amountOffFields = document.getElementById('amount-off-fields');
+    $('#product_ids').select2({
+        width: '100%',
+        placeholder: 'Select products',
+        allowClear: true
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     const discountTypeSelect = document.getElementById('discount_type');
-    const percentageField = document.getElementById('percentage-field');
-    const fixedAmountField = document.getElementById('fixed-amount-field');
+    const customPercentageField = document.getElementById('custom-percentage-field');
     
-    function toggleDiscountFields() {
-        const selectedType = typeSelect.value;
-        if (selectedType === 'Lunar\\DiscountTypes\\AmountOff') {
-            amountOffFields.style.display = 'block';
+    function toggleCustomPercentage() {
+        const selectedType = discountTypeSelect.value;
+        if (selectedType === 'custom') {
+            customPercentageField.style.display = 'block';
         } else {
-            amountOffFields.style.display = 'none';
-        }
-    }
-    
-    function toggleValueFields() {
-        const selectedDiscountType = discountTypeSelect.value;
-        if (selectedDiscountType === 'percentage') {
-            percentageField.style.display = 'block';
-            fixedAmountField.style.display = 'none';
-        } else {
-            percentageField.style.display = 'none';
-            fixedAmountField.style.display = 'block';
+            customPercentageField.style.display = 'none';
         }
     }
     
     // Initial state
-    toggleDiscountFields();
-    toggleValueFields();
+    toggleCustomPercentage();
     
-    // Event listeners
-    typeSelect.addEventListener('change', toggleDiscountFields);
-    discountTypeSelect.addEventListener('change', toggleValueFields);
+    // Event listener
+    discountTypeSelect.addEventListener('change', toggleCustomPercentage);
 });
 </script>
 @endsection

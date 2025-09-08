@@ -12,14 +12,12 @@
         <div class="card-header bg-transparent border-bottom py-3">
             <h3 class="h5 mb-0">{{ __('Discounts') }}</h3>
         </div>
-        <div class="table-responsive">
+        <div class="">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Handle') }}</th>
-                        <th>{{ __('Type') }}</th>
-                        <th>{{ __('Coupon') }}</th>
+                        <th>{{ __('Discount') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Uses') }}</th>
                         <th>{{ __('Starts At') }}</th>
@@ -37,17 +35,11 @@
                                 </a>
                             </h6>
                         </td>
-                        <td>{{ $discount->handle }}</td>
                         <td>
-                            <span class="badge bg-secondary">
-                                {{ class_basename($discount->type) }}
-                            </span>
-                        </td>
-                        <td>
-                            @if($discount->coupon)
-                                <code class="bg-light px-2 py-1 rounded">{{ $discount->coupon }}</code>
+                            @if($discount->data['fixed_value'] === true)
+                                {{ $discount->data['fixed_values']['Eur'] ?? 0 }}€
                             @else
-                                -
+                                {{ $discount->data['percentage'] }}%
                             @endif
                         </td>
                         <td>
@@ -70,8 +62,16 @@
                                 / {{ $discount->max_uses }}
                             @endif
                         </td>
-                        <td>{{ $discount->starts_at ? $discount->starts_at->format('M j, Y') : '-' }}</td>
-                        <td>{{ $discount->ends_at ? $discount->ends_at->format('M j, Y') : '-' }}</td>
+                        <td>
+                            <span class="badge bg-success bg-opacity-10 text-success">
+                                {{ $discount->starts_at ? $discount->starts_at->format('M j, Y') : '-' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                {{ $discount->ends_at ? $discount->ends_at->format('M j, Y') : 'Indefinitely' }}
+                            </span>
+                        </td>
                         <td class="text-end pe-4">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">

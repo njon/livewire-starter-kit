@@ -163,7 +163,7 @@ $tax = $cart->taxTotal->formatted();
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ $line->purchasable->product->thumbnail ? $line->purchasable->product->thumbnail->getUrl('small') : 'https://via.placeholder.com/80' }}"
+                                            <img src="{{ $line->purchasable->product->getThumbImage() }}"
                                                 class="product-img me-3"
                                                 alt="{{ $line->purchasable->product->translateAttribute('name') }}">
                                             <div>
@@ -276,7 +276,7 @@ $tax = $cart->taxTotal->formatted();
                     @endif
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Tax:</span>
+                        <span>VAT 24%</span>
                         <span>{{ $tax }}</span>
                     </div>
 
@@ -409,5 +409,319 @@ $tax = $cart->taxTotal->formatted();
         }
     });
 </script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: none;
+        }
+        .product-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 10px 16px;
+            font-weight: 600;
+        }
+        .btn-outline-primary {
+            border-width: 2px;
+            font-weight: 500;
+        }
+        .delivery-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .delivery-option.active {
+            border-color: #0d6efd !important;
+            background-color: rgba(13, 110, 253, 0.08);
+        }
+        .payment-method {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .payment-method:hover {
+            background-color: #f8f9fa;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .divider::before {
+            margin-right: 10px;
+        }
+        .divider::after {
+            margin-left: 10px;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0"><span class="step-number">1</span>Delivery Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="delivery-option card p-3 border active" id="emailOption" onclick="selectOption('email')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="deliveryMethod" id="emailMethod" checked>
+                                        <label class="form-check-label fw-bold" for="emailMethod">
+                                            Receive by Email
+                                        </label>
+                                    </div>
+                                    <p class="text-muted mb-0 mt-2">Free. We'll send the product to your email address.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="delivery-option card p-3 border" id="deliveryOption" onclick="selectOption('delivery')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="deliveryMethod" id="deliveryMethod">
+                                        <label class="form-check-label fw-bold" for="deliveryMethod">
+                                            Physical Delivery
+                                        </label>
+                                    </div>
+                                    <p class="text-muted mb-0 mt-2">We'll ship the product to your address.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="emailForm" class="mt-4">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" placeholder="your@email.com">
+                            </div>
+                        </div>
+
+                        <div id="addressForm" class="mt-4" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="state" class="form-label">State</label>
+                                    <select class="form-select" id="state">
+                                        <option selected>Choose...</option>
+                                        <option>California</option>
+                                        <option>New York</option>
+                                        <option>Texas</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="zip" class="form-label">Zip</label>
+                                    <input type="text" class="form-control" id="zip">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0"><span class="step-number">2</span>Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="payment-method card p-3 border text-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
+                                        <label class="form-check-label" for="creditCard">
+                                            <i class="bi bi-credit-card fs-4 d-block mb-2"></i>
+                                            Credit Card
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="payment-method card p-3 border text-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="paypal">
+                                        <label class="form-check-label" for="paypal">
+                                            <i class="bi bi-paypal fs-4 d-block mb-2"></i>
+                                            PayPal
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="payment-method card p-3 border text-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="applePay">
+                                        <label class="form-check-label" for="applePay">
+                                            <i class="bi bi-apple fs-4 d-block mb-2"></i>
+                                            Apple Pay
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://via.placeholder.com/70" alt="Product" class="product-img">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Wireless Headphones</h6>
+                                <small class="text-muted">Quantity: 1</small>
+                            </div>
+                            <div class="ms-auto">$129.99</div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://via.placeholder.com/70" alt="Product" class="product-img">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Phone Case</h6>
+                                <small class="text-muted">Quantity: 2</small>
+                            </div>
+                            <div class="ms-auto">$35.98</div>
+                        </div>
+
+                        <div class="divider">or</div>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Coupon code">
+                            <button class="btn btn-outline-primary" type="button">Apply</button>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Subtotal</span>
+                            <span>$165.97</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Discount</span>
+                            <span class="text-success">-$10.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">VAT (20%)</span>
+                            <span>$31.19</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Shipping</span>
+                            <span class="text-success">Free</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3 mb-2">
+                            <h5>Total</h5>
+                            <h5>$187.16</h5>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="termsCheck">
+                            <label class="form-check-label" for="termsCheck">
+                                I agree to the <a href="#">Terms and Conditions</a>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary w-100 py-2" id="checkoutButton" disabled>Complete Purchase</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectOption(option) {
+            if (option === 'email') {
+                document.getElementById('emailOption').classList.add('active');
+                document.getElementById('deliveryOption').classList.remove('active');
+                document.getElementById('emailMethod').checked = true;
+                document.getElementById('emailForm').style.display = 'block';
+                document.getElementById('addressForm').style.display = 'none';
+            } else {
+                document.getElementById('deliveryOption').classList.add('active');
+                document.getElementById('emailOption').classList.remove('active');
+                document.getElementById('deliveryMethod').checked = true;
+                document.getElementById('emailForm').style.display = 'none';
+                document.getElementById('addressForm').style.display = 'block';
+            }
+        }
+
+        // Enable checkout button only when terms are accepted
+        document.getElementById('termsCheck').addEventListener('change', function() {
+            document.getElementById('checkoutButton').disabled = !this.checked;
+        });
+
+        // Add interaction to payment methods
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.style.borderColor = '#dee2e6';
+                });
+                this.style.borderColor = '#0d6efd';
+            });
+        });
+    </script>
+</body>
+</html>
 
 @endsection

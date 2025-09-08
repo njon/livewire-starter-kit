@@ -1,8 +1,9 @@
-
 <div class="offcanvas offcanvas-end" tabindex="-1" id="shoppingCart" aria-labelledby="shoppingCartLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="shoppingCartLabel">{{ __('Shopping cart') }}</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <div class="offcanvas-header pt-3">
+    <div class="container p-0">
+      <h5 class="offcanvas-title" id="shoppingCartLabel">{{ __('Shopping cart') }}</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
   </div>
   <div class="offcanvas-body p-0">
     <div class="d-flex flex-column h-100">
@@ -11,7 +12,6 @@
           
         </ul>
       </div>
-      
       <div class="border-top p-3">
         <div class="d-flex justify-content-between mb-2">
           <h6 class="mb-0">{{ __('No information') }}</h6>

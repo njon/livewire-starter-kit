@@ -31,7 +31,7 @@ class ProductVariant extends LunarProductVariant
 
     public function getDiscountedPrice()
     {
-        $discount = $this->discounts->first() ?? new Discount();
+        $discount = $this->product->discounts->first() ?? new Discount();
 
         return (new DiscountService($this->basePrices->first(), $discount))->calculate();
     }

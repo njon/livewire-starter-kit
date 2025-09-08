@@ -11,8 +11,10 @@ use Lunar\Models\OrderAddress;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use App\Events\OrderCompleted;
-use Lunar\Models\Cart;
+use Lunar\Models\Discount;
 use App\Services\NotificationService;
+use Lunar\Models\Collection;
+use Lunar\Facades\Discounts;
 
 
 class CheckoutController extends Controller
@@ -20,6 +22,13 @@ class CheckoutController extends Controller
     public function index()
     {
         $cart = CartSession::current();
+       
+        // forceDeleteAllData();
+        // $discount = Discount::first();
+        // $xx = Discounts::apply($cart, $discount);
+       
+        $cart->calculate();
+        $cart->save();
 
         return view('partials.checkout', compact('cart'));
     }
@@ -166,8 +175,6 @@ class CheckoutController extends Controller
             'order_notes' => 'nullable|string'
         ]);
 
-        // @todo CHanell fix maybe
-
         $order = Order::create([
             'user_id' => auth()->id(),
             'status' => 'awaiting-payment',
@@ -206,7 +213,6 @@ class CheckoutController extends Controller
 
         $addressData['type'] = 'billing';
         OrderAddress::create($addressData);
-
 
         foreach ($cart->lines as $line) {
             $order->lines()->create([
