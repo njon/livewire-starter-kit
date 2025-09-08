@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminStoreController;
 use App\Http\Controllers\Admin\AdminOrdersController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminDiscountController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,7 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     
     Route::resource('stores', AdminStoreController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->except(['show']);
+    Route::resource('discounts', AdminDiscountController::class)->except(['show'])->names('admin.discounts');
 
 
     Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
