@@ -30,9 +30,10 @@ class AdminOrdersController extends Controller
 
     public function show(Order $order)
     {
-        $orderLine = $order->lines->ownedByUser()->first();
-
-        $this->authorize('view', $orderLine);
+        if(auth()->user()->role != 'super_admin') {
+            $orderLine = $order->lines->ownedByUser()->first();
+            $this->authorize('view', $orderLine);
+        } 
 
         $lines = $order->lines()->ownedByUser()
             ->with(['purchasable' => function($query) {

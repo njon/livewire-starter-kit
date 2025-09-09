@@ -874,3 +874,6 @@ body .bg-primary {
     right: 1.5rem;
     top: 1.5rem;
 }
+.delivery-option {
+    cursor: pointer;
+}

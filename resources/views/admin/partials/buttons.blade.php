@@ -18,13 +18,16 @@
             @endif
 
             @if(isset($button['save']))
-                <button type="button" class="btn btn-primary" id="save-asset" onclick="document.querySelector('.submit-form').submit();">{{ __('Save changes') }}</button>
+                <button type="button" class="btn btn-primary" id="save-asset" onclick="document.querySelector('.submit-form').submit();"><i class="bi bi-check-lg text-light"></i> {{ __('Save changes') }}</button>
             @endif
 
             @if(isset($button['new']))
-                <a class="btn btn-primary" type="button" href="{{ $button['link'] }}">
+                <button class="btn btn-primary" type="button">
+                    <a href="{{ $button['link'] }}" class="text-white text-decoration-none">
                     <i class="bi bi-plus-circle me-1"></i> {{ __('Create New') }}
-                </a>
+</a>
+                </button>
+
             @endif
             @if(isset($custom_button))
                 {!! $custom_button !!}

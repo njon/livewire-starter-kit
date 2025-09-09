@@ -140,3 +140,91 @@ body {
     font-size: 12px;
     margin-right: 8px;
 }
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.delivery-option.active {
+    border-color: #0d6efd !important;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.payment-method {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-method:hover {
+    border-color: #0d6efd !important;
+}
+
+.product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.cart-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    color: #6c757d;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #dee2e6;
+    z-index: 1;
+}
+
+.divider span {
+    background: white;
+    padding: 0 15px;
+    position: relative;
+    z-index: 2;
+}
+
+#card-element {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+}
+
+#card-element.StripeElement--focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+.payment-method .form-check-input {
+    display: none;
+}
+
+.payment-method .form-check {
+    padding: 0;
+}

@@ -39,7 +39,7 @@
             <h2><a href="https://animated-dollop-g5v44x4gg5fwq7-80.app.github.dev/"><i class="bi bi-moon-stars"></i>
                     LunarPHP</a></h2>
         </div>
-        <ul class="topbar-nav">
+        <ul class="topbar-nav mt-3">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
@@ -61,17 +61,21 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="#">
                     <i class="bi bi-envelope"></i>
                     <span class="badge bg-danger">7</span>
                 </a>
-            </li>
-            <li class="nav-item dropdown">
+            </li> -->
+            <!-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <span class="d-none d-lg-inline">{{ __('Admin User') }}</span>
-                    <img src="https://ui-avatars.com/api/?name=Admin+User&amp;background=6366f1&amp;color=fff"
-                        alt="User" class="user-avatar">
+                </a>
+            </li> -->
+            <li class="nav-item">
+                <span class="profile badge bg-warning">7</span>
+                <a class="nav-link m-0" href="#" role="button" data-bs-toggle="dropdown">
+                    <div class="user-avatar text-center">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 </a>
             </li>
         </ul>

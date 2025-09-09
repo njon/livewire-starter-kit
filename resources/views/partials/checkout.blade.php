@@ -53,21 +53,17 @@ $tax = $cart->taxTotal->formatted();
                     </div>
                     <form action="/checkout" method="POST" id="checkout-form">
 
+                        <div class="my-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" placeholder="your@email.com" name="email">
+                        </div>
+
                         <div id="emailForm" class="mt-4">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="email" placeholder="your@email.com"
-                                    name="email">
-                            </div>
+                            
                         </div>
 
                         <div id="addressForm" class="mt-4" style="display: none;">
                             <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email_physical"
-                                        placeholder="your@email.com" name="email_physical">
-                                </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="firstName" class="form-label">First Name</label>
                                     <input type="text" class="form-control" id="firstName" name="first_name">
@@ -103,6 +99,8 @@ $tax = $cart->taxTotal->formatted();
                                 </div>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-primary mt-3">Continue to Payment</button>
+                        @csrf
                     </form>
 
                 </div>
@@ -192,7 +190,7 @@ $tax = $cart->taxTotal->formatted();
                     </div>
                     @endforeach
 
-                    <div class="divider">or</div>
+                    <div class="divider"></div>
 
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Coupon code">
@@ -231,7 +229,7 @@ $tax = $cart->taxTotal->formatted();
                         </label>
                     </div>
 
-                    <button class="btn btn-primary w-100 py-2" id="checkoutButton" disabled>
+                    <button class="btn btn-primary w-100 py-2" id="checkoutButton" disabled onclick="processCheckout()">
                         Complete Purchase
                     </button>
                 </div>
@@ -240,28 +238,44 @@ $tax = $cart->taxTotal->formatted();
     </div>
 </div>
 
-<div id="stripe-payment">
-    <form id="payment-form">
-        <div id="card-element" class="my-4 p-3 border rounded">
-            <!-- Stripe Elements will be inserted here -->
+<!-- Stripe Payment Modal -->
+<div class="modal fade" id="stripeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complete Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="stripe-payment-form">
+                    <div id="card-element" class="my-4 p-3 border rounded">
+                        <!-- Stripe Elements will be inserted here -->
+                    </div>
+                    <div id="card-errors" class="text-danger" role="alert"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="stripe-pay-button" class="btn btn-primary">
+                    <span id="stripe-button-text">Pay {{ $total }}</span>
+                    <div id="stripe-spinner" class="spinner-border spinner-border-sm ms-2 d-none"></div>
+                </button>
+            </div>
         </div>
-        <div id="card-errors" class="text-red-500" role="alert"></div>
-        <input type="text" name="order_id" id="order_id" value="no"/>
-        
-        <button id="submit-button" class="btn btn-primary mt-4">
-            Pay {{ $total }}
-        </button>
-    </form>
+    </div>
 </div>
 
-<form action="{{ route('paypal.create') }}" method="POST">
-    <button type="submit" class="btn btn-paypal btn btn-outline-primary">
-        <i class="fab fa-paypal"></i> Pay with PayPal
-    </button>
+<!-- PayPal Form (hidden) -->
+<form id="paypal-form" action="{{ route('paypal.create') }}" method="POST" style="display: none;">
+    @csrf
+    <input type="hidden" name="order_data" id="paypal-order-data">
 </form>
 
 <script>
-    // Stripe initialization and payment handling
+    let currentOrderId = null;
+    let currentOrderReference = null;
+    
+    // Stripe initialization
     const stripe = Stripe("{{ env('STRIPE_KEY') }}");
     const elements = stripe.elements();
     const cardElement = elements.create('card', {
@@ -280,24 +294,67 @@ $tax = $cart->taxTotal->formatted();
             }
         }
     });
-    cardElement.mount('#card-element');
+
+    // Mount Stripe elements when modal is shown
+    document.getElementById('stripeModal').addEventListener('shown.bs.modal', function() {
+        if (!cardElement._parent) {
+            cardElement.mount('#card-element');
+        }
+    });
+
     // Handle real-time validation errors
     cardElement.on('change', function(event) {
         const displayError = document.getElementById('card-errors');
         displayError.textContent = event.error ? event.error.message : '';
     });
-    // Handle form submission
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const submitButton = document.getElementById('submit-button');
-        const buttonText = document.getElementById('button-text');
-        const spinner = document.getElementById('button-spinner');
-        const order_id = document.getElementById('order_id').value;
-        const order_reference = document.getElementById('order_reference').value;
+
+    // Main checkout process
+    async function processCheckout() {
+        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked').id;
+        const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').id;
+        
+        // Collect form data
+        const orderData = collectFormData(deliveryMethod);
+        
+        // Validate form data
+        if (!validateFormData(orderData, deliveryMethod)) {
+            return;
+        }
+
+        try {
+            // First create the order
+            const orderResponse = await createOrder(orderData);
+            currentOrderId = orderResponse.order_id;
+            currentOrderReference = orderResponse.order_reference;
+            
+            // Then proceed with selected payment method
+            if (selectedPayment === 'creditCard') {
+                // Show Stripe modal
+                const modal = new bootstrap.Modal(document.getElementById('stripeModal'));
+                modal.show();
+            } else if (selectedPayment === 'paypal') {
+                // Submit PayPal form
+                document.getElementById('paypal-order-data').value = JSON.stringify(orderData);
+                document.getElementById('paypal-form').submit();
+            } else if (selectedPayment === 'applePay') {
+                alert('Apple Pay integration coming soon!');
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            alert('Checkout failed: ' + error.message);
+        }
+    }
+
+    // Stripe payment processing
+    document.getElementById('stripe-pay-button').addEventListener('click', async function() {
+        const submitButton = this;
+        const buttonText = document.getElementById('stripe-button-text');
+        const spinner = document.getElementById('stripe-spinner');
+        
         submitButton.disabled = true;
         buttonText.textContent = 'Processing...';
         spinner.classList.remove('d-none');
+        
         try {
             // 1. Create payment intent
             const response = await fetch('/checkout/create-payment-intent', {
@@ -307,25 +364,24 @@ $tax = $cart->taxTotal->formatted();
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    amount: {{ $cart->total->value }}, // in cents, currency: 'EUR',
-                    currency: 'EUR',
-                    order_id: order_id
+                    amount: {{ $cart->total->value }},
+                    currency: '{{ $cart->currency->code }}',
+                    order_id: currentOrderId
                 })
             });
+            
             if (!response.ok) throw new Error('Failed to create payment intent');
-            const {
-                clientSecret
-            } = await response.json();
+            const { clientSecret } = await response.json();
+            
             // 2. Confirm payment
-            const {
-                error,
-                paymentIntent
-            } = await stripe.confirmCardPayment(clientSecret, {
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: cardElement
                 }
             });
+            
             if (error) throw error;
+            
             // 3. Complete order
             const completeResponse = await fetch('/checkout/complete-order', {
                 method: 'POST',
@@ -335,20 +391,82 @@ $tax = $cart->taxTotal->formatted();
                 },
                 body: JSON.stringify({
                     payment_intent_id: paymentIntent.id,
-                    order_id: order_id
+                    order_id: currentOrderId
                 })
             });
+            
             if (!completeResponse.ok) throw new Error('Order completion failed');
-            window.location.href = '/checkout/success/' + order_reference;
+            
+            window.location.href = '/checkout/success/' + currentOrderReference;
         } catch (error) {
             console.error('Payment error:', error);
-            document.getElementById('card-errors').textContent = error.message ||
-                'Payment failed. Please try again.';
+            document.getElementById('card-errors').textContent = error.message || 'Payment failed. Please try again.';
             submitButton.disabled = false;
             buttonText.textContent = 'Pay {{ $total }}';
             spinner.classList.add('d-none');
         }
     });
+
+    // Helper functions
+    function collectFormData(deliveryMethod) {
+        if (deliveryMethod === 'emailMethod') {
+            return {
+                email: document.getElementById('email').value,
+                first_name: 'Guest',
+                last_name: 'User', 
+                phone: '',
+                address: '',
+                city: '',
+                zip_code: '',
+                order_notes: ''
+            };
+        } else {
+            return {
+                email: document.getElementById('email_physical').value,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                zip_code: document.getElementById('zip').value,
+                order_notes: document.getElementById('order_notes').value
+            };
+        }
+    }
+
+    function validateFormData(data, deliveryMethod) {
+        if (!data.email) {
+            alert('Email address is required');
+            return false;
+        }
+        
+        if (deliveryMethod === 'deliveryMethod') {
+            if (!data.first_name || !data.last_name || !data.phone) {
+                alert('First name, last name, and phone are required for delivery');
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    async function createOrder(orderData) {
+        const response = await fetch('/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to create order');
+        }
+        
+        return await response.json();
+    }
+    // Delivery option selection
     function selectOption(option) {
         if (option === 'email') {
             document.getElementById('emailOption').classList.add('active');
@@ -364,25 +482,23 @@ $tax = $cart->taxTotal->formatted();
             document.getElementById('addressForm').style.display = 'block';
         }
     }
+
     // Enable checkout button only when terms are accepted
     document.getElementById('termsCheck').addEventListener('change', function() {
         document.getElementById('checkoutButton').disabled = !this.checked;
     });
+
     // Add interaction to payment methods
     document.querySelectorAll('.payment-method').forEach(method => {
         method.addEventListener('click', function() {
             const radio = this.querySelector('input[type="radio"]');
             radio.checked = true;
             document.querySelectorAll('.payment-method').forEach(m => {
-                m.style.borderColor = '#dee2e6';
+                m.style.setProperty('border-color', '#dee2e6', 'important');
             });
-            this.style.borderColor = '#0d6efd';
+            this.style.setProperty('border-color', '#1d82e0ff', 'important');
         });
     });
 </script>
-
-
-<input type="hidden" id="order_id">
-<input type="hidden" id="order_reference">
 
 @endsection

@@ -42,6 +42,7 @@ class CheckoutController extends Controller
             ->where('status', 'payment-received')
             ->firstOrFail();
 
+
         if (!$order) {
             abort(404, 'Order not found or not completed.');
         }
@@ -126,6 +127,7 @@ class CheckoutController extends Controller
 
             // Create notification for new order
             NotificationService::newOrder($order);
+            event(new OrderCompleted($order));
 
             $order->transactions()->create([
                 'success' => true,
@@ -142,7 +144,6 @@ class CheckoutController extends Controller
                 $cart->delete();
             }
 
-            event(new OrderCompleted($order));
 
             return response()->json([
                 'success' => true,
@@ -167,11 +168,11 @@ class CheckoutController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:255',
-            'address' => '',
-            'city' => '',
-            'zip_code' => '',
-            'country' => '',
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
             'order_notes' => 'nullable|string'
         ]);
 
@@ -199,15 +200,15 @@ class CheckoutController extends Controller
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
             'company_name' => null,
-            'line_one' => $validated['address'],
+            'line_one' => $validated['address'] ?? '',
             'line_two' => null,
             'line_three' => null,
-            'city' => $validated['city'],
+            'city' => $validated['city'] ?? '',
             'state' => null,
-            'postcode' => $validated['zip_code'],
+            'postcode' => $validated['zip_code'] ?? '',
             'country_id' => 1,
             'contact_email' => $validated['email'],
-            'contact_phone' => $validated['phone'],
+            'contact_phone' => $validated['phone'] ?? '',
             'type' => 'shipping',
         ];
 

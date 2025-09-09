@@ -1,7 +1,10 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => __('Services'), 'asset' => __('Services'), 'custom_button' => '<a href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> ' . __('Create New') . ' </a>', 'buttons' => [
+    @include('admin.partials.buttons', ['title' => __('Services'), 'asset' => __('Services'), 'custom_button' => '
+    <button href="javascript:void(0);" onclick="showCreateModal()" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>
+     ' . __('Create New') . ' </button>', 
+     'buttons' => [
         []
     ]])
 
