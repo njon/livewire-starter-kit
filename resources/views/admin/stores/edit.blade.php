@@ -1,168 +1,233 @@
 @extends('admin.app')
 
 @section('toolbar')
-    @include('admin.partials.buttons', ['title' => 'Edit Store', 'asset' => 'Store', 'buttons' => [
-        ['save' => true]
-    ], 'custom_button' => '<button type="button" class="btn btn-danger" onclick="confirmDelete(\'Are you sure you want to delete this store?\', function() { document.getElementById(\'delete-store-form\').submit(); })"><i class="bi bi-trash me-1"></i> Delete Store</button>'])
+    @include('admin.partials.buttons', [
+        'title' => __('Edit Store'),
+        'asset' => __('Store'),
+        'buttons' => [['save' => true]],
+        'custom_button' => '<button type="button" class="btn btn-danger" onclick="confirmDelete(\'Are you sure you want to delete this store?\', function() { document.getElementById(\'delete-store-form\').submit(); })"><i class="bi bi-trash me-1"></i> ' . __('Delete Store') . '</button>'
+    ])
 @endsection
 
 @section('content')
-<script>
-const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : json_encode([
-    "monday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "tuesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "wednesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "thursday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "friday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "saturday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
-    "sunday" => ["active" => true, "open" => "10:00", "close" => "18:00"]
-]) !!};
-</script>
-<link rel="stylesheet" href="/css/sldr.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
-<form method="POST" enctype="multipart/form-data" action="{{ route('stores.update', $store->id) }}" class="submit-form">
-    @csrf
-    @method('PUT')
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-transparent border-bottom py-3">
-            <h3 class="h5 mb-0 d-flex align-items-center">
-                <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Edit Store details') }}
-            </h3>
-        </div>
-        <div class="card-body">
-            <ul id="languageTabs" role="tablist">
-                <p>{{ __('Please select a language to edit the store details:') }}</p>
-                @foreach($languages as $language)
-                <li>
-                    <button class="m-0 nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
-                        data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
-                        role="tab">
-                        {{ $language->name }}
-                        {!! lang_icon($language->code) !!}
-                    </button>
-                </li>
-                @endforeach
-            </ul>
-            <div class="row">
-                <div class="tab-content col-6" id="languageTabsContent">
-                    @foreach($languages as $language)
-                    <div class="tab-pane fade @if($loop->first) show active @endif"
-                        id="{{ $language->code }}-content" role="tabpanel">
-                        <div class="row g-4">
-                            <div class="col-lg-6">
-                                <label for="channel_title_{{ $language->code }}" class="form-label">{{ __('Store title') }} {!! lang_icon($language->code) !!}</label>
-                                <input type="text" data-slug="true"
-                                    class="form-control @error('name.'.$language->code) is-invalid @enderror"
-                                    id="channel_title_{{ $language->code }}" name="attribute_data[name][{{ $language->code }}]"
-                                    value="{{ $store->attribute_data['name'][$language->code] ?? '' }}"
-                                    @if($language->default) required @endif>
-                                @error('name.'.$language->code)
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+<div class="container-fluid p-0">
+    <script>
+    const exampleData = {!! !empty($store->working_hours) ? $store->working_hours : json_encode([
+        "monday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "tuesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "wednesday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "thursday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "friday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "saturday" => ["active" => true, "open" => "09:00", "close" => "21:00"],
+        "sunday" => ["active" => true, "open" => "10:00", "close" => "18:00"]
+    ]) !!};
+    </script>
+    <link rel="stylesheet" href="/css/sldr.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+    <form method="POST" enctype="multipart/form-data" action="{{ route('stores.update', $store->id) }}" class="submit-form">
+        @csrf
+        @method('PUT')
+        
+        <div class="row g-4">
+            <!-- Left Column - Store Details -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-lg mb-4">
+                    <div class="card-header bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle p-2 me-3">
+                                <i class="bi bi-shop fs-5"></i>
                             </div>
-                            <div class="mb-3 col-lg-6">
-                                <label class="form-label d-flex align-items-center gap-2">
-                                    URL {!! lang_icon($language->code) !!}
-                                </label>
-                                <div class="input-group">
-                                    <input type="text" id="channel_url_{{ $language->code }}" data-auto="true"
-                                    class="form-control url-field @error('urls.'.$language->code) is-invalid @enderror"
-                                    name="attribute_data[url][{{ $language->code }}]" data-lang="{{ $language->code }}"
-                                    value="{{ $store->attribute_data['url'][$language->code] ?? '' }}">
-                                    <span class="input-group-text no-bg">
-                                        <span id="slugCheckIcon"> </span> 
-                                    </span>
-                                    @error('urls.'.$language->code)
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                            <div>
+                                <h4 class="mb-0 fw-semibold fs-6">{{ __('Store Information') }}</h4>
+                                <small>{{ __('Manage your store details and settings') }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- Language Tabs -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-translate text-muted me-2"></i>
+                                <small class="text-muted">{{ __('Select language to edit store details') }}</small>
+                            </div>
+                            <nav class="nav nav-pills nav-fill bg-light rounded-3 p-1" id="languageTabs" role="tablist">
+                                @foreach($languages as $language)
+                                <button class="nav-link @if($loop->first) active @endif rounded-2 fw-medium" 
+                                        id="{{ $language->code }}-tab"
+                                        data-bs-toggle="tab" 
+                                        data-bs-target="#{{ $language->code }}-content" 
+                                        type="button" role="tab">
+                                    {!! lang_icon($language->code) !!}
+                                    <span class="ms-2">{{ $language->name }}</span>
+                                </button>
+                                @endforeach
+                            </nav>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="languageTabsContent">
+                            @foreach($languages as $language)
+                            <div class="tab-pane fade @if($loop->first) show active @endif" 
+                                 id="{{ $language->code }}-content" role="tabpanel">
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" 
+                                                   class="form-control form-control-lg @error('name.'.$language->code) is-invalid @enderror"
+                                                   id="channel_title_{{ $language->code }}" 
+                                                   name="attribute_data[name][{{ $language->code }}]"
+                                                   value="{{ $store->attribute_data['name'][$language->code] ?? '' }}"
+                                                   placeholder="{{ __('Store Name') }}"
+                                                   @if($language->default) required @endif>
+                                            <label for="channel_title_{{ $language->code }}" class="d-flex align-items-center">
+                                                <i class="bi bi-shop me-2 text-primary"></i>
+                                                {{ __('Store Name') }} {!! lang_icon($language->code) !!}
+                                            </label>
+                                            @error('name.'.$language->code)
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <label class="form-label mb-1">{{ __('Store Description') }} {!! lang_icon($language->code) !!}</label>
-                                <textarea id="channelDescription_{{ $language->code }}"
-                                    name="attribute_data[description][{{ $language->code }}]"
-                                    class="rich-text-editor border rounded bg-light @error('description.'.$language->code) is-invalid @enderror"
-                                    data-lang="{{ $language->code }}">{{ $store->attribute_data['description'][$language->code] ?? '' }}</textarea>
-                                @error('description.'.$language->code)
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">{{ __('Describe your channel in detail (supports rich text formatting)') }}</div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact & Location Info -->
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle p-2 me-3">
+                                <i class="bi bi-geo-alt fs-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-semibold fs-6">{{ __('Contact & Location') }}</h4>
+                                <small>{{ __('Store contact information and address') }}</small>
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                           value="{{ $store->phone }}" placeholder="{{ __('Phone Number') }}">
+                                    <label for="phone">
+                                        <i class="bi bi-telephone me-2 text-primary"></i>
+                                        {{ __('Phone Number') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           value="{{ $store->email }}" placeholder="{{ __('Email Address') }}">
+                                    <label for="email">
+                                        <i class="bi bi-envelope me-2 text-primary"></i>
+                                        {{ __('Email Address') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="address" name="address" 
+                                           value="{{ $store->address }}" placeholder="{{ __('Store Address') }}">
+                                    <label for="address">
+                                        <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                        {{ __('Store Address') }}
+                                    </label>
+                                    <div class="form-text mt-2">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        {{ __('Start typing to search for address suggestions') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-map text-primary me-2"></i>
+                                        <h6 class="mb-0">{{ __('Store Location') }}</h6>
+                                    </div>
+                                    <div class="map-container border rounded-3 overflow-hidden shadow-sm">
+                                        <div id="map" style="height: 350px; width: 100%;"></div>
+                                    </div>
+                                    <input type="hidden" id="map_location" name="map_location" value="{{ $store->map_location }}">
+                                    <div class="mt-3 p-3 bg-light rounded-3">
+                                        <div class="d-flex align-items-center text-muted small">
+                                            <i class="bi bi-cursor me-2"></i>
+                                            {{ __('Click on the map or drag the marker to set the exact store location') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="phone" class="form-label">{{ __('Phone') }}</label>
-                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $store->phone }}">
+            </div>
+
+            <!-- Right Column - Business Hours -->
+            <div class="col-lg-5">
+                <div class="sticky-top" style="top: 1rem;">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-white">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle p-2 me-3">
+                                    <i class="bi bi-clock fs-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0 fw-semibold fs-6">{{ __('Business Hours') }}</h4>
+                                    <small>{{ __('Set your store operating hours') }}</small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">{{ __('Email') }}</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{ $store->email }}">
-                        </div>
-                        <!-- <div class="col-md-6 mt-3">
-                            <label for="website" class="form-label">{{ __('Website') }}</label>
-                            <input type="text" class="form-control" id="website" name="website" value="{{ $store->website }}">
-                        </div> -->
-                        <div class="col-md-12 mt-3">
-                            <label for="address" class="form-label">{{ __('Address') }}</label>
-                            <input type="text" class="form-control" id="address" name="address" value="{{ $store->address }}" placeholder="{{ __('Start typing address...') }}">
-                        </div>
-                        <div class="col-md-12 mt-3">
+                        <div class="card-body p-4">
                             <div class="mb-3">
-                                <div id="map" style="height: 300px; width: 100%; background-color: #eee;"></div>
-                                <input type="hidden" id="map_location" name="map_location" value="{{ $store->map_location }}">
-                                <div class="mt-2 text-muted small">{{ __('Drag the marker to adjust the exact location') }}</div>
+                                <div class="d-flex align-items-center text-muted small mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    {{ __('Configure when your store is open for business') }}
+                                </div>
+                                <div id="business-hours-container" class="business-hours-modern"></div>
                             </div>
+                            <input type="hidden" name="working_hours" id="json-output" value="{{ $store->working_hours }}">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div>
-        <div class="card mb-4">
-            <div class="card-header bg-transparent border-bottom py-3">
-                <h3 class="h5 mb-0 d-flex align-items-center">
-                    <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Business hours') }}
-                </h3>
-            </div>
-            <div class="card-body">
-                <!-- Working Hours Section -->
-                <div>
-                    <div class="row g-3">
-                        <div id="business-hours-container"> </div>
-                    </div>
-                </div>
-                <input type="hidden" name="working_hours" id="json-output" value="{{ $store->working_hours }}">
-            </div>
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgEzqtsDF9vccmavcM9nqftFqXSgASHGE&libraries=places&callback=initMap"  defer></script>
 <script>
+// Modern form enhancements
 document.addEventListener('DOMContentLoaded', function() {
-    @foreach($languages as $language)
-    tinymce.init({
-        selector: '#channelDescription_{{ $language->code }}',
-        plugins: 'lists link image table help wordcount',
-        toolbar: 'undo redo | formatselect | bold italic | \
-                 alignleft aligncenter alignright alignjustify | \
-                 bullist numlist outdent indent | link image | help',
-        skin: 'oxide',
-        height: 300,
-        menubar: false,
-        branding: false,
-        statusbar: false,
-        setup: function(editor) {
-            editor.on('change', function() {
-                editor.save();
-            });
-        }
+    // Add floating label animations
+    const formControls = document.querySelectorAll('.form-floating .form-control');
+    formControls.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
     });
-    @endforeach
+
+    // Smooth tab transitions
+    const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabButtons.forEach(button => {
+        button.addEventListener('shown.bs.tab', function(e) {
+            // Add smooth transition effect
+            const target = document.querySelector(e.target.getAttribute('data-bs-target'));
+            target.style.opacity = '0';
+            setTimeout(() => {
+                target.style.opacity = '1';
+            }, 50);
+        });
+    });
 });
 document.getElementById('images').addEventListener('change', function(e) {
     const previewContainer = document.querySelector('.image-preview');
