@@ -13,100 +13,6 @@ $tax = $cart->taxTotal->formatted();
 <script src="https://js.stripe.com/v3/"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
-<script>
-    // Stripe initialization and payment handling
-    const stripe = Stripe("{{ env('STRIPE_KEY') }}");
-    const elements = stripe.elements();
-    const cardElement = elements.create('card', {
-        style: {
-            base: {
-                fontSize: '16px',
-                color: '#32325d',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        }
-    });
-    cardElement.mount('#card-element');
-    // Handle real-time validation errors
-    cardElement.on('change', function(event) {
-        const displayError = document.getElementById('card-errors');
-        displayError.textContent = event.error ? event.error.message : '';
-    });
-    // Handle form submission
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const submitButton = document.getElementById('submit-button');
-        const buttonText = document.getElementById('button-text');
-        const spinner = document.getElementById('button-spinner');
-        const order_id = document.getElementById('order_id').value;
-        const order_reference = document.getElementById('order_reference').value;
-        submitButton.disabled = true;
-        buttonText.textContent = 'Processing...';
-        spinner.classList.remove('d-none');
-        try {
-            // 1. Create payment intent
-            const response = await fetch('/checkout/create-payment-intent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    amount: {
-                        {
-                            $cart - > total - > value
-                        }
-                    }, // in cents, currency: 'EUR',
-                    currency: 'EUR',
-                    order_id: order_id
-                })
-            });
-            if (!response.ok) throw new Error('Failed to create payment intent');
-            const {
-                clientSecret
-            } = await response.json();
-            // 2. Confirm payment
-            const {
-                error,
-                paymentIntent
-            } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: cardElement
-                }
-            });
-            if (error) throw error;
-            // 3. Complete order
-            const completeResponse = await fetch('/checkout/complete-order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    payment_intent_id: paymentIntent.id,
-                    order_id: order_id
-                })
-            });
-            if (!completeResponse.ok) throw new Error('Order completion failed');
-            window.location.href = '/checkout/success/' + order_reference;
-        } catch (error) {
-            console.error('Payment error:', error);
-            document.getElementById('card-errors').textContent = error.message ||
-                'Payment failed. Please try again.';
-            submitButton.disabled = false;
-            buttonText.textContent = 'Pay {{ $total }}';
-            spinner.classList.add('d-none');
-        }
-    });
-</script>
 
 <div class="container py-5">
     <div class="row">
@@ -334,6 +240,20 @@ $tax = $cart->taxTotal->formatted();
     </div>
 </div>
 
+<div id="stripe-payment">
+    <form id="payment-form">
+        <div id="card-element" class="my-4 p-3 border rounded">
+            <!-- Stripe Elements will be inserted here -->
+        </div>
+        <div id="card-errors" class="text-red-500" role="alert"></div>
+        <input type="text" name="order_id" id="order_id" value="no"/>
+        
+        <button id="submit-button" class="btn btn-primary mt-4">
+            Pay {{ $total }}
+        </button>
+    </form>
+</div>
+
 <form action="{{ route('paypal.create') }}" method="POST">
     <button type="submit" class="btn btn-paypal btn btn-outline-primary">
         <i class="fab fa-paypal"></i> Pay with PayPal
@@ -341,6 +261,94 @@ $tax = $cart->taxTotal->formatted();
 </form>
 
 <script>
+    // Stripe initialization and payment handling
+    const stripe = Stripe("{{ env('STRIPE_KEY') }}");
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        }
+    });
+    cardElement.mount('#card-element');
+    // Handle real-time validation errors
+    cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        displayError.textContent = event.error ? event.error.message : '';
+    });
+    // Handle form submission
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('button-spinner');
+        const order_id = document.getElementById('order_id').value;
+        const order_reference = document.getElementById('order_reference').value;
+        submitButton.disabled = true;
+        buttonText.textContent = 'Processing...';
+        spinner.classList.remove('d-none');
+        try {
+            // 1. Create payment intent
+            const response = await fetch('/checkout/create-payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    amount: {{ $cart->total->value }}, // in cents, currency: 'EUR',
+                    currency: 'EUR',
+                    order_id: order_id
+                })
+            });
+            if (!response.ok) throw new Error('Failed to create payment intent');
+            const {
+                clientSecret
+            } = await response.json();
+            // 2. Confirm payment
+            const {
+                error,
+                paymentIntent
+            } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardElement
+                }
+            });
+            if (error) throw error;
+            // 3. Complete order
+            const completeResponse = await fetch('/checkout/complete-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    payment_intent_id: paymentIntent.id,
+                    order_id: order_id
+                })
+            });
+            if (!completeResponse.ok) throw new Error('Order completion failed');
+            window.location.href = '/checkout/success/' + order_reference;
+        } catch (error) {
+            console.error('Payment error:', error);
+            document.getElementById('card-errors').textContent = error.message ||
+                'Payment failed. Please try again.';
+            submitButton.disabled = false;
+            buttonText.textContent = 'Pay {{ $total }}';
+            spinner.classList.add('d-none');
+        }
+    });
     function selectOption(option) {
         if (option === 'email') {
             document.getElementById('emailOption').classList.add('active');
@@ -372,6 +380,8 @@ $tax = $cart->taxTotal->formatted();
         });
     });
 </script>
+
+
 <input type="hidden" id="order_id">
 <input type="hidden" id="order_reference">
 
