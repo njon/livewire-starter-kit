@@ -2,7 +2,7 @@
 
 @section('toolbar')
 @include('admin.partials.buttons', [
-'title' => __('Save service'),
+'title' => __('Edit service'),
 'asset' => __('Service'),
 'buttons' => [
 ['save' => true]
@@ -44,9 +44,11 @@
                 </div>
                 <div class="card-body">
                     <!-- Language Tabs -->
-                    <div class="mb-2 small">{{ __('Click to change language translations') }}</div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-translate text-muted me-2"></i>
+                        <small class="text-muted">{{ __('Select language to edit store details') }}</small>
+                    </div>
                     <ul id="languageTabs" role="tablist">
-                        
                         @foreach($languages as $language)
                         <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
                                 data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
@@ -67,32 +69,30 @@
                             id="{{ $language->code }}-content" role="tabpanel">
                             <div class="row g-4">
                                 <div class="col-lg-12">
-                                    <div class="form-floating">
-                                        <input type="text" data-slug="true"
-                                            class="form-control @error('name.'.$language->code) is-invalid @enderror"
-                                            id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
-                                            value="{{ old('name.'.$language->code, $product->translateAttribute('name', $language->code) ?? '') }}"
-                                            placeholder="{{ __('Service title') }}"
-                                            @if($language->default) required @endif>
-                                        <label for="product_title_{{ $language->code }}">
-                                            <i class="bi bi-card-text me-2 text-primary"></i>
-                                            {{ __('Service title') }}
-                                        </label>
-                                        @error('name.'.$language->code)
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                    <label for="product_title_{{ $language->code }}" class="form-label">
+                                        <i class="bi bi-card-text me-2 text-primary"></i>
+                                        {{ __('Service title') }}
+                                    </label>
+                                    <input type="text" data-slug="true"
+                                        class="form-control @error('name.'.$language->code) is-invalid @enderror"
+                                        id="product_title_{{ $language->code }}" name="name[{{ $language->code }}]"
+                                        value="{{ old('name.'.$language->code, $product->translateAttribute('name', $language->code) ?? '') }}"
+                                        placeholder="{{ __('Service title') }}"
+                                        @if($language->default) required @endif>
+                                    @error('name.'.$language->code)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <div class="form-floating">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-link me-2 text-primary"></i>
+                                        {{ __('URL') }}
+                                    </label>
                                     <input type="text" id="product_url_{{ $language->code }}" data-auto="true"
                                         class="form-control url-field @error('urls.'.$language->code) is-invalid @enderror"
                                         name="urls[{{ $language->code }}]" data-lang="{{ $language->code }}"
                                         placeholder="{{ __('Product URL') }}"
                                         value="{{ old('urls.'.$language->code, $url->slug ?? '') }}">
-                                    <label for="product_url_{{ $language->code }}">
-                                        <i class="bi bi-link me-2 text-primary"></i>
-                                        {{ __('URL') }}
-                                    </label>
                                     @error('urls.'.$language->code)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -150,19 +150,17 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <div class="form-floating">
-                        <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
-                            <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
-                            <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>{{ __('Published') }}</option>
-                        </select>
-                        <label for="status">
-                            <i class="bi bi-toggle-on me-2 text-primary"></i>
-                            {{ __('Service Status') }}
-                        </label>
-                        @error('status')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <label for="status" class="form-label">
+                        <i class="bi bi-toggle-on me-2 text-primary"></i>
+                        {{ __('Service Status') }}
+                    </label>
+                    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+                        <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
+                        <option value="published" {{ $product->status == 'published' ? 'selected' : '' }}>{{ __('Published') }}</option>
+                    </select>
+                    @error('status')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
@@ -223,23 +221,21 @@
                 <div class="card-body">
                     <div class="category-list-container mb-3">
                         <div class="category-list">
-                            <div class="form-floating">
-                                <select class="form-select subcategory mb-3" name="category" id="category">
-                                    <option>{{ __('Select Category') }}</option>
-                                    @foreach($collections as $mainCategory)
-                                    @if($mainCategory->parent_id == null)
-                                    <option value="{{ $mainCategory->id }}"
-                                        {{ $product->collections->contains('id', $mainCategory->id) ? 'selected' : '' }}>
-                                        {{ $mainCategory->translateAttribute('name') }}
-                                    </option>
-                                    @endif
-                                    @endforeach
-                                </select>
-                                <label for="category">
-                                    <i class="bi bi-tag me-2 text-primary"></i>
-                                    {{ __('Category') }}
-                                </label>
-                            </div>
+                            <label for="category" class="form-label">
+                                <i class="bi bi-tag me-2 text-primary"></i>
+                                {{ __('Category') }}
+                            </label>
+                            <select class="form-select subcategory mb-3" name="category" id="category">
+                                <option>{{ __('Select Category') }}</option>
+                                @foreach($collections as $mainCategory)
+                                @if($mainCategory->parent_id == null)
+                                <option value="{{ $mainCategory->id }}"
+                                    {{ $product->collections->contains('id', $mainCategory->id) ? 'selected' : '' }}>
+                                    {{ $mainCategory->translateAttribute('name') }}
+                                </option>
+                                @endif
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="subcategory-container">
@@ -273,37 +269,33 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <div class="form-floating mb-3">
-                        <input type="number" class="form-control @error('price') is-invalid @enderror" 
-                               id="price" name="price" placeholder="{{ __('Base Price') }}"
-                               value="{{ old('price',  $price) }}">
-                        <label for="price">
-                            <i class="bi bi-currency-euro me-2 text-primary"></i>
-                            {{ __('Base Price') }}
-                        </label>
-                        @error('price')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <label for="price" class="form-label">
+                        <i class="bi bi-currency-euro me-2 text-primary"></i>
+                        {{ __('Base Price') }}
+                    </label>
+                    <input type="number" class="form-control @error('price') is-invalid @enderror" 
+                           id="price" name="price" placeholder="{{ __('Base Price') }}"
+                           value="{{ old('price',  $price) }}">
+                    @error('price')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                     
-                    <div class="form-floating">
-                        <select class="form-select @error('tax_class_id') is-invalid @enderror" id="taxClass"
-                            name="tax_class_id">
-                            @foreach($taxClasses as $taxClass)
-                            <option value="{{ $taxClass->id }}"
-                                {{ (old('tax_class_id', $product->variants->first()->tax_class_id ?? '') == $taxClass->id) ? 'selected' : '' }}>
-                                {{ $taxClass->name }} ({{ $taxClass->rate }}%)
-                            </option>
-                            @endforeach
-                        </select>
-                        <label for="taxClass">
-                            <i class="bi bi-percent me-2 text-primary"></i>
-                            {{ __('Tax Class') }}
-                        </label>
-                        @error('tax_class_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <label for="taxClass" class="form-label mt-3">
+                        <i class="bi bi-percent me-2 text-primary"></i>
+                        {{ __('Tax Class') }}
+                    </label>
+                    <select class="form-select @error('tax_class_id') is-invalid @enderror" id="taxClass"
+                        name="tax_class_id">
+                        @foreach($taxClasses as $taxClass)
+                        <option value="{{ $taxClass->id }}"
+                            {{ (old('tax_class_id', $product->variants->first()->tax_class_id ?? '') == $taxClass->id) ? 'selected' : '' }}>
+                            {{ $taxClass->name }} ({{ $taxClass->rate }}%)
+                        </option>
+                        @endforeach
+                    </select>
+                    @error('tax_class_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 

@@ -18,7 +18,7 @@
             @endif
 
             @if(isset($button['save']))
-                <button type="button" class="btn btn-primary" id="save-asset" onclick="document.querySelector('.submit-form').submit();">{{ $title }}</button>
+                <button type="button" class="btn btn-primary" id="save-asset" onclick="document.querySelector('.submit-form').submit();">{{ __('Save changes') }}</button>
             @endif
 
             @if(isset($button['new']))

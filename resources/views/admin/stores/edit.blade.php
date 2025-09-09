@@ -51,19 +51,18 @@
                                 <i class="bi bi-translate text-muted me-2"></i>
                                 <small class="text-muted">{{ __('Select language to edit store details') }}</small>
                             </div>
-                            <nav class="nav nav-pills nav-fill bg-light rounded-3 p-1" id="languageTabs" role="tablist">
+                            <ul id="languageTabs" role="tablist">
                                 @foreach($languages as $language)
-                                <button class="nav-link @if($loop->first) active @endif rounded-2 fw-medium" 
-                                        id="{{ $language->code }}-tab"
-                                        data-bs-toggle="tab" 
-                                        data-bs-target="#{{ $language->code }}-content" 
-                                        type="button" role="tab">
-                                    {!! lang_icon($language->code) !!}
-                                    <span class="ms-2">{{ $language->name }}</span>
-                                </button>
+                                <li><button class="nav-link @if($loop->first) active @endif" id="{{ $language->code }}-tab"
+                                        data-bs-toggle="tab" data-bs-target="#{{ $language->code }}-content" type="button"
+                                        role="tab">
+                                        {{ $language->name }}
+                                        <span class="fi fi-{{ $language->code == 'gr' ? 'gr' : 'gb' }} fis"></span>
+                                    </button></li>
                                 @endforeach
-                            </nav>
+                            </ul>
                         </div>
+                    
 
                         <!-- Tab Content -->
                         <div class="tab-content" id="languageTabsContent">
@@ -72,22 +71,20 @@
                                  id="{{ $language->code }}-content" role="tabpanel">
                                 <div class="row g-4">
                                     <div class="col-12">
-                                        <div class="form-floating">
-                                            <input type="text" 
-                                                   class="form-control form-control-lg @error('name.'.$language->code) is-invalid @enderror"
-                                                   id="channel_title_{{ $language->code }}" 
-                                                   name="attribute_data[name][{{ $language->code }}]"
-                                                   value="{{ $store->attribute_data['name'][$language->code] ?? '' }}"
-                                                   placeholder="{{ __('Store Name') }}"
-                                                   @if($language->default) required @endif>
-                                            <label for="channel_title_{{ $language->code }}" class="d-flex align-items-center">
-                                                <i class="bi bi-shop me-2 text-primary"></i>
-                                                {{ __('Store Name') }} {!! lang_icon($language->code) !!}
-                                            </label>
-                                            @error('name.'.$language->code)
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                        <label for="channel_title_{{ $language->code }}" class="form-label">
+                                            <i class="bi bi-shop me-2 text-primary"></i>
+                                            {{ __('Store Name') }} {!! lang_icon($language->code) !!}
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control @error('name.'.$language->code) is-invalid @enderror"
+                                               id="channel_title_{{ $language->code }}" 
+                                               name="attribute_data[name][{{ $language->code }}]"
+                                               value="{{ $store->attribute_data['name'][$language->code] ?? '' }}"
+                                               placeholder="{{ __('Store Name') }}"
+                                               @if($language->default) required @endif>
+                                        @error('name.'.$language->code)
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -112,37 +109,31 @@
                     <div class="card-body p-4">
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="tel" class="form-control" id="phone" name="phone" 
-                                           value="{{ $store->phone }}" placeholder="{{ __('Phone Number') }}">
-                                    <label for="phone">
-                                        <i class="bi bi-telephone me-2 text-primary"></i>
-                                        {{ __('Phone Number') }}
-                                    </label>
-                                </div>
+                                <label for="phone" class="form-label">
+                                    <i class="bi bi-telephone me-2 text-primary"></i>
+                                    {{ __('Phone Number') }}
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ $store->phone }}" placeholder="{{ __('Phone Number') }}">
                             </div>
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           value="{{ $store->email }}" placeholder="{{ __('Email Address') }}">
-                                    <label for="email">
-                                        <i class="bi bi-envelope me-2 text-primary"></i>
-                                        {{ __('Email Address') }}
-                                    </label>
-                                </div>
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope me-2 text-primary"></i>
+                                    {{ __('Email Address') }}
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ $store->email }}" placeholder="{{ __('Email Address') }}">
                             </div>
                             <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="address" name="address" 
-                                           value="{{ $store->address }}" placeholder="{{ __('Store Address') }}">
-                                    <label for="address">
-                                        <i class="bi bi-geo-alt me-2 text-primary"></i>
-                                        {{ __('Store Address') }}
-                                    </label>
-                                    <div class="form-text mt-2">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        {{ __('Start typing to search for address suggestions') }}
-                                    </div>
+                                <label for="address" class="form-label">
+                                    <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                    {{ __('Store Address') }}
+                                </label>
+                                <input type="text" class="form-control" id="address" name="address" 
+                                       value="{{ $store->address }}" placeholder="{{ __('Store Address') }}">
+                                <div class="form-text mt-2">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    {{ __('Start typing to search for address suggestions') }}
                                 </div>
                             </div>
                             <div class="col-12">
