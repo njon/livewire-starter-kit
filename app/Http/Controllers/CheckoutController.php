@@ -13,6 +13,8 @@ use Stripe\PaymentIntent;
 use App\Events\OrderCompleted;
 use Lunar\Models\Discount;
 use App\Services\NotificationService;
+use App\Services\InvoiceService;
+use App\Models\Invoice;
 use Lunar\Models\Collection;
 use Lunar\Facades\Discounts;
 
@@ -128,6 +130,25 @@ class CheckoutController extends Controller
             // Create notification for new order
             NotificationService::newOrder($order);
             event(new OrderCompleted($order));
+
+            // Generate invoice for the completed order
+            try {
+                $invoiceService = new InvoiceService();
+                $invoicePath = $invoiceService->generateInvoice($order);
+
+                // Store invoice record in database
+                Invoice::create([
+                    'order_id' => $order->id,
+                    'owner_id' => $order->user_id,
+                    'invoice_number' => 'INV' . date('Y') . '-' . $order->id,
+                    'invoice_path' => $invoicePath,
+                    'amount' => $order->total->value / 100,
+                    'currency_code' => $order->currency_code,
+                    'generated_at' => now(),
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Invoice generation failed for order ' . $order->id . ': ' . $e->getMessage());
+            }
 
             $order->transactions()->create([
                 'success' => true,

@@ -19,10 +19,33 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminDiscountController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
+
+
+Route::get('/test/generate-invoice/{orderIdOrReference?}', function ($orderIdOrReference = null) {
+    $result = generate_test_invoice($orderIdOrReference);
+
+    if ($result['success']) {
+        // Try to download the invoice if generation was successful
+        try {
+            $order = \Lunar\Models\Order::find($result['order_id']);
+            $invoiceService = new \App\Services\InvoiceService();
+            return $invoiceService->downloadInvoice($order);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'] . ' (Invoice generated but download failed: ' . $e->getMessage() . ')',
+                'invoice_path' => $result['invoice_path']
+            ]);
+        }
+    }
+
+    return response()->json($result, 400);
+})->name('test.generate-invoice');
 
 Route::post('/refresh-lunar-cache', [CartController::class, 'refreshLunarCache'])->name('lunar.cache.refresh');
 Route::post('/remove-orders', [CartController::class, 'removeOrders'])->name('lunar.orders.remove');
@@ -63,6 +86,9 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::get('/profile/business', [AdminProfileController::class, 'business'])->name('admin.profile.business');
     Route::post('/profile/business', [AdminProfileController::class, 'updateBusiness'])->name('admin.profile.business.update');
 
+    // Test Invoice Generation
+    Route::post('/test-invoice', [InvoiceController::class, 'generateTest'])->name('admin.test-invoice');
+
 });
 
 Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {
@@ -85,6 +111,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/invite', [UserController::class, 'sendInvitations'])->name('invite.send');
     Route::get('/profile/delete', [UserController::class, 'showDeleteAccount'])->name('profile.delete');
     Route::delete('/profile/delete', [UserController::class, 'deleteAccount'])->name('profile.destroy');
+
+    // Invoice Routes
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
 });
 
 // Paypal
@@ -179,3 +210,4 @@ Route::get('{slug}', function($slug) {
     return view('errors.404', ['message' => 'Page not found']);
 
 })->where('slug', '.*');
+

@@ -590,6 +590,86 @@ if (!function_exists('send_test_email')) {
     }
 }
 
+if (!function_exists('generate_test_invoice')) {
+    /**
+     * Generate test invoice for a random order
+     *
+     * @param int|null $orderId Optional specific order ID
+     * @return array [
+     *     'success' => bool,
+     *     'message' => string,
+     *     'invoice_path' => string|null,
+     *     'order_id' => int|null
+     * ]
+     */
+    function generate_test_invoice(int|string|null $orderId = null)
+    {
+        try {
+            $invoiceService = new \App\Services\InvoiceService();
+
+            if ($orderId) {
+                // Try to find order by ID first, then by reference if not found
+                $order = Order::find($orderId);
+                if (!$order) {
+                    $order = Order::where('reference', $orderId)->first();
+                }
+
+                if (!$order) {
+                    return [
+                        'success' => false,
+                        'message' => 'Order not found for ID/reference: ' . $orderId,
+                        'invoice_path' => null,
+                        'order_id' => null
+                    ];
+                }
+            } else {
+                $order = Order::where('status', 'payment-received')->inRandomOrder()->first();
+                if (!$order) {
+                    return [
+                        'success' => false,
+                        'message' => 'No completed orders found to generate test invoice.',
+                        'invoice_path' => null,
+                        'order_id' => null
+                    ];
+                }
+            }
+
+            $invoicePath = $invoiceService->generateInvoice($order);
+
+            // Store invoice record in database if it doesn't exist
+            $existingInvoice = \App\Models\Invoice::where('order_id', $order->id)->first();
+            if (!$existingInvoice) {
+                \App\Models\Invoice::create([
+                    'order_id' => $order->id,
+                    'owner_id' => $order->user_id,
+                    'invoice_number' => 'TEST-INV' . date('Y') . '-' . $order->id,
+                    'invoice_path' => $invoicePath,
+                    'amount' => $order->total->value / 100,
+                    'currency_code' => $order->currency_code,
+                    'generated_at' => now(),
+                ]);
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Test invoice generated successfully for order ' . $order->reference,
+                'invoice_path' => $invoicePath,
+                'order_id' => $order->id
+            ];
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Test invoice generation failed: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Failed to generate test invoice: ' . $e->getMessage(),
+                'invoice_path' => null,
+                'order_id' => null
+            ];
+        }
+    }
+}
+
 if (!function_exists('check_voucher_status')) {
     /**
      * Check if voucher exists and return its status with expiration information
@@ -703,3 +783,4 @@ if (!function_exists('check_voucher_status')) {
         }
     }
 }
+            
