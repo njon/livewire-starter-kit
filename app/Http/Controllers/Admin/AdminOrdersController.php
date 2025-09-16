@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Lunar\Models\Order;
 use Lunar\Models\OrderLine;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 
 class AdminOrdersController extends Controller
@@ -24,6 +25,10 @@ class AdminOrdersController extends Controller
             ->paginate(25);
 
         $orders = generate_order_prices($orders);
+
+        $orders->each(function ($order) {
+            $order->vouchers = Voucher::where('order_id', $order->id)->get();
+        });
 
         return view('admin.orders.index', compact('orders'));
     }

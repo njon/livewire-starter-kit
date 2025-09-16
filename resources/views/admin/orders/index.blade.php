@@ -27,10 +27,10 @@
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Reference') }}</th>
                         <th>{{ __('Email') }}</th>
-                        <th>{{ __('Phone') }}</th>
                         <th>{{ __('Total') }}</th>
                         @if(auth()->user()->super_admin)
                             <th>{{ __('Owner ID') }}</th>
+                            <th>{{ __('Vouchers') }}</th>
                         @endif
                         <th>{{ __('Date') }}</th>
                     </tr>
@@ -56,11 +56,11 @@
                                 {{ $order->addresses->first()->contact_email ?? '-' }}
                             </span>
                         </td>
-                        <td>
+                        <!-- <td>
                             <span class="text-muted fs-14">
                                 {{ $order->addresses->first()->contact_phone ?? '-' }}
                             </span>
-                        </td>
+                        </td> -->
                         <td>
                             {{ format_price($order->owner_total)->formatted() }}
                         </td>
@@ -70,6 +70,11 @@
                                     <a href="{{ route('users.edit', $line->owner_id) }}" class="text-decoration-none">
                                         {{ $line->owner_id }}
                                     </a>
+                                @endforeach
+                            </td>
+                            <td>
+                                @foreach($order->vouchers as $voucher)
+                                    <div class="text-muted text-small small">{{ $voucher->code }}</div>
                                 @endforeach
                             </td>
                         @endif

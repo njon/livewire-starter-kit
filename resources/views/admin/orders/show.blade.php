@@ -157,7 +157,7 @@
                 @foreach($order->transactions as $transaction)
                 <div class="border-bottom pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0">{{ __('Payment successful') }} - {{ $transaction->amount }}</h6>
+                        <h6 class="mb-0">{{ __('Payment successful') }} - {{ $transaction->amount->formatted() }}</h6>
                         <span class="badge bg-success bg-opacity-10 text-success">{{ __('Completed') }}</span>
                     </div>
                     <div class="text-muted fs-14 mb-1">

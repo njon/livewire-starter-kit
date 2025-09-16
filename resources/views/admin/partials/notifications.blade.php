@@ -10,7 +10,7 @@ $notifications = \App\Services\NotificationService::getRecent(5);
             <div class="activity-item">
                 <div class="activity-icon {{ $notification->type === 'new_order' ? 'bg-primary bg-opacity-10 text-primary' : ($notification->type === 'new_review' ? 'bg-success bg-opacity-10 text-success' : 'bg-info bg-opacity-10 text-info') }}">
                     @if($notification->type === 'new_order')
-                        <i class="bi bi-cart-check"></i>
+                        <i class="bi bi-cart-check text-white"></i>
                     @elseif($notification->type === 'new_review')
                         <i class="bi bi-star-fill"></i>
                     @elseif($notification->type === 'new_question')

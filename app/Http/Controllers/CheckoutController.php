@@ -144,7 +144,6 @@ class CheckoutController extends Controller
                 $cart->delete();
             }
 
-
             return response()->json([
                 'success' => true,
                 'order_reference' => $order->reference,
@@ -165,8 +164,8 @@ class CheckoutController extends Controller
         $cart = CartSession::current();
 
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',

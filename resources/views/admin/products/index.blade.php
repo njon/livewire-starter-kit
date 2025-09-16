@@ -74,9 +74,11 @@
                         </td>
                         <td>
                             @if($product->discounts()->exists())
-                                <span class="badge bg-success bg-opacity-10 text-success">
-                                    {{ $product->discounts()->first()->data['fixed_value'] === true ? $product->discounts()->first()->data['fixed_values']['Eur'] . '€' : $product->discounts()->first()->data['percentage'] . '%' }} {{ __('Discount') }}
-                                </span>
+                                @foreach($product->discounts as $discount)
+                                    <span class="badge bg-success bg-opacity-10 text-success">
+                                        {{ $discount->data['fixed_value'] === true ? $discount->data['fixed_values']['Eur'] . '€' : $discount->data['percentage'] . '%' }} {{ __('Discount') }}
+                                    </span>
+                                @endforeach
                             @else
                                 <span class="badge bg-secondary bg-opacity-10 text-secondary">
                                     {{ __('No discount') }}

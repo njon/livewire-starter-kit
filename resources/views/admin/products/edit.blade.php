@@ -37,11 +37,11 @@
 
             <!-- SERVICE DETAILS -->
             <div class="card mb-4 border-0 shadow-sm">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-card-text me-2 text-primary"></i> {{ __('Service Details') }}
-                    </h3>
-                </div>
+            @include('admin.partials.form-header', [
+                'title' => __('Service Details'),
+                'description' => __('Manage your service details and settings'),
+                'icon' => 'bi-info-circle'
+            ])
                 <div class="card-body">
                     <!-- Language Tabs -->
                     <div class="d-flex align-items-center mb-3">
@@ -116,22 +116,22 @@
             </div>
 
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Thumbnail Image') }}
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Thumbnail Image'),
+                    'description' => __('Thumbnail image for your service. Displayed in list views.'),
+                    'icon' => 'bi-image'
+                ])
                 <div class="card-body">
                     @include('admin.partials.thumbnail-uploader', ['product' => $product])
                 </div>
             </div>
 
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service Images') }}
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Service Images'),
+                    'description' => __('Images for your service. Displayed in service view as gallery.'),
+                    'icon' => 'bi-image'
+                ])
                 <div class="card-body">
                     @include('admin.partials.media-uploader', ['product' => $product])
                 </div>
@@ -144,11 +144,11 @@
         <div class="col-lg-5">
 
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service status') }}
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Service status'),
+                    'description' => __('Manage service visibility and status'),
+                    'icon' => 'bi-toggle-on'
+                ])
                 <div class="card-body">
                     <label for="status" class="form-label">
                         <i class="bi bi-toggle-on me-2 text-primary"></i>
@@ -167,16 +167,11 @@
              <!-- STORE -->
 
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h3 class="fs-5 mb-1">
-                                <i class="bi bi-shop me-2 text-primary"></i> {{ __('Store Availability') }}
-                            </h3>
-                            <p class="text-muted small mb-0">{{ __('Stores where this service is available') }}</p>
-                        </div>
-                    </div>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Store Availability'),
+                    'description' => __('Stores where this service is available'),
+                    'icon' => 'bi-shop'
+                ])
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         @foreach($channels as $channel)
@@ -213,11 +208,11 @@
 
             <!-- Categories -->
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Categories') }}
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Categories'),
+                    'description' => __('Organize your service into categories'),
+                    'icon' => 'bi-tag'
+                ])
                 <div class="card-body">
                     <div class="category-list-container mb-3">
                         <div class="category-list">
@@ -263,11 +258,11 @@
 
             <!-- Pricing -->
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> Pricing
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Pricing'),
+                    'description' => __('Set service pricing and tax information'),
+                    'icon' => 'bi-currency-euro'
+                ])
                 <div class="card-body">
                     <label for="price" class="form-label">
                         <i class="bi bi-currency-euro me-2 text-primary"></i>
@@ -303,12 +298,22 @@
             
             <!-- Add this to your product edit view -->
             <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="h6 mb-0 py-2">{{ __('Product variants') }}</h3>
-                    <button type="button" class="btn btn-sm btn-light add-variant-btn m-0">
+                <div class="card-header bg-white">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="rounded-circle p-2">
+                            <i class="bi bi-list-ul fs-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold fs-6">Product variants</h4>
+                            <small>Manage service variations and options</small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-light add-variant-btn m-0">
                         <i class="bi bi-plus me-1"></i> {{ __('Add variant') }}
                     </button>
+                    </div>
+                    
                 </div>
+
                 <div class="card-body p-0">
                     <div class="d-flex column flex-column" id="variantsContainer">
                         @foreach($variants as $variant)
@@ -324,11 +329,11 @@
             <script src="{{ asset('js/product-variants.js') }}"></script>
             @endsection
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h3 class="h5 mb-0 d-flex align-items-center">
-                        <i class="bi bi-tag me-2 text-primary"></i> {{ __('Service Filters') }}
-                    </h3>
-                </div>
+                @include('admin.partials.form-header', [
+                    'title' => __('Service Filters'),
+                    'description' => __('Configure service filtering options'),
+                    'icon' => 'bi-funnel'
+                ])
                 <div class="card-body p-0">
                     <div class="filter-card accordion" id="filterAccordion">
                         @foreach($filterCategories as $index => $filterCategory)

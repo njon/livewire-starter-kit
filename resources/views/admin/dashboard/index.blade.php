@@ -88,10 +88,9 @@
                     <div class="activity-container">
                         <div class="chart-header mb-3">
                             <h3>{{ __('Recent Activity') }}</h3>
-                            <a href="#" class="btn btn-sm btn-outline-secondary">{{ __('View All') }}</a>
+                            <a href="{{ route('admin.notifications.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('View All') }}</a>
                         </div>
-                                                @include('admin.partials.notifications')
-
+                        @include('admin.partials.notifications')
                     </div>
                 </div>
             </div>

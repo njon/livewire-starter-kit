@@ -130,6 +130,29 @@ Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpf
 Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 'destroy']);
 Route::get('wishlist/ajax-items', [WishlistController::class, 'ajaxItems'])->name('wishlist.ajaxItems');
 
+// Voucher Status Check
+Route::get('/voucher', function(Request $request) {
+    $code = $request->query('c');
+    
+    if (!$code) {
+        return response()->json([
+            'success' => false,
+            'message' => __('Please provide a voucher code using the "c" parameter.')
+        ], 400);
+    }
+    
+    $result = check_voucher_status($code);
+    
+    return response()->json([
+        'success' => $result['exists'],
+        'status' => $result['status'],
+        'message' => $result['message'],
+        'expires_at' => $result['expires_at'],
+        'days_remaining' => $result['days_remaining'],
+        'voucher_code' => $code
+    ]);
+})->name('voucher.check');
+
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     

@@ -137,7 +137,7 @@ class AdminDiscountController extends Controller
         }
         
         $data = $request->validate($validation);
-        $products = $data['product_ids'];
+        
         unset($data['product_ids']);
         
         $data['starts_at'] = Carbon::parse($data['starts_at']);

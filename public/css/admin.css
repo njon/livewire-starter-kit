@@ -13,7 +13,14 @@
     --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.card-body > div:last-child {
+    border: none !important;
+    margin: 0 !important;
+}
 
+.activity-container .dropdown-footer {
+    display: none !important;
+}
 body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: #fafafa;
@@ -1079,10 +1086,11 @@ button.remove-button-d {
     color: #98B68A !important;
 }
 
-body .form-control:focus {
-    border-width: 2px;
+body .form-control:focus,
+body .form-select:focus {
+    border-width: 1px;
     border-color: #98b68a !important;
-    box-shadow: 0 0 6px 0px #8080806b !important;
+    box-shadow: 0 0 3px 1px #577e29ab !important;
     outline: none !important;
 }
 
@@ -1241,4 +1249,14 @@ button.btn {
 .btn:hover {
     background: #15794b;
     border-color: #15794b;
+}
+.sticky-top {
+    top: 5rem !important;
+}
+.filter-option input:checked ~ .checkmark {
+    background-color: #4CAF50;
+    border-color: #ffffff;
+}
+.modal-footer > button:last-child {
+    margin-left: 15px !important;
 }

@@ -589,3 +589,117 @@ if (!function_exists('send_test_email')) {
         }
     }
 }
+
+if (!function_exists('check_voucher_status')) {
+    /**
+     * Check if voucher exists and return its status with expiration information
+     *
+     * @param string $code The voucher code to check
+     * @return array [
+     *     'exists' => bool,
+     *     'status' => string,
+     *     'message' => string,
+     *     'expires_at' => string|null,
+     *     'days_remaining' => int|null,
+     *     'voucher' => object|null
+     * ]
+     */
+    function check_voucher_status(string $code): array
+    {
+        try {
+            // Find the voucher by code using Voucher model
+            $voucher = \App\Models\Voucher::where('code', $code)->first();
+            
+            if (!$voucher) {
+                return [
+                    'exists' => false,
+                    'status' => 'not_found',
+                    'message' => __('Voucher code not found. Please check your code and try again.'),
+                    'expires_at' => null,
+                    'days_remaining' => null,
+                    'voucher' => null
+                ];
+            }
+            
+            $now = Carbon::now();
+            $expiresAt = $voucher->expires_at ? Carbon::parse($voucher->expires_at) : null;
+            
+            // Check if voucher is cancelled
+            if ($voucher->isCancelled()) {
+                return [
+                    'exists' => true,
+                    'status' => 'cancelled',
+                    'message' => __('This voucher has been cancelled and cannot be used.'),
+                    'expires_at' => $expiresAt ? $expiresAt->format('M d, Y H:i') : null,
+                    'days_remaining' => null,
+                    'voucher' => $voucher
+                ];
+            }
+            
+            // Check if voucher is already used
+            if ($voucher->isUsed()) {
+                return [
+                    'exists' => true,
+                    'status' => 'used',
+                    'message' => __('This voucher has already been used and cannot be redeemed again.'),
+                    'expires_at' => $expiresAt ? $expiresAt->format('M d, Y H:i') : null,
+                    'days_remaining' => null,
+                    'voucher' => $voucher
+                ];
+            }
+            
+            // Check if voucher has expired
+            if ($voucher->isExpired()) {
+                return [
+                    'exists' => true,
+                    'status' => 'expired',
+                    'message' => __('This voucher has expired on :date.', [
+                        'date' => $expiresAt->format('M d, Y')
+                    ]),
+                    'expires_at' => $expiresAt->format('M d, Y H:i'),
+                    'days_remaining' => 0,
+                    'voucher' => $voucher
+                ];
+            }
+            
+            // Voucher is valid and active
+            $daysRemaining = $expiresAt ? $voucher->getRemainingValidityDays() : null;
+            
+            $message = __('Voucher is valid and ready to use!');
+            if ($expiresAt) {
+                if ($daysRemaining <= 0) {
+                    $message .= ' ' . __('Expires today at :time.', ['time' => $expiresAt->format('H:i')]);
+                } elseif ($daysRemaining == 1) {
+                    $message .= ' ' . __('Expires tomorrow.');
+                } elseif ($daysRemaining <= 7) {
+                    $message .= ' ' . __('Expires in :days days.', ['days' => $daysRemaining]);
+                } else {
+                    $message .= ' ' . __('Valid until :date.', ['date' => $expiresAt->format('M d, Y')]);
+                }
+            } else {
+                $message .= ' ' . __('No expiration date.');
+            }
+            
+            return [
+                'exists' => true,
+                'status' => 'valid',
+                'message' => $message,
+                'expires_at' => $expiresAt ? $expiresAt->format('M d, Y H:i') : null,
+                'days_remaining' => $daysRemaining,
+                'voucher' => $voucher
+            ];
+            
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Voucher check failed: ' . $e->getMessage());
+            
+            return [
+                'exists' => false,
+                'status' => 'error',
+                'message' => __('An error occurred while checking the voucher. Please try again.'),
+                'expires_at' => null,
+                'days_remaining' => null,
+                'voucher' => null
+            ];
+        }
+    }
+}

@@ -21,7 +21,7 @@
                                 <div class="me-3">
                                     <div class="notification-icon {{ $notification->type === 'new_order' ? 'bg-primary' : ($notification->type === 'new_review' ? 'bg-success' : 'bg-info') }} bg-opacity-10 text-{{ $notification->type === 'new_order' ? 'primary' : ($notification->type === 'new_review' ? 'success' : 'info') }} rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                         @if($notification->type === 'new_order')
-                                            <i class="bi bi-cart-check"></i>
+                                            <i class="bi bi-cart-check text-white"></i>
                                         @elseif($notification->type === 'new_review')
                                             <i class="bi bi-star-fill"></i>
                                         @elseif($notification->type === 'new_question')

@@ -7,6 +7,9 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Listeners\TransferGuestWishlist;
+use App\Listeners\CreateVouchersForOrder;
+use App\Events\OrderCompleted;
+use App\Listeners\SendOrderConfirmationEmail;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +25,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderCompleted::class => [
             SendOrderConfirmationEmail::class,
+            CreateVouchersForOrder::class,
         ],
     ];
 

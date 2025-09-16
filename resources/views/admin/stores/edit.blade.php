@@ -32,17 +32,11 @@
             <!-- Left Column - Store Details -->
             <div class="col-lg-7">
                 <div class="card border-0 shadow-lg mb-4">
-                    <div class="card-header bg-white">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle p-2 me-3">
-                                <i class="bi bi-shop fs-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-0 fw-semibold fs-6">{{ __('Store Information') }}</h4>
-                                <small>{{ __('Manage your store details and settings') }}</small>
-                            </div>
-                        </div>
-                    </div>
+                    @include('admin.partials.form-header', [
+                        'title' => __('Store Information'),
+                        'description' => __('Manage your store details and settings'),
+                        'icon' => 'bi-shop'
+                    ])
 
                     <div class="card-body p-4">
                         <!-- Language Tabs -->
@@ -95,20 +89,15 @@
 
                 <!-- Contact & Location Info -->
                 <div class="card border-0 shadow-lg">
-                    <div class="card-header bg-white">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle p-2 me-3">
-                                <i class="bi bi-geo-alt fs-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-0 fw-semibold fs-6">{{ __('Contact & Location') }}</h4>
-                                <small>{{ __('Store contact information and address') }}</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
+                    @include('admin.partials.form-header', [
+                        'title' => __('Contact & Location'),
+                        'description' => __('Store contact information and address'),
+                        'icon' => 'bi-geo-alt'
+                    ])
+
+                    <div class="card-body p-3">
                         <div class="row g-4">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-0">
                                 <label for="phone" class="form-label">
                                     <i class="bi bi-telephone me-2 text-primary"></i>
                                     {{ __('Phone Number') }}
@@ -116,7 +105,7 @@
                                 <input type="tel" class="form-control" id="phone" name="phone" 
                                        value="{{ $store->phone }}" placeholder="{{ __('Phone Number') }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6  mt-0">
                                 <label for="email" class="form-label">
                                     <i class="bi bi-envelope me-2 text-primary"></i>
                                     {{ __('Email Address') }}
@@ -163,17 +152,12 @@
             <div class="col-lg-5">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="card border-0 shadow-lg">
-                        <div class="card-header bg-white">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle p-2 me-3">
-                                    <i class="bi bi-clock fs-5"></i>
-                                </div>
-                                <div>
-                                    <h4 class="mb-0 fw-semibold fs-6">{{ __('Business Hours') }}</h4>
-                                    <small>{{ __('Set your store operating hours') }}</small>
-                                </div>
-                            </div>
-                        </div>
+                        @include('admin.partials.form-header', [
+                            'title' => __('Business Hours'),
+                            'description' => __('Set your store operating hours'),
+                            'icon' => 'bi-clock'
+                        ])
+
                         <div class="card-body p-4">
                             <div class="mb-3">
                                 <div class="d-flex align-items-center text-muted small mb-3">
@@ -220,21 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-document.getElementById('images').addEventListener('change', function(e) {
-    const previewContainer = document.querySelector('.image-preview');
-    previewContainer.innerHTML = '';
-    for (const file of e.target.files) {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                previewContainer.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-});
+
 let map;
 let marker;
 let geocoder;
@@ -297,6 +267,23 @@ function geocodePosition(pos) {
         }
     });
 }
+function updateLocationField(latLng) {
+    document.getElementById('map_location').value = `${latLng.lat()},${latLng.lng()}`;
+}
+document.getElementById('address').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+    }
+});
+</script>
+
+<!-- Hidden Delete Form -->
+<form id="delete-store-form" action="{{ route('stores.destroy', $store->id) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
 function updateLocationField(latLng) {
     document.getElementById('map_location').value = `${latLng.lat()},${latLng.lng()}`;
 }
