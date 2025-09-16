@@ -91,6 +91,54 @@ class ProductController extends Controller
 
         $viewData['collection'] = $collection;
         $viewData['title'] = $collection->translateAttribute('name');
+        $viewData['description'] = $collection->translateAttribute('description');
+
+        return view('products.collection', $viewData);
+    }
+
+    public function saleItems()
+    {
+        $ajax = request()->get('ajax', false);
+        $sort = request()->input('sort');
+        
+        // Get products with active discounts
+        $products = Product::whereHas('discounts', function($query) {
+            $query->where(function($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })->where(function($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+            });
+        })->applySorting($sort)->paginate(6);
+        
+        $filterCategories = FilterCategory::with('options')->get();
+        $links = $products->links();
+
+        if (in_array($sort, ['price_asc', 'price_desc'])) {
+            $sortMethod = ($sort === 'price_desc') ? 'sortByDesc' : 'sortBy';
+            
+            $products = $products->$sortMethod(function($item) {
+                return (float) filter_var($item->price, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+            });
+        }
+
+        $viewData = [
+            'products' => $products,
+            'filterCategories' => $filterCategories,
+            'pagination' => $links,
+        ];
+
+        if ($ajax === 'true') {
+            $filters = view('products.search-tags', ['filterCategories' => $filterCategories])->render();
+            $productsHtml = view('products.ajax', $viewData)->render();
+
+            return response()->json([
+                'filters' => $filters,
+                'products' => $productsHtml,
+            ]);
+        }
+
+        $viewData['title'] = 'Sale Items';
+        $viewData['description'] = 'Browse our collection of products currently on sale. Enjoy great discounts on a variety of items for a limited time only!';
 
         return view('products.collection', $viewData);
     }

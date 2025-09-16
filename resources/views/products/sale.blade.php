@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $title)
+@section('title', 'Sale Items')
 
 @section('content')
 
@@ -12,9 +12,9 @@
 
     <div class="col-md-9 col-lg-9" id="content">
 
-      <h1 class="pt-5 fs-2">{{ $title }}</h1>
+      <h1 class="pt-5 fs-2">Sale Items</h1>
       <div class="text-muted mb-5 mt-3">
-        {!! $description !!}
+        Discover amazing deals on our discounted products!
       </div>
 
       <div class="d-flex justify-content-between align-items-center mb-4">

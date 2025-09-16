@@ -153,6 +153,9 @@ Route::get('/voucher', function(Request $request) {
     ]);
 })->name('voucher.check');
 
+// Sale page route
+Route::get('/sale', [ProductController::class, 'saleItems'])->name('products.sale');
+
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {
     
