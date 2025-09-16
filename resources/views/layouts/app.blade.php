@@ -165,6 +165,20 @@ div#dashboard {
 
 
     @cookieconsentview
+
+    {{-- Newsletter Modal --}}
+    @include('components.newsletter-modal')
+
+    {{-- Newsletter JavaScript --}}
+    <script>
+        window.newsletterConfig = {
+            enabled: {{ config('newsletter.modal.enabled') ? 'true' : 'false' }},
+            delay: {{ config('newsletter.modal.delay_seconds', 10) * 1000 }},
+            scrollPercent: {{ config('newsletter.modal.scroll_percentage', 50) }},
+            hideDays: {{ config('newsletter.modal.hide_for_days', 7) }}
+        };
+    </script>
+    <script src="{{ asset('js/newsletter.js') }}"></script>
 </body>
     @yield('structured_data')
 </html>

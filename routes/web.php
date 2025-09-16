@@ -19,7 +19,10 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminDiscountController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\NewsletterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
@@ -50,6 +53,14 @@ Route::get('/test/generate-invoice/{orderIdOrReference?}', function ($orderIdOrR
 Route::post('/refresh-lunar-cache', [CartController::class, 'refreshLunarCache'])->name('lunar.cache.refresh');
 Route::post('/remove-orders', [CartController::class, 'removeOrders'])->name('lunar.orders.remove');
 
+// Newsletter routes
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::post('/newsletter/status', [NewsletterController::class, 'status'])->name('newsletter.status');
+Route::get('/newsletter/unsubscribe', function() {
+    return view('newsletter.unsubscribe');
+})->name('newsletter.unsubscribe.page');
+
 Route::group(['prefix' => 'admin/products/{product}/variants', 'as' => 'admin.products.variants.'], function() {
     Route::post('/', [ProductVariantController::class, 'store'])->name('store');
     Route::put('/{variant}', [ProductVariantController::class, 'update'])->name('update');
@@ -68,6 +79,7 @@ Route::prefix('admin')->middleware(['auth', 'owner'])->group(function () {
     Route::resource('stores', AdminStoreController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->except(['show']);
     Route::resource('discounts', AdminDiscountController::class)->except(['show'])->names('admin.discounts');
+    Route::resource('articles', AdminArticleController::class)->names('admin.articles');
 
 
     Route::get('/orders', [AdminOrdersController::class, 'index'])->name('admin.orders.index');
@@ -186,6 +198,10 @@ Route::get('/voucher', function(Request $request) {
 
 // Sale page route
 Route::get('/sale', [ProductController::class, 'saleItems'])->name('products.sale');
+
+// Articles routes
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+// Route::get('{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 // Catch-all Route for Products and Collections
 Route::get('{slug}', function($slug) {

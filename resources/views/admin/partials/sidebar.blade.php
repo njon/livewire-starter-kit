@@ -46,6 +46,13 @@
                                     <span>{{ __('Discounts') }}</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/articles*') ? 'active' : '' }}"
+                                    href="/admin/articles">
+                                    <i class="bi bi-journal-text"></i>
+                                    <span>{{ __('Articles') }}</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

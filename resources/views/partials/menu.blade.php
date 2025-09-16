@@ -176,6 +176,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-briefcase me-1"></i> {{ __('For Business') }}</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('articles.index') }}"><i class="fa fa-newspaper-o me-1"></i> {{ __('Articles') }}</a>
+          </li>
         </ul>
       </div>
     </div>
