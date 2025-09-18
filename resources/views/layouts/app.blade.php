@@ -41,6 +41,7 @@ const helpful = '{{ __("Helpful") }}';
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@350" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"

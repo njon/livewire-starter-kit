@@ -1,4 +1,4 @@
-<div class="mb-5 product px-2 {{ isset($col) ? 'col-lg-' . $col . ' col-md-6' : 'col col-md-6' }}">
+<div class="mb-5 product px-2 col">
     <div class="product-item-list card border-0 h-100">
         <!-- Product Image -->
         <div class="position-relative overflow-hidden">
@@ -31,13 +31,13 @@
 
         <!-- Card Body -->
         <div class="card-body p-2">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <h3 class="card-title h5 mb-0 mt-2">
+            <div class="d-flex justify-content-between align-items-start my-2">
+                <h3 class="card-title h5 double-truncate">
                     <a href="{{ $product->defaultUrl->slug }}" class="text-decoration-none text-dark">
                         {{ $product->translateAttribute('name') }}
                     </a>
                 </h3>
-                <div class="text-muted mt-2" style="width: 66px; text-align: right; margin-top: 5px; font-size: 14px; font-weight: 700; color: rgb(25 135 84) !important;">
+                <div class="rating-stars-list">
                     @if($product->average_rating != 0)
                         {{ $product->average_rating }} <i class="fa fa-star"></i>
                     @else
@@ -45,9 +45,9 @@
                     @endif
                 </div>
             </div>
-            
+           
             <!-- Tour Details -->
-            <div class="d-flex flex-wrap gap-3 my-3 text-muted small">
+            <div class="d-flex flex-wrap gap-3 my-3 text-muted small  d-none">
                 <div class="d-flex align-items-center">
                     <i class="fa fa-clock-o me-2"></i> 
                     {{ $product->translateAttribute('length') ?? '3.5 hours' }}
@@ -63,7 +63,7 @@
             </div>
 
             <!-- @todo variation -->
-            <div class="d-flex flex-wrap gap-2 mb-3 small d-none">
+            <div class="d-flex flex-wrap gap-2 mb-3 small">
                 <div class="d-flex align-items-center bg-light px-2 py-1 rounded">
                     <i class="fa fa-clock-o text-muted me-1"></i> 3.5h
                 </div>
@@ -76,16 +76,16 @@
             </div>
             
             <!-- Highlights -->
-            <ul class="list-unstyled small mb-3 d-none">
+            <ul class="list-unstyled small mb-3">
                 <li class="mb-1"><i class="fa fa-check text-success me-2"></i> 8+ local tastings</li>
                 <li class="mb-1"><i class="fa fa-check text-success me-2"></i> Expert food guide</li>
                 <li><i class="fa fa-check text-success me-2"></i> Vegetarian options</li>
             </ul>
             
             <!-- Price & CTA -->
-            <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <span class="text-muted small">
+                    <span class="text-muted small d-none">
                         @if($product->variants->count() > 1)
                             {{ __('From') }}
                         @else

@@ -1,4 +1,4 @@
-<footer class="gradient-footer text-dark py-5 mt-5" style="background-color: #f6f6f6;">
+<footer class="gradient-footer text-dark py-5" style="background-color: #f6f6f6;">
   <div class="container">
     <div class="row g-4">
       <!-- Company Info -->

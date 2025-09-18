@@ -204,9 +204,20 @@ body .text-success {
 .fw-600 {
     font-weight: 600;
 }
+fw-700 {
+    font-weight: 700;
+}
+.fw-800 {
+    font-weight: 800;
+}
 .fw-900 {
     font-weight: 900;
 }
+body .py-6 {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+}
+.double-card-title { font-size: 1.9rem !important; font-family: 'Figtree'; font-weight: 700; }
 .sf { font-family: "Plus Jakarta Sans"; }
 /* @todo rework. avoid important */
 .input-group > * {
@@ -301,7 +312,7 @@ footer a {
 }
 
 .button-animated {
-  color: #aab2bd;
+  color: #f1f1f1;
   padding: 0.2em 0.6em;
   border-radius: 0.2em;
   outline: none;
@@ -317,7 +328,7 @@ footer a {
   transition: 0.2s;
 }
 .button-animated:hover, .button-animated:focus {
-  color: #8d98a7;
+  color: #f9a3a3;
 }
 .button-animated:hover:active i, .button-animated:focus:active i {
   transform: scale(0.8);
@@ -447,7 +458,7 @@ footer a {
   color: #cc4896;
 }
 .button-animated.like.is-active {
-  background: #ffffff;
+  background: #ffffffcf;
 }
 .button-animated.plus:before, .button-animated.plus:after {
   color: #8cc152;
@@ -798,7 +809,8 @@ i.fa.fa-star {
     padding: 0 8px;
 }
 .wishlist-add {
-    background: white;
+    background: #0000008c;
+    border-radius: 50%;
 }
 .btn-wishlist {
     z-index: 9;
@@ -876,4 +888,12 @@ body .bg-primary {
 }
 .delivery-option {
     cursor: pointer;
+}
+
+.rating-stars-list {width: 79px;text-align: right;margin-top: 5px;margin-right: -5px;font-size: 14px;font-weight: 700;color: rgb(25 135 84) !important;}
+.double-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

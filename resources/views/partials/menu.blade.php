@@ -19,9 +19,7 @@
         <!-- Logo/Title Column -->
         <div class="justify-content-between d-flex py-3 align-items-center">
           <div>
-            <h1 class="h3 mb-0">
-              <a href="/" class="navbar-brand fw-bold text-danger fs-2" href="#">Giftify</a>
-            </h1>
+            <img src="{{ asset('images/logo2.jpg') }}" alt="Logo" height="50">
           </div>
 
           <!-- Contact/Live Chat Column -->
@@ -30,7 +28,7 @@
               <div class="d-flex flex-column flex-md-row justify-content-center gap-5 info-lines" bis_skin_checked="1">
                 <!-- Company Info Card -->
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
-                  <i class="d-block small text-dark mb-1 fa fa-mobile mt-1 fs-2"></i>
+                  <i class="d-block small text-dark mb-1 bi bi-phone mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
                     <span class="d-block fw-semibold small text-dark mb-1">{{ __('Phone Number') }}</span>
                     <a href="tel:+396973391189"
@@ -42,7 +40,7 @@
 
                 <!-- Support Info Card -->
                 <div class="text-nowrap d-flex align-items-start gap-3 rounded-3 hover-lift" bis_skin_checked="1">
-                  <i class="d-block small text-dark mb-1 fa fa-comments-o mt-1 fs-2"></i>
+                  <i class="d-block small text-dark mb-1 bi bi-chat-dots mt-1 fs-2"></i>
                   <div bis_skin_checked="1">
                     <span class="d-block fw-semibold small text-dark mb-1">{{ __('Live Chat') }}</span>
                     <a href="#"
@@ -54,7 +52,7 @@
                 <div class="text-nowrap d-flex align-items-center gap-3 rounded-3 hover-lift" bis_skin_checked="1">
                   <div class="input-group">
                     <span class="input-group-text">
-                      <i class="fa fa-search" aria-hidden="true"></i>
+                      <i class="bi bi-search" aria-hidden="true"></i>
  
                     </span>
                     <input type="search" class="form-control border-start-0 min-width-400"
@@ -83,11 +81,15 @@
                 @endif
               </div>
 
-              <a href="{{ route('wishlist.index') }}"
-                class="material-symbols-outlined hoverable-icon text-dark text-decoration-none">
-                <i class="fa fa-heart-o" aria-hidden="true"></i>
+              <a href="{{ route('wishlist.index') }}" class="hoverable-icon text-dark text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="25" viewBox="-12 -12 280 280">
+                <g transform="translate(1.4066 1.4066) scale(2.81 2.81)">
+                  <path d="M 45 84.334 L 6.802 46.136 C 2.416 41.75 0 35.918 0 29.716 c 0 -6.203 2.416 -12.034 6.802 -16.42 c 4.386 -4.386 10.217 -6.802 16.42 -6.802 c 6.203 0 12.034 2.416 16.42 6.802 L 45 18.654 l 5.358 -5.358 c 4.386 -4.386 10.218 -6.802 16.42 -6.802 c 6.203 0 12.034 2.416 16.42 6.802 C 87.585 17.682 90 23.513 90 29.716 c 0 6.203 -2.415 12.034 -6.802 16.42 L 45 84.334 z" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+              </svg>
+              
               </a>
-              <i class="fa fa-shopping-basket material-symbols-outlined hoverable-icon" data-bs-toggle="offcanvas"
+              <i class="bi bi-cart3 hoverable-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#shoppingCart" aria-controls="shoppingCart" aria-label="Toggle navigation"
                 aria-hidden="true"></i>
 
@@ -112,7 +114,7 @@
           <li class="nav-item dropdown mega-menu">
             <a class="nav-link dropdown-toggle" href="#" id="dropdownExperiences" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fa fa-magic text-danger me-1"></i> {{ __('Browse Experiences') }}
+              <i class="bi bi-magic me-1"></i> {{ __('Browse Experiences') }}
             </a>
             <div class="dropdown-menu shadow border menu-mega p-0" aria-labelledby="dropdownExperiences">
               <div class="row gx-0">
@@ -157,27 +159,22 @@
                 </div>
               </div>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-heart text-danger me-1"></i> {{ __('Father\'s Day') }}</a>
+            <a class="nav-link" href="#"><i class="bi bi-gift me-1"></i> {{ __('Birthdays') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-birthday-cake text-warning me-1"></i> {{ __('Birthdays') }}</a>
+            <a class="nav-link fw-semibold" href="{{ route('products.sale') }}"><i class="bi bi-tags me-1"></i> {{ __('Sale') }} <span
+                class="badge bg-success">{{ __('NOW ON!') }}</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" href="#"><i class="fa fa-tags me-1"></i> {{ __('Sale') }} <span
-                class="badge bg-danger">{{ __('NOW ON!') }}</span></a>
+            <a class="nav-link" href="#"><i class="bi bi-search me-1"></i> {{ __('Gift Finder') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-search me-1"></i> {{ __('Gift Finder') }}</a>
+            <a class="nav-link" href="#"><i class="bi bi-gift me-1"></i> {{ __('Gift Cards') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-gift text-success me-1"></i> {{ __('Gift Cards') }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-briefcase me-1"></i> {{ __('For Business') }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('articles.index') }}"><i class="fa fa-newspaper-o me-1"></i> {{ __('Articles') }}</a>
+            <a class="nav-link" href="#"><i class="bi bi-briefcase me-1"></i> {{ __('For Business') }}</a>
           </li>
         </ul>
       </div>
